@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>AgriGrade — AI-Powered Tomato Quality & Size Grading</title>
+  <meta name="description" content="Independent AI-powered tomato size and quality grading for Indian farmers and mandi buyers using standard ₹10 and ₹5 reference coins.">
+  <meta name="theme-color" content="#1b5e20">
+  
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='55' r='38' fill='%23d32f2f'/><path d='M50,15 Q55,28 65,22 Q52,32 50,38 Q48,32 35,22 Q45,28 50,15' fill='%232e7d32'/></svg>">
+</head>
+<body>
+
+  <!-- Top Global Legal & Scope Disclaimer Banner -->
+  <div class="disclaimer-bar">
+    <span data-i18n="disclaimer_banner">AgriGrade is an independent negotiation reference, not a certified grading authority.</span>
+  </div>
+
+  <!-- Header & Navigation -->
+  <header class="header-nav">
+    <div class="nav-container">
+      <a href="#home" class="brand-link">
+        <div class="brand-logo-icon" aria-hidden="true">🍅</div>
+        <div class="brand-text">
+          <h1 data-i18n="app_title">AgriGrade</h1>
+          <span data-i18n="tagline">AI Tomato Quality Grading</span>
+        </div>
+      </a>
+
+      <button class="mobile-nav-toggle" aria-label="Toggle Navigation Menu">☰</button>
+
+      <ul class="nav-links">
+        <li><a href="#home" class="nav-link active" data-view="home" data-i18n="nav_home">Home</a></li>
+        <li><a href="#new" class="nav-link" data-view="new-grade" data-i18n="nav_new_grade">New Grading</a></li>
+        <li><a href="#history" class="nav-link" data-view="history" data-i18n="nav_history">Reports History</a></li>
+        <li><a href="#methodology" class="nav-link" data-view="methodology" data-i18n="nav_methodology">How We Grade</a></li>
+        <li><a href="#standards" class="nav-link" data-view="standards" data-i18n="nav_standards">Standards & Rules</a></li>
+        <li>
+          <!-- Language Switcher -->
+          <div class="lang-switch" role="group" aria-label="Select Language">
+            <button type="button" class="lang-btn active" data-lang="en">EN</button>
+            <button type="button" class="lang-btn" data-lang="hi">हिन्दी</button>
+            <button type="button" class="lang-btn" data-lang="te">తెలుగు</button>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Main Application Body -->
+  <main class="main-wrapper">
+
+    <!-- 1. HOME VIEW -->
+    <section id="view-home" class="view-panel active-view">
+      <div class="hero-card">
+        <div class="hero-badge">🇮🇳 Farmer & Mandi Transparency Initiative</div>
+        <h2 class="hero-title" data-i18n="hero_title">Grade Tomatoes Fairly with AI & Reference Coin</h2>
+        <p class="hero-subtitle" data-i18n="hero_subtitle">
+          Snap a photo of your tomatoes with a ₹10 or ₹5 coin. Measure exact fruit size in mm, inspect surface blemishes, and generate a tamper-evident grade report for mandi negotiations.
+        </p>
+        <div class="hero-actions">
+          <a href="#new" class="btn btn-primary" id="btn-hero-start" data-i18n="btn_start_grading">Start Tomato Grading</a>
+          <a href="#history" class="btn btn-secondary" data-i18n="btn_view_history">View Saved Reports</a>
+          <a href="#methodology" class="btn btn-secondary" data-i18n="btn_learn_more">How It Works</a>
+        </div>
+      </div>
+
+      <!-- Photo Guidelines Grid -->
+      <h3 style="font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 16px;" data-i18n="photo_guide_heading">Photo Guidelines for Reliable Grading</h3>
+      <div class="guide-card-grid">
+        <div class="guide-step-card">
+          <div class="step-num">1</div>
+          <div class="step-text">
+            <h4>Spread Fruit</h4>
+            <p data-i18n="guide_step1">Place 1 to 20 tomatoes separated on a flat, light-coloured surface (newspaper, white cloth, or tray).</p>
+          </div>
+        </div>
+        <div class="guide-step-card">
+          <div class="step-num">2</div>
+          <div class="step-text">
+            <h4>Place Reference Coin</h4>
+            <p data-i18n="guide_step2">Place a standard ₹10 or ₹5 coin flat beside the tomatoes at the same height.</p>
+          </div>
+        </div>
+        <div class="guide-step-card">
+          <div class="step-num">3</div>
+          <div class="step-text">
+            <h4>Direct Top-Down Photo</h4>
+            <p data-i18n="guide_step3">Photograph directly from above in clear daylight. Avoid harsh shadows or strong camera tilt.</p>
+          </div>
+        </div>
+        <div class="guide-step-card">
+          <div class="step-num">4</div>
+          <div class="step-text">
+            <h4>Avoid Severe Overlap</h4>
+            <p data-i18n="guide_step4">Ensure fruit do not overlap heavily so individual contours can be measured accurately.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. NEW GRADING VIEW (Capture, Upload, Reference & Options) -->
+    <section id="view-new-grade" class="view-panel">
+      <div class="workflow-card">
+        <div class="workflow-header">
+          <h2 data-i18n="upload_heading">Photograph Upload & Calibration</h2>
+          <p data-i18n="upload_desc">Capture or select 1 to 3 photographs of your tomatoes with the reference coin.</p>
+        </div>
+
+        <!-- Drag & Drop Zone -->
+        <div class="dropzone" id="photo-dropzone">
+          <div class="dropzone-icon">📷</div>
+          <h3 data-i18n="drag_drop_text">Drag & drop photos here or tap to upload</h3>
+          <p data-i18n="max_photos_hint">Up to 3 photographs allowed (JPG, PNG, WebP up to 15MB each)</p>
+          
+          <div class="dropzone-actions">
+            <!-- Mobile Camera direct trigger -->
+            <label for="camera-input" class="btn btn-primary" style="cursor: pointer;">
+              📸 <span data-i18n="camera_btn">Open Camera</span>
+            </label>
+            <input type="file" id="camera-input" accept="image/*" capture="environment" style="display: none;">
+
+            <!-- Gallery/File Upload -->
+            <label for="file-input" class="btn btn-secondary" style="cursor: pointer;">
+              🖼️ <span data-i18n="gallery_btn">Upload Photos</span>
+            </label>
+            <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" multiple style="display: none;">
+          </div>
+        </div>
+
+        <!-- Selected Photos Preview Gallery -->
+        <div class="preview-gallery" id="preview-gallery"></div>
+
+        <!-- Reference Object Selection -->
+        <div class="form-section">
+          <h3 data-i18n="reference_heading">Select Reference Object</h3>
+          <div class="radio-cards-grid">
+            <label class="radio-card">
+              <input type="radio" name="ref-type" value="coin_10" checked>
+              <div class="radio-card-content">
+                <strong data-i18n="ref_coin_10">Indian ₹10 Coin (27 mm nominal diameter)</strong>
+                <span>Recommended standard reference coin</span>
+              </div>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="ref-type" value="coin_5">
+              <div class="radio-card-content">
+                <strong data-i18n="ref_coin_5">Indian ₹5 Coin (23 mm nominal diameter)</strong>
+                <span>Nickel-brass / stainless steel disc</span>
+              </div>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="ref-type" value="custom_card">
+              <div class="radio-card-content">
+                <strong data-i18n="ref_custom">Custom Card / Object</strong>
+                <span>Enter known diameter or width in mm</span>
+              </div>
+            </label>
+          </div>
+
+          <!-- Custom Dimension Input (revealed if custom selected) -->
+          <div class="input-group" id="custom-mm-group" style="display: none;">
+            <label for="custom-dimension-mm" class="input-label" data-i18n="custom_mm_label">Custom Dimension (mm)</label>
+            <input type="number" step="0.1" id="custom-dimension-mm" class="input-field" placeholder="e.g. 50.0" data-i18n-placeholder="custom_mm_placeholder">
+          </div>
+
+          <!-- Mandi Price Input (Optional) -->
+          <div class="input-group">
+            <label for="mandi-price-input" class="input-label" data-i18n="price_heading">Optional Mandi Base Price (₹/kg)</label>
+            <input type="number" step="0.5" id="mandi-price-input" class="input-field" placeholder="e.g. 25.00" data-i18n-placeholder="price_placeholder">
+            <p class="input-hint" data-i18n="price_hint">Enter your local mandi benchmark rate to calculate indicative price per grade.</p>
+          </div>
+
+          <!-- Form Submit Actions -->
+          <div style="display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap;">
+            <button type="button" class="btn btn-primary" id="btn-submit-grade" style="flex: 2;" data-i18n="btn_submit_grade">
+              🔍 Analyze & Grade Tomatoes
+            </button>
+            <button type="button" class="btn btn-secondary" id="btn-clear-selection" style="flex: 1;" data-i18n="btn_clear">
+              Reset Selection
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. GRADING PROGRESS VIEW -->
+    <section id="view-progress" class="view-panel">
+      <div class="progress-card">
+        <div class="progress-spinner"></div>
+        <h2 data-i18n="progress_heading">AI Computer Vision in Progress...</h2>
+        <p style="color: var(--text-secondary); font-size: 0.95rem;">Analyzing photograph geometry, reference coin scale, and tomato skin quality.</p>
+
+        <ul class="progress-steps-list">
+          <li class="progress-step-item active" id="prog-step-1">
+            <span class="step-dot"></span>
+            <span data-i18n="step_validating">Validating image resolution, sharpness, and daylight lighting...</span>
+          </li>
+          <li class="progress-step-item" id="prog-step-2">
+            <span class="step-dot"></span>
+            <span data-i18n="step_calibrating">Detecting reference coin and computing pixel-to-millimetre scale...</span>
+          </li>
+          <li class="progress-step-item" id="prog-step-3">
+            <span class="step-dot"></span>
+            <span data-i18n="step_segmenting">Executing watershed contour segmentation on touching tomatoes...</span>
+          </li>
+          <li class="progress-step-item" id="prog-step-4">
+            <span class="step-dot"></span>
+            <span data-i18n="step_defects">Measuring color ripening stage and surface blemish percentage...</span>
+          </li>
+          <li class="progress-step-item" id="prog-step-5">
+            <span class="step-dot"></span>
+            <span data-i18n="step_lot">Applying AGMARK/UNECE tolerance rules and generating lot fingerprint...</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 4. REPORT & DETAILED RESULTS VIEW -->
+    <section id="view-report" class="view-panel">
+      
+      <!-- Report Header Card -->
+      <div class="report-hero">
+        <div class="report-top-meta">
+          <div class="report-meta-id">
+            <h2 id="report-id-display">AG-20261023-XXXX</h2>
+            <span id="report-date-display">Generated just now</span>
+          </div>
+
+          <!-- SHA-256 Tamper Badge -->
+          <div id="tamper-badge" class="tamper-badge verified">
+            <span>🛡️</span>
+            <span id="tamper-text" data-i18n="tamper_verified">SHA-256 Verified Authentic</span>
+          </div>
+        </div>
+
+        <!-- Lot Grade Hero Display -->
+        <div class="lot-grade-display">
+          <div>
+            <span style="font-size: 0.85rem; color: var(--text-muted); display: block;" data-i18n="lot_grade_label">Overall Observed Lot Grade</span>
+            <div id="lot-grade-pill" class="grade-pill Class-I">Class I</div>
+          </div>
+        </div>
+
+        <!-- Lot Stats Grid -->
+        <div class="lot-stats-grid">
+          <div class="stat-box">
+            <span data-i18n="observed_fruit_label">Observed Fruit Count</span>
+            <strong id="fruit-count-stat">0</strong>
+          </div>
+          <div class="stat-box">
+            <span data-i18n="calibration_status_label">Calibration Status</span>
+            <strong id="cal-status-stat">₹10 Coin</strong>
+          </div>
+        </div>
+
+        <!-- Optional Mandi Valuation Box -->
+        <div id="pricing-card" class="pricing-card" style="display: none;">
+          <h3 data-i18n="indicative_price_title">Indicative Mandi Valuation</h3>
+          <div id="pricing-rate" class="pricing-rate-large">₹0.00 / kg</div>
+          <p id="pricing-formula" style="font-size: 0.85rem; color: #5d4037; margin: 4px 0 8px;">₹25.00 × 1.00 = ₹25.00/kg</p>
+          <p style="font-size: 0.78rem; color: var(--text-muted);" data-i18n="price_disclaimer">Indicative estimate for negotiation reference only. Mandi prices vary by local supply, moisture, and transport costs.</p>
+        </div>
+
+        <!-- Lot Reasons & Explanation -->
+        <div style="margin-top: 18px;">
+          <h4 style="font-size: 0.95rem; font-weight: 600; margin-bottom: 6px;" data-i18n="lot_reasons_label">Why This Lot Grade Was Assigned</h4>
+          <ul id="lot-reasons-list" style="padding-left: 20px; font-size: 0.88rem; color: var(--text-secondary);"></ul>
+        </div>
+      </div>
+
+      <!-- Warnings & Sampling Notice -->
+      <div class="notice-box">
+        <h4 data-i18n="lot_warnings_label">Sampling & Calibration Notices</h4>
+        <ul id="lot-warnings-list"></ul>
+      </div>
+
+      <!-- Annotated Photo Showcase -->
+      <div class="annotated-showcase">
+        <h3 style="font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 12px;">Computer Vision Fruit & Calibration Overlay</h3>
+        <div class="annotated-img-frame">
+          <img id="annotated-img" src="" alt="Annotated tomatoes photograph showing diameter and grade overlays">
+        </div>
+        <p style="font-size: 0.8rem; color: var(--text-muted); text-align: center;">Green/Orange/Red contours denote fruit quality classification. Cyan circle indicates reference coin calibration.</p>
+      </div>
+
+      <!-- Individual Fruit Inspection Table -->
+      <div class="fruit-table-card">
+        <h3 style="font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 14px;" data-i18n="fruit_list_title">Individual Fruit Inspection Breakdown</h3>
+        <table class="fruit-table">
+          <thead>
+            <tr>
+              <th data-i18n="fruit_id_col">Fruit #</th>
+              <th data-i18n="fruit_size_col">Diameter (mm)</th>
+              <th data-i18n="fruit_size_code_col">Size Code</th>
+              <th data-i18n="fruit_shape_col">Shape (Axis Ratio)</th>
+              <th data-i18n="fruit_color_col">Color Stage</th>
+              <th data-i18n="fruit_defects_col">Surface Defects</th>
+              <th data-i18n="fruit_grade_col">Assigned Grade</th>
+              <th data-i18n="fruit_reasons_col">Rule Reasons</th>
+            </tr>
+          </thead>
+          <tbody id="fruit-table-body"></tbody>
+        </table>
+      </div>
+
+      <!-- Farmer & Buyer Acknowledgement Audit Form -->
+      <div class="audit-card">
+        <h3 data-i18n="ack_heading">Farmer & Buyer Acknowledgement (Append-Only Audit Trail)</h3>
+        <p style="font-size: 0.88rem; color: var(--text-secondary);" data-i18n="ack_desc">Both parties can formally record agreement or dispute. Each acknowledgement is cryptographically chained to the report SHA-256 fingerprint.</p>
+
+        <!-- Existing Acknowledgement Events List -->
+        <div id="ack-records-list" class="ack-records-list"></div>
+
+        <!-- Acknowledgement Submission Form -->
+        <form id="ack-form" style="margin-top: 18px; border-top: 1px solid var(--border-color); padding-top: 16px;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 14px;">
+            <div>
+              <label for="ack-party" class="input-label" data-i18n="party_label">Your Role</label>
+              <select id="ack-party" class="input-field" style="max-width: 100%;">
+                <option value="farmer">Farmer (किसान / రైతు)</option>
+                <option value="buyer">Mandi Buyer / Trader (व्यापारी / కొనుగోలుదారు)</option>
+              </select>
+            </div>
+            <div>
+              <label for="ack-verdict" class="input-label" data-i18n="verdict_label">Verdict</label>
+              <select id="ack-verdict" class="input-field" style="max-width: 100%;">
+                <option value="accept" data-i18n="verdict_accept">Accept Grade & Pricing</option>
+                <option value="dispute" data-i18n="verdict_dispute">Dispute / Renegotiate</option>
+              </select>
+            </div>
+          </div>
+          <div class="input-group">
+            <label for="ack-note" class="input-label" data-i18n="note_label">Comments / Reason for dispute</label>
+            <input type="text" id="ack-note" class="input-field" style="max-width: 100%;" placeholder="e.g. Agreed at Class I rate with 2% tare deduction." data-i18n-placeholder="note_placeholder">
+          </div>
+          <button type="submit" class="btn btn-primary" id="btn-submit-ack" data-i18n="btn_submit_ack">
+            ✍️ Sign & Record Acknowledgement
+          </button>
+        </form>
+      </div>
+
+      <!-- QR Code & Share Box -->
+      <div class="qr-share-box">
+        <h3 data-i18n="share_heading">Share & Verify Grading Report</h3>
+        <p style="font-size: 0.88rem; color: var(--text-secondary);" data-i18n="share_desc">Anyone can scan this QR code or open the report link to inspect the exact measurements and verify tamper-proof integrity.</p>
+        
+        <img id="report-qr-img" class="qr-code-img" src="" alt="Report verification QR code">
+
+        <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-link" data-i18n="btn_copy_link">📋 Copy Report Link</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-download-qr" data-i18n="btn_download_qr">📥 Download QR Code</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-share-native" data-i18n="btn_share_native">📤 Share via WhatsApp</button>
+          <button type="button" class="btn btn-accent btn-sm" id="btn-read-aloud" data-i18n="btn_read_aloud">🔊 Read Report Aloud</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. HISTORY VIEW -->
+    <section id="view-history" class="view-panel">
+      <div class="workflow-card">
+        <h2 style="font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 8px;" data-i18n="history_title">Grading History & Audit Records</h2>
+        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px;">Review past tomato grading reports and cryptographic verification hashes.</p>
+
+        <div id="history-empty" style="display: none; text-align: center; padding: 40px 20px; color: var(--text-muted);">
+          <p data-i18n="history_empty">No grading reports found yet. Start your first grading above!</p>
+          <a href="#new" class="btn btn-primary btn-sm" style="margin-top: 12px;" data-i18n="btn_start_grading">Start Tomato Grading</a>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="fruit-table">
+            <thead>
+              <tr>
+                <th data-i18n="report_id_label">Report ID</th>
+                <th data-i18n="created_at_label">Date</th>
+                <th data-i18n="history_fruit_col">Observed Fruit</th>
+                <th data-i18n="lot_grade_label">Grade</th>
+                <th data-i18n="history_status_col">Acknowledgements</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="history-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. HOW WE GRADE (Methodology & Vision Pipeline Explanation) -->
+    <section id="view-methodology" class="view-panel">
+      <div class="workflow-card">
+        <h2 style="font-family: var(--font-heading); font-size: 1.6rem; color: var(--primary-900); margin-bottom: 12px;">How AgriGrade Inspects & Measures Tomatoes</h2>
+        <p style="font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 24px;">
+          AgriGrade employs transparent, reproducible computer vision algorithms running on standard CPU hardware. Here is how each photograph is processed:
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div class="stat-box" style="padding: 18px;">
+            <h4 style="color: var(--primary-800); margin-bottom: 4px;">1. Image Validation & Lighting Check</h4>
+            <p style="font-size: 0.88rem; color: var(--text-secondary);">Photographs are checked for blur using Laplacian variance (threshold ≥ 65) and lighting intensity. Blurry or extremely dark photographs produce calibration warnings.</p>
+          </div>
+
+          <div class="stat-box" style="padding: 18px;">
+            <h4 style="color: var(--primary-800); margin-bottom: 4px;">2. Reference Coin Calibration</h4>
+            <p style="font-size: 0.88rem; color: var(--text-secondary);">The application detects the standard ₹10 (27mm) or ₹5 (23mm) coin using circularity and color thresholding. By dividing coin diameter in pixels by nominal diameter in millimetres, it calculates the exact <code>pixels_per_mm</code> scale.</p>
+          </div>
+
+          <div class="stat-box" style="padding: 18px;">
+            <h4 style="color: var(--primary-800); margin-bottom: 4px;">3. Watershed Segmentation for Touching Fruit</h4>
+            <p style="font-size: 0.88rem; color: var(--text-secondary);">Euclidean distance transformation separates tomatoes that touch each other on the table without confusing them as a single large fruit.</p>
+          </div>
+
+          <div class="stat-box" style="padding: 18px;">
+            <h4 style="color: var(--primary-800); margin-bottom: 4px;">4. Surface Color & Defect Heuristics</h4>
+            <p style="font-size: 0.88rem; color: var(--text-secondary);">Using HSV and Lab color spaces, AgriGrade calculates the red surface percentage to identify ripening stages (Mature Green to Mature Red) and detects dark blemishes, necrotic spots, or surface cracks.</p>
+          </div>
+
+          <div class="stat-box" style="padding: 18px; border-left: 4px solid var(--accent-gold);">
+            <h4 style="color: #f57f17; margin-bottom: 4px;">5. Important Technical Limitations</h4>
+            <p style="font-size: 0.88rem; color: var(--text-secondary);">An ordinary external photograph cannot detect internal fruit rot, hollow cavities, or seed gel ripeness. A single coin cannot fully correct severe camera tilt or perspective angle. AgriGrade is an independent benchmark for mandi negotiations, not a certified legal grading system.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. STANDARDS & RULES TRANSPARENCY VIEW -->
+    <section id="view-standards" class="view-panel">
+      <div class="workflow-card">
+        <h2 style="font-family: var(--font-heading); font-size: 1.6rem; color: var(--primary-900); margin-bottom: 8px;" data-i18n="standards_title">Tomato Grading Standards & Thresholds</h2>
+        <p style="font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 18px;" data-i18n="standards_intro">
+          AgriGrade applies deterministic engineering interpretations based on DMI/AGMARK (Directorate of Marketing & Inspection, Government of India) and UNECE FFV-36 standards.
+        </p>
+
+        <!-- Standards Table -->
+        <table class="standards-table">
+          <thead>
+            <tr>
+              <th data-i18n="standards_table_class">Class</th>
+              <th data-i18n="standards_table_defects">Max Surface Defects</th>
+              <th data-i18n="standards_table_shape">Min Axis Ratio</th>
+              <th data-i18n="standards_table_notes">Requirements & Tolerances</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Extra Class</strong></td>
+              <td>&lt; 1.0%</td>
+              <td>≥ 0.90</td>
+              <td data-i18n="standards_extra_desc">Superficial defects &lt; 1%, axis ratio &ge; 0.90, uniform color, no cracks/decay.</td>
+            </tr>
+            <tr>
+              <td><strong>Class I</strong></td>
+              <td>&le; 3.0%</td>
+              <td>≥ 0.80</td>
+              <td data-i18n="standards_class1_desc">Defects &le; 3%, axis ratio &ge; 0.80, slight shape variation allowed.</td>
+            </tr>
+            <tr>
+              <td><strong>Class II</strong></td>
+              <td>&le; 8.0%</td>
+              <td>≥ 0.65</td>
+              <td data-i18n="standards_class2_desc">Defects &le; 8%, axis ratio &ge; 0.65, greenback allowed provided fruit is firm.</td>
+            </tr>
+            <tr>
+              <td><strong>Below Standard</strong></td>
+              <td>&gt; 8.0%</td>
+              <td>&lt; 0.65</td>
+              <td data-i18n="standards_below_desc">Defects &gt; 8%, axis ratio &lt; 0.65, undersized fruit (&lt;35mm round, &lt;30mm oblong), or cracks/decay.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="notice-box" style="margin-top: 20px;">
+          <h4 data-i18n="tolerances_note">Lot Tolerances: Extra allows maximum 5% out-of-grade; Class I and Class II allow maximum 10% out-of-grade.</h4>
+          <p style="font-size: 0.85rem; color: #5d4037; margin-top: 4px;" data-i18n="agmark_field_note">Field Validation Notice: These thresholds are provisional interpretations for market transparency and dispute resolution. Formal certification requires an authorized AGMARK grading inspector.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p><strong>AgriGrade</strong> — Empowering Indian Farmers & Mandi Traders with Transparent Quality Evaluation.</p>
+    <p style="margin-top: 4px;">Independent Negotiation Reference System • Standards Version 1.0.0-provisional • SHA-256 Verified</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/js/i18n.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/app.js"></script>
+
+  <!-- Service Worker Registration for PWA -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(reg => console.log('AgriGrade PWA ServiceWorker active:', reg.scope))
+          .catch(err => console.log('ServiceWorker registration error:', err));
+      });
+    }
+  </script>
+</body>
+</html>
