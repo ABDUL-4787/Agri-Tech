@@ -260,6 +260,73 @@ const AgriGradeApp = (() => {
     });
   };
 
+  const compressImage = (file, maxDim = 1600, quality = 0.85) => {
+    return new Promise((resolve) => {
+      if (!file || !file.type.startsWith("image/")) {
+        return resolve(file);
+      }
+
+      const objectUrl = URL.createObjectURL(file);
+      const img = new Image();
+
+      img.onload = () => {
+        URL.revokeObjectURL(objectUrl);
+        try {
+          let w = img.naturalWidth || img.width;
+          let h = img.naturalHeight || img.height;
+
+          // If image is already smaller than maxDim and under 1.5MB, no compression needed
+          if (w <= maxDim && h <= maxDim && file.size < 1.5 * 1024 * 1024) {
+            return resolve(file);
+          }
+
+          if (w > maxDim || h > maxDim) {
+            if (w > h) {
+              h = Math.round((h * maxDim) / w);
+              w = maxDim;
+            } else {
+              w = Math.round((w * maxDim) / h);
+              h = maxDim;
+            }
+          }
+
+          const canvas = document.createElement("canvas");
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, w, h);
+
+          canvas.toBlob(
+            (blob) => {
+              if (blob && blob.size > 0) {
+                const baseName = (file.name || "photo").replace(/\.[^.]+$/, "");
+                const compressedFile = new File([blob], `${baseName}.jpg`, {
+                  type: "image/jpeg",
+                  lastModified: Date.now()
+                });
+                resolve(compressedFile);
+              } else {
+                resolve(file);
+              }
+            },
+            "image/jpeg",
+            quality
+          );
+        } catch (canvasErr) {
+          console.warn("Canvas compression fallback:", canvasErr);
+          resolve(file);
+        }
+      };
+
+      img.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        resolve(file);
+      };
+
+      img.src = objectUrl;
+    });
+  };
+
   const submitGrading = async () => {
     if (selectedFiles.length === 0) {
       alert(t("err_select_image"));
@@ -273,15 +340,20 @@ const AgriGradeApp = (() => {
     const customMm = dom.customMmInput ? dom.customMmInput.value : "";
     const mandiPrice = dom.mandiPriceInput ? dom.mandiPriceInput.value : "";
 
-    const formData = new FormData();
-    selectedFiles.forEach(file => {
-      formData.append("images", file);
-    });
-    formData.append("reference_type", selectedRef);
-    if (customMm) formData.append("custom_dimension_mm", customMm);
-    if (mandiPrice) formData.append("mandi_price_per_kg", mandiPrice);
-
     try {
+      // Downscale & compress photos client-side to ensure payload is under Vercel's 4.5MB limit
+      const compressedFiles = await Promise.all(
+        selectedFiles.map(file => compressImage(file, 1600, 0.85))
+      );
+
+      const formData = new FormData();
+      compressedFiles.forEach(file => {
+        formData.append("images", file, file.name || "tomato.jpg");
+      });
+      formData.append("reference_type", selectedRef);
+      if (customMm) formData.append("custom_dimension_mm", customMm);
+      if (mandiPrice) formData.append("mandi_price_per_kg", mandiPrice);
+
       const report = await AgriGradeAPI.submitGrading(formData);
       currentReport = report;
       renderReport(report);

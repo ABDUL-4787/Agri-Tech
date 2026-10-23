@@ -15,6 +15,9 @@ const AgriGradeAPI = (() => {
       const response = await fetch(url, options);
       if (!response.ok) {
         let errDetail = `Server returned status ${response.status}`;
+        if (response.status === 413) {
+          errDetail = "Image file size exceeded server limit (4.5 MB). Please select a smaller photo or fewer images.";
+        }
         try {
           const errData = await response.json();
           if (errData && errData.detail) {
