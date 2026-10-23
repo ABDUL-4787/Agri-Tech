@@ -1,0 +1,104 @@
+{
+  "crop": "tomato",
+  "crop_name": "Tomato (Solanum lycopersicum)",
+  "standards_version": "1.0.0-provisional",
+  "status": "provisional_engineering_standard",
+  "documentation_note": "These thresholds are provisional engineering interpretations formulated from DMI/AGMARK (Directorate of Marketing & Inspection, Government of India) Tomato Grading and Marking Rules and UNECE Standard FFV-36. They provide an objective, transparent benchmark for market negotiations and require formal field validation against certified mandi grader evaluations.",
+  "minimum_size_mm": {
+    "round": 35.0,
+    "oblong": 30.0
+  },
+  "size_codes": [
+    { "code": 1, "min_diameter_mm": 30.0, "max_diameter_mm": 34.9, "label": "Size 1 (30–34 mm)" },
+    { "code": 2, "min_diameter_mm": 35.0, "max_diameter_mm": 39.9, "label": "Size 2 (35–39 mm)" },
+    { "code": 3, "min_diameter_mm": 40.0, "max_diameter_mm": 46.9, "label": "Size 3 (40–46 mm)" },
+    { "code": 4, "min_diameter_mm": 47.0, "max_diameter_mm": 56.9, "label": "Size 4 (47–56 mm)" },
+    { "code": 5, "min_diameter_mm": 57.0, "max_diameter_mm": 66.9, "label": "Size 5 (57–66 mm)" },
+    { "code": 6, "min_diameter_mm": 67.0, "max_diameter_mm": 81.9, "label": "Size 6 (67–81 mm)" },
+    { "code": 7, "min_diameter_mm": 82.0, "max_diameter_mm": 101.9, "label": "Size 7 (82–101 mm)" },
+    { "code": 8, "min_diameter_mm": 102.0, "max_diameter_mm": 999.0, "label": "Size 8 (102 mm and above)" }
+  ],
+  "shape_thresholds": {
+    "round_min_axis_ratio": 0.80,
+    "uniform_round_axis_ratio": 0.90,
+    "oblong_max_axis_ratio": 0.79,
+    "misshapen_max_axis_ratio": 0.65
+  },
+  "color_stages": [
+    { "stage": "Mature green", "min_red_pct": 0.0, "max_red_pct": 2.0, "description": "Completely green surface with mature green sheen" },
+    { "stage": "Breaker", "min_red_pct": 2.0, "max_red_pct": 10.0, "description": "Definite break in color from green to tannish-yellow, pink, or red on not more than 10% of surface" },
+    { "stage": "Turning", "min_red_pct": 10.0, "max_red_pct": 30.0, "description": "10% to 30% of surface shows aggregate red or pink coloration" },
+    { "stage": "Pink", "min_red_pct": 30.0, "max_red_pct": 60.0, "description": "30% to 60% of surface shows aggregate red or pink coloration" },
+    { "stage": "Red", "min_red_pct": 60.0, "max_red_pct": 90.0, "description": "60% to 90% of surface shows red coloration" },
+    { "stage": "Mature red", "min_red_pct": 90.0, "max_red_pct": 100.0, "description": "More than 90% of surface shows intense red coloration" }
+  ],
+  "quality_classes": {
+    "Extra": {
+      "max_defect_area_pct": 1.0,
+      "min_axis_ratio": 0.90,
+      "allow_cracks": false,
+      "allow_decay": false,
+      "color_uniformity": "high",
+      "description": "Superior quality, virtually free of superficial defects, well-formed, uniform color"
+    },
+    "Class I": {
+      "max_defect_area_pct": 3.0,
+      "min_axis_ratio": 0.80,
+      "allow_cracks": false,
+      "allow_decay": false,
+      "color_uniformity": "moderate",
+      "description": "Good quality, minor superficial skin defects up to 3% surface area, slight shape irregularity allowed"
+    },
+    "Class II": {
+      "max_defect_area_pct": 8.0,
+      "min_axis_ratio": 0.65,
+      "allow_cracks": false,
+      "allow_decay": false,
+      "allow_greenback": true,
+      "description": "Marketable quality, minor defects up to 8% surface area, greenback allowed provided fruit remains firm"
+    },
+    "Below standard": {
+      "max_defect_area_pct": 100.0,
+      "min_axis_ratio": 0.0,
+      "allow_cracks": true,
+      "allow_decay": true,
+      "description": "Fruit exceeding defect thresholds (>8% defects), severely misshapen, undersized, or showing cracks/decay"
+    }
+  },
+  "lot_tolerances": {
+    "Extra": {
+      "max_pct_below_class": 5.0,
+      "description": "Maximum 5% by number of fruit not satisfying requirements of Extra class"
+    },
+    "Class I": {
+      "max_pct_below_class": 10.0,
+      "description": "Maximum 10% by number of fruit not satisfying requirements of Class I"
+    },
+    "Class II": {
+      "max_pct_below_class": 10.0,
+      "description": "Maximum 10% by number of fruit not satisfying requirements of Class II"
+    }
+  },
+  "indicative_price_multipliers": {
+    "Extra": 1.15,
+    "Class I": 1.00,
+    "Class II": 0.80,
+    "Below standard": 0.50
+  },
+  "reference_objects": {
+    "coin_10": {
+      "name": "Indian ₹10 Coin (Bi-metallic / Ring)",
+      "nominal_diameter_mm": 27.0,
+      "acceptable_pixel_range_fraction": [0.03, 0.45]
+    },
+    "coin_5": {
+      "name": "Indian ₹5 Coin (Standard Nickel-Brass / Ferritic)",
+      "nominal_diameter_mm": 23.0,
+      "acceptable_pixel_range_fraction": [0.03, 0.40]
+    },
+    "custom_card": {
+      "name": "Calibration Reference Card / Object",
+      "nominal_diameter_mm": null
+    }
+  }
+}
