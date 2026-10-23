@@ -30,8 +30,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include API Router
+# Vercel serverless request path middleware:
+# Restores original URL if Vercel internal rewrites rewrite the path to /api/index.py
+from fastapi import Request
+
+@app.middleware("http")
+async def vercel_path_rewrite_fix(request: Request, call_next):
+    path = request.scope.get("path", "")
+    if "index.py" in path:
+        headers = request.headers
+        for header_key in ("x-matched-path", "x-invoke-path", "x-forwarded-uri"):
+            original = headers.get(header_key)
+            if original and "index.py" not in original:
+                request.scope["path"] = original.split("?")[0]
+                break
+    return await call_next(request)
+
+# Include API Router under both /api and root prefix to guarantee route matching on Vercel
 app.include_router(api_router, prefix=settings.API_PREFIX)
+app.include_router(api_router, prefix="")
 
 # Serve Frontend static files if directory exists
 frontend_dir = Path(__file__).resolve().parent.parent.parent / "frontend"
