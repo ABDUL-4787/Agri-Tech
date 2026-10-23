@@ -3,7 +3,7 @@ import uuid
 import datetime
 import requests
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Query, Response, status
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Query, Response, status, Request
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
 
@@ -80,6 +80,7 @@ def get_standards(crop: str):
 
 @router.post("/grade")
 async def grade_tomatoes(
+    request: Request,
     images: List[UploadFile] = File(..., description="1 to 3 photographs of tomatoes with reference coin"),
     reference_type: str = Form("coin_10", description="'coin_10' (27mm), 'coin_5' (23mm), or 'custom_card'"),
     custom_dimension_mm: Optional[float] = Form(None, description="Diameter or width in mm if using custom reference card"),
@@ -213,8 +214,9 @@ async def grade_tomatoes(
     db.commit()
     db.refresh(db_report)
 
-    # Generate QR Code
-    qr_data_url = generate_report_qr_data_url(report_id)
+    # Generate QR Code with dynamic live base URL
+    base_url = str(request.base_url).rstrip("/") if request else settings.PUBLIC_BASE_URL
+    qr_data_url = generate_report_qr_data_url(report_id, base_url=base_url)
 
     # Annotated image URLs
     annotated_urls = [f"/api/reports/{report_id}/image/{i+1}" for i in range(len(annotated_image_filenames))]
@@ -238,7 +240,7 @@ async def grade_tomatoes(
     }
 
 @router.get("/reports/{report_id}")
-def get_report(report_id: str, db: Session = Depends(get_db)):
+def get_report(report_id: str, request: Request = None, db: Session = Depends(get_db)):
     """
     Retrieves full grading report by ID and verifies SHA-256 integrity and acknowledgement chain.
     """
@@ -277,7 +279,8 @@ def get_report(report_id: str, db: Session = Depends(get_db)):
         image_refs = []
 
     annotated_urls = [f"/api/reports/{report.id}/image/{i+1}" for i in range(len(image_refs))]
-    qr_data_url = generate_report_qr_data_url(report.id)
+    base_url = str(request.base_url).rstrip("/") if request else settings.PUBLIC_BASE_URL
+    qr_data_url = generate_report_qr_data_url(report.id, base_url=base_url)
 
     return {
         "id": report.id,
@@ -320,9 +323,10 @@ def get_report_image(report_id: str, image_index: int, db: Session = Depends(get
     return Response(content=raw_bytes, media_type="image/jpeg")
 
 @router.get("/reports/{report_id}/qr")
-def get_report_qr(report_id: str):
+def get_report_qr(report_id: str, request: Request = None):
     """Serves PNG QR code image pointing to stable report view."""
-    qr_bytes = generate_report_qr_bytes(report_id)
+    base_url = str(request.base_url).rstrip("/") if request else settings.PUBLIC_BASE_URL
+    qr_bytes = generate_report_qr_bytes(report_id, base_url=base_url)
     return Response(content=qr_bytes, media_type="image/png")
 
 @router.post("/reports/{report_id}/ack", response_model=AcknowledgementResponse)
