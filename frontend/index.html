@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>AgriGrade — Tomato Quality & Size Helper</title>
-  <meta name="description" content="AgriGrade is a simple helper tool for Indian farmers and mandi buyers to check tomato size and defects using a ₹10 or ₹5 coin.">
+  <title>AgriGrade: Check tomato size and look with your phone</title>
+  <meta name="description" content="Check tomato size and damage with a photo and a coin. A helper tool for farmers and buyers. Not an official grade.">
   <meta name="theme-color" content="#0f5132">
   
   <link rel="manifest" href="/manifest.json">
@@ -18,7 +18,7 @@
 
   <!-- Top Global Legal & Scope Disclaimer Banner -->
   <div class="disclaimer-bar">
-    <span data-i18n="disclaimer_banner">Helper tool for market talks. Not official grade.</span>
+    <span data-i18n="banner">Helper tool for price talks. Not an official grade.</span>
   </div>
 
   <!-- Header & Navigation -->
@@ -81,6 +81,8 @@
 
   <!-- Main Application Body -->
   <main class="main-wrapper">
+    <!-- Top Flags Strip (Visible in chosen language, cannot be hidden) -->
+    <div id="top-flags-strip" class="top-flags-strip" style="display: none;"></div>
 
     <!-- ============================================================
          1. HOME VIEW
@@ -88,9 +90,9 @@
     <section id="view-home" class="view-panel active-view">
       <div class="hero-card">
         <div class="hero-badge">🇮🇳 Farmer & Mandi Helper</div>
-        <h2 class="hero-title" data-i18n="hero_title">Grade Tomatoes Fairly with a Coin</h2>
-        <p class="hero-subtitle" data-i18n="hero_subtitle">
-          Place tomatoes with a ₹10 or ₹5 coin. Check size and defects for fair mandi prices.
+        <h2 class="hero-title" data-i18n="hero">Fair talks for farmers and buyers</h2>
+        <p class="hero-subtitle" data-i18n="hero_sub">
+          Take a photo with a coin. See size and damage.
         </p>
 
         <button type="button" class="btn-listen" data-speak-target="home-intro">
@@ -316,28 +318,56 @@
             <div class="grid-3x5-cell">11</div><div class="grid-3x5-cell">12</div><div class="grid-3x5-cell">13</div><div class="grid-3x5-cell">14</div><div class="grid-3x5-cell">15</div>
           </div>
 
-          <!-- Coin spot guide circle -->
-          <div class="coin-spot-overlay">🪙 Coin</div>
+          <!-- Coin spot guide circle in one corner -->
+          <div class="coin-spot-overlay" id="coin-spot-overlay" data-i18n="coin_spot">🪙 Coin</div>
+
+          <!-- Small thumbnail of Photo A (shown during Photo B) -->
+          <div id="photo-a-thumbnail-box" class="photo-a-thumbnail-box" style="display: none;">
+            <img id="photo-a-thumbnail-img" alt="Photo A Thumbnail" class="photo-a-thumbnail-img">
+            <span class="photo-a-thumbnail-label" id="photo-a-thumbnail-label" data-i18n="thumbnail_photo_a">Photo A (stem up)</span>
+          </div>
         </div>
 
-        <!-- Live Pre-flight Checks Bar -->
+        <!-- Live Pre-flight Checks Bar (coin, blur, dark - skipping tilt, shadow, glare, touching for now) -->
         <div class="live-checks-bar">
-          <span class="live-tick" id="tick-coin">🪙 Coin: Checking</span>
-          <span class="live-tick" id="tick-blur">🔍 Sharp: Checking</span>
-          <span class="live-tick" id="tick-light">☀️ Light: Checking</span>
-          <span class="live-tick" id="tick-tilt">📐 Flat: Checking</span>
-          <span class="live-tick" id="tick-touch">🍅 Spaced: Checking</span>
+          <span class="live-tick pass" id="tick-coin">🪙 Coin: Checking</span>
+          <span class="live-tick pass" id="tick-blur">🔍 Sharp: Checking</span>
+          <span class="live-tick pass" id="tick-light">☀️ Light: Checking</span>
+        </div>
+
+        <!-- Red Check Action Box (Retake & Use anyway) -->
+        <div id="red-check-box" style="display: none; margin-top: 14px; padding: 14px; background: #fff1f2; border: 2px solid #f43f5e; border-radius: var(--radius-sm); text-align: center;">
+          <p id="red-check-text" style="color: #9f1239; font-weight: 700; margin-bottom: 10px; font-size: 1.05rem;">Check failed.</p>
+          <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+            <button type="button" class="btn btn-secondary" id="btn-live-retake" style="font-size: 1.05rem; padding: 10px 18px;">
+              🔄 <span data-i18n="btn_retake">Retake</span>
+            </button>
+            <button type="button" class="btn btn-accent" id="btn-live-use-anyway" style="font-size: 1.05rem; padding: 10px 18px;">
+              ⚠️ <span data-i18n="btn_use_anyway">Use anyway</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Blocking Banner (F0 no coin, F0b blurry or dark) -->
+        <div id="blocking-banner-box" style="display: none; margin-top: 14px; padding: 16px; background: #fef2f2; border: 3px solid #dc2626; border-radius: var(--radius-md); text-align: center;">
+          <div style="font-size: 2.5rem; margin-bottom: 6px;">🛑</div>
+          <h3 id="blocking-title" style="color: #991b1b; font-size: 1.3rem; margin-bottom: 6px;">Blocked</h3>
+          <p id="blocking-reason-text" style="color: #7f1d1d; font-size: 1.15rem; font-weight: 700; margin-bottom: 14px;"></p>
+          <button type="button" class="btn btn-primary btn-block" id="btn-blocking-retake" style="font-size: 1.15rem;">
+            🔄 <span data-i18n="btn_retake">Retake Photo</span>
+          </button>
         </div>
 
         <!-- Hidden inputs & triggers -->
         <input type="file" id="camera-input" accept="image/*" capture="environment" style="display: none;">
         <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" style="display: none;">
 
+        <!-- Big Capture Button (18px+) & Gallery Fallback -->
         <div style="display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap;">
-          <label for="camera-input" class="btn btn-primary" style="flex: 2; cursor: pointer;">
-            📸 <span data-i18n="btn_capture">Capture Photo</span>
-          </label>
-          <label for="file-input" class="btn btn-secondary" style="flex: 1; cursor: pointer;">
+          <button type="button" class="btn btn-primary" id="btn-camera-capture" style="flex: 2; font-size: 1.25rem; min-height: 58px; cursor: pointer;">
+            📸 <span data-i18n="btn_take_photo">Take Photo</span>
+          </button>
+          <label for="file-input" class="btn btn-secondary" style="flex: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.15rem;">
             🖼️ Gallery
           </label>
         </div>
@@ -427,6 +457,9 @@
          ============================================================ -->
     <section id="view-report" class="view-panel">
 
+      <!-- Report Title (Section 5: Warning flag changes this to INDICATIVE ONLY / सिर्फ़ संकेत / కేవలం సూచన మాత్రమే) -->
+      <h2 id="report-title" class="report-title" data-i18n="results_heading">Tomato Lot Result</h2>
+
       <!-- Indicative Warning Banner (Shown if ANY warning flag exists) -->
       <div id="indicative-banner" class="indicative-banner" style="display: none;">
         <span>⚠️</span>
@@ -436,80 +469,88 @@
       <!-- Top Flags List (Section F) -->
       <div id="flags-container" class="flags-list-container"></div>
 
-      <!-- Lot Verdict Hero: Color + Big Icon + One Short Sentence (Section E4) -->
+      <!-- Lot Verdict Hero: Color + Big Icon + Big Grade (or Not Sure Yet) + 3 Short Lines -->
       <div id="verdict-hero" class="verdict-hero-card sure">
         <div id="verdict-icon" class="verdict-icon">🟢</div>
         <div id="verdict-grade-title" class="verdict-grade-title">Grade A</div>
-        <div id="verdict-sentence" class="verdict-sentence">Sure: Grade A</div>
-        <button type="button" class="btn-listen" id="btn-read-aloud">
+        <div id="verdict-sentence" class="verdict-sentence" style="display: none;">Sure: Grade A</div>
+        
+        <!-- 3 short lines in user's language -->
+        <div class="verdict-3-lines" id="verdict-3-lines">
+          <p id="verdict-line-1" class="verdict-line"></p>
+          <p id="verdict-line-2" class="verdict-line"></p>
+          <p id="verdict-line-3" class="verdict-line"></p>
+        </div>
+
+        <button type="button" class="btn-listen" id="btn-read-aloud" style="margin-top: 12px;">
           🔊 <span data-i18n="btn_listen">Listen</span>
         </button>
       </div>
 
-      <!-- Amber Verdict Option: Add 20 more fruit -->
-      <div id="amber-action-box" style="display: none; margin-bottom: 20px; text-align: center;">
-        <button type="button" class="btn btn-accent btn-block" id="btn-add-20-more" data-i18n="btn_add_20_more">
-          ➕ Add 20 more fruit
-        </button>
-      </div>
-
-      <!-- Buyer Repeat Option: Buyer wants own check (Section C Step 4) -->
-      <div style="margin-bottom: 20px; text-align: center;">
-        <button type="button" class="btn btn-secondary btn-block" id="btn-buyer-repeat" data-i18n="btn_buyer_repeat">
-          🔄 Buyer wants own check
-        </button>
-      </div>
-
-      <!-- Wilson Range Bar (Section E3) -->
-      <div class="wilson-bar-container">
-        <div class="wilson-text" id="wilson-text-display">
-          Bad fruit: about 8 in 100. Could be 4 to 15 in 100.
-        </div>
-        <div class="wilson-track">
-          <div class="wilson-range" id="wilson-range-bar" style="left: 4%; width: 11%;"></div>
-          <div class="wilson-point" id="wilson-center-point" style="left: 8%;"></div>
-        </div>
-        <span class="surface-seen-badge" id="surface-seen-display" data-i18n="surface_seen_85">
-          About 85% of fruit surface seen.
-        </span>
-        <p style="font-size: 0.95rem; color: #b45309; margin-top: 8px; font-weight: 600;" data-i18n="hidden_defect_warning">
-          Inside rot and soft fruit cannot be seen by photo.
-        </p>
-      </div>
-
-      <!-- Open Price Multiplier Table (Section B) -->
-      <div id="pricing-card" style="background: #ffffff; border: 2px solid #cbd5e1; border-radius: var(--radius-md); padding: 18px; margin-bottom: 20px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <h3 style="font-size: 1.2rem; font-weight: 800;" data-i18n="price_title">Example Price Multipliers</h3>
-          <span style="background: #f1f5f9; color: #475569; font-size: 0.85rem; font-weight: 700; padding: 4px 10px; border-radius: 9999px;" data-i18n="price_example_tag">Example only</span>
-        </div>
-        <div id="pricing-rate" style="font-size: 1.8rem; font-weight: 900; color: #0f5132; margin-bottom: 8px;">₹25.00 / kg</div>
-        <table class="price-open-table">
-          <tbody>
-            <tr><td>Grade A</td><td data-i18n="price_mult_a">Base price (x 1.00)</td></tr>
-            <tr><td>Grade B</td><td data-i18n="price_mult_b">Base price x 0.85</td></tr>
-            <tr><td>Grade C</td><td data-i18n="price_mult_c">Base price x 0.70</td></tr>
-            <tr><td>Reject</td><td data-i18n="price_mult_reject">Reject = ₹0.00</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Server Storage & Fingerprint Badge (Section B) -->
-      <div id="server-status-box" style="margin-bottom: 20px; text-align: center;">
-        <span id="server-badge" style="display: none; background: #ecfdf5; color: #065f46; font-size: 0.95rem; font-weight: 700; padding: 6px 14px; border-radius: 9999px; border: 1px solid #a7f3d0;" data-i18n="server_saved_badge">
-          Report not changed since saved
-        </span>
-      </div>
-
-      <!-- Toggle Fruit Details Button -->
-      <div style="text-align: center; margin-bottom: 20px;">
+      <!-- Toggle Details Button (Everything else behind Details) -->
+      <div style="text-align: center; margin: 20px 0;">
         <button type="button" class="btn btn-secondary btn-block" id="btn-toggle-details" data-i18n="btn_toggle_details">
-          Show Fruit Details 🔽
+          Details 🔽
         </button>
       </div>
 
-      <!-- Detailed Breakdown (Initially Hidden) -->
+      <!-- Detailed Breakdown (Initially Hidden behind Details) -->
       <div id="details-section" style="display: none;">
+
+        <!-- Amber Verdict Option: Add 20 more fruit -->
+        <div id="amber-action-box" style="display: none; margin-bottom: 20px; text-align: center;">
+          <button type="button" class="btn btn-accent btn-block" id="btn-add-20-more" data-i18n="btn_add_20_more">
+            ➕ Add 20 more fruit
+          </button>
+        </div>
+
+        <!-- Buyer Repeat Option: Buyer wants own check -->
+        <div style="margin-bottom: 20px; text-align: center;">
+          <button type="button" class="btn btn-secondary btn-block" id="btn-buyer-repeat" data-i18n="btn_buyer_repeat">
+            🔄 Buyer wants own check
+          </button>
+        </div>
+
+        <!-- Wilson Range Bar -->
+        <div class="wilson-bar-container">
+          <div class="wilson-text" id="wilson-text-display">
+            Bad fruit: about 8 in 100. Could be 4 to 15 in 100.
+          </div>
+          <div class="wilson-track">
+            <div class="wilson-range" id="wilson-range-bar" style="left: 4%; width: 11%;"></div>
+            <div class="wilson-point" id="wilson-center-point" style="left: 8%;"></div>
+          </div>
+          <span class="surface-seen-badge" id="surface-seen-display" data-i18n="surface_seen_85">
+            About 85% of fruit surface seen.
+          </span>
+          <p style="font-size: 0.95rem; color: #b45309; margin-top: 8px; font-weight: 600;" data-i18n="hidden_defect_warning">
+            Inside rot and soft fruit cannot be seen by photo.
+          </p>
+        </div>
+
+        <!-- Open Price Multiplier Table -->
+        <div id="pricing-card" style="background: #ffffff; border: 2px solid #cbd5e1; border-radius: var(--radius-md); padding: 18px; margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <h3 style="font-size: 1.2rem; font-weight: 800;" data-i18n="price_title">Example Price Multipliers</h3>
+            <span style="background: #f1f5f9; color: #475569; font-size: 0.85rem; font-weight: 700; padding: 4px 10px; border-radius: 9999px;" data-i18n="price_example_tag">Example only</span>
+          </div>
+          <div id="pricing-rate" style="font-size: 1.8rem; font-weight: 900; color: #0f5132; margin-bottom: 8px;">₹25.00 / kg</div>
+          <table class="price-open-table">
+            <tbody>
+              <tr><td>Grade A</td><td data-i18n="price_mult_a">Base price (x 1.00)</td></tr>
+              <tr><td>Grade B</td><td data-i18n="price_mult_b">Base price x 0.85</td></tr>
+              <tr><td>Grade C</td><td data-i18n="price_mult_c">Base price x 0.70</td></tr>
+              <tr><td>Reject</td><td data-i18n="price_mult_reject">Reject = ₹0.00</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Server Storage & Fingerprint Badge -->
+        <div id="server-status-box" style="margin-bottom: 20px; text-align: center;">
+          <span id="server-badge" style="display: none; background: #ecfdf5; color: #065f46; font-size: 0.95rem; font-weight: 700; padding: 6px 14px; border-radius: 9999px; border: 1px solid #a7f3d0;" data-i18n="server_saved_badge">
+            Report not changed since saved
+          </span>
+        </div>
         
         <!-- Annotated Photo Overlay with Defect Correction -->
         <div class="annotated-showcase" style="margin-bottom: 24px;">
@@ -542,8 +583,11 @@
 
       <!-- Farmer & Buyer Agreement Screen (Section B & H) -->
       <div class="audit-card" style="margin-bottom: 24px;">
-        <h3 data-i18n="ack_heading">Record of Your Talk</h3>
-        <p style="font-size: 1.05rem; font-weight: 700; color: #b45309; margin: 6px 0 14px;" data-i18n="agreement_note">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+          <h3 data-i18n="ack_heading" style="margin: 0;">Record of Your Talk</h3>
+          <span class="unverified-badge" data-i18n="pin_unverified" style="background: #f1f5f9; color: #475569; font-size: 0.85rem; font-weight: 700; padding: 4px 10px; border-radius: 9999px; border: 1px solid #cbd5e1;">Not verified who signed</span>
+        </div>
+        <p style="font-size: 1.05rem; font-weight: 700; color: #b45309; margin: 8px 0 14px;" data-i18n="agreement_note">
           This is a record of your talk. It is not a legal paper.
         </p>
 
@@ -568,11 +612,6 @@
             </div>
           </div>
 
-          <div class="input-group">
-            <label for="ack-pin" class="input-label" data-i18n="pin_label">Enter 4-digit PIN</label>
-            <input type="password" maxlength="4" id="ack-pin" class="input-field" placeholder="4 digits" data-i18n-placeholder="pin_placeholder">
-          </div>
-
           <div class="input-group" style="margin-top: 10px;">
             <label for="ack-note" class="input-label" data-i18n="note_label">Note / Remarks</label>
             <input type="text" id="ack-note" class="input-field" placeholder="e.g. 5% discount agreed" data-i18n-placeholder="note_placeholder">
@@ -593,14 +632,14 @@
           <button type="button" class="btn btn-primary" id="btn-share-native" data-i18n="btn_whatsapp_share">Share on WhatsApp</button>
           <button type="button" class="btn btn-secondary" id="btn-copy-link" data-i18n="btn_copy_link">Copy Link</button>
           <button type="button" class="btn btn-secondary" id="btn-print-pdf" data-i18n="btn_print_pdf">Print / PDF</button>
-          <button type="button" class="btn btn-accent" id="btn-delete-photos" data-i18n="btn_delete_photos">Delete my photos</button>
+          <button type="button" class="btn btn-accent" id="btn-delete-photos" data-i18n="delete_photos">Delete my photos</button>
         </div>
-        <p style="font-size: 0.95rem; color: #64748b; margin-top: 12px; text-align: center;" data-i18n="privacy_note">
+        <p style="font-size: 0.95rem; color: #64748b; margin-top: 12px; text-align: center;" data-i18n="privacy">
           Photos are used only for this report.
         </p>
       </div>
 
-      <div class="mandatory-footer-box" data-i18n="mandatory_footer">
+      <div class="mandatory-footer-box" data-i18n="report_footer">
         This is a helper tool. It is not an official grade. You both decide the final price.
       </div>
     </section>
@@ -642,8 +681,8 @@
       <div class="workflow-card">
         <h2 style="font-size: 1.6rem; color: var(--primary-900); margin-bottom: 12px;" data-i18n="nav_methodology">How We Grade</h2>
         <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 16px; margin-bottom: 20px;">
-          <p style="font-size: 1.15rem; font-weight: 700; color: #1e40af;" data-i18n="how_we_grade_simple">
-            Our simple rules are made for market talks. They are not official.
+          <p style="font-size: 1.15rem; font-weight: 700; color: #1e40af;" data-i18n="how_we_grade">
+            We use our own simple rules. They look at size and damage.
           </p>
         </div>
 
@@ -667,7 +706,7 @@
         </div>
       </div>
 
-      <div class="mandatory-footer-box" data-i18n="mandatory_footer">
+      <div class="mandatory-footer-box" data-i18n="report_footer">
         This is a helper tool. It is not an official grade. You both decide the final price.
       </div>
     </section>
@@ -677,9 +716,12 @@
          ============================================================ -->
     <section id="view-standards" class="view-panel">
       <div class="workflow-card">
-        <h2 style="font-size: 1.6rem; color: var(--primary-900); margin-bottom: 12px;" data-i18n="nav_standards">Market Rules</h2>
-        <p style="font-size: 1.05rem; margin-bottom: 18px;" data-i18n="how_we_grade_simple">
-          Our simple rules are made for market talks. They are not official.
+        <h2 style="font-size: 1.6rem; color: var(--primary-900); margin-bottom: 12px;" data-i18n="rules_heading">Our Grading Rules</h2>
+        <p style="font-size: 1.05rem; margin-bottom: 12px; color: #b45309; font-weight: 600;" data-i18n="rules_note">
+          These rules are ours. They are not AGMARK. They are not government rules. They may change.
+        </p>
+        <p style="font-size: 1rem; margin-bottom: 18px; color: #475569;" data-i18n="table_intro">
+          Grade A, B and C are our own names.
         </p>
 
         <table class="standards-table">
@@ -720,7 +762,7 @@
         </table>
       </div>
 
-      <div class="mandatory-footer-box" data-i18n="mandatory_footer">
+      <div class="mandatory-footer-box" data-i18n="report_footer">
         This is a helper tool. It is not an official grade. You both decide the final price.
       </div>
     </section>
@@ -785,7 +827,7 @@
         </div>
       </div>
 
-      <div class="mandatory-footer-box" data-i18n="mandatory_footer">
+      <div class="mandatory-footer-box" data-i18n="report_footer">
         This is a helper tool. It is not an official grade. You both decide the final price.
       </div>
     </section>
@@ -794,13 +836,18 @@
 
   <!-- Global Footer with 3-language rule -->
   <footer class="footer">
-    <p><strong>AgriGrade</strong></p>
-    <p style="margin-top: 6px;" data-i18n="mandatory_footer">
+    <p><strong data-i18n="page_footer">AgriGrade. Helper tool for farmers and buyers.</strong></p>
+    <p style="margin-top: 6px;" data-i18n="report_footer">
       This is a helper tool. It is not an official grade. You both decide the final price.
     </p>
   </footer>
 
   <!-- Scripts -->
+  <script src="/js/config.js"></script>
+  <script src="/js/wilson.js"></script>
+  <script src="/js/verdict.js"></script>
+  <script src="/js/flags.js"></script>
+  <script src="/js/match.js"></script>
   <script src="/js/i18n.js"></script>
   <script src="/js/api.js"></script>
   <script src="/js/app.js"></script>

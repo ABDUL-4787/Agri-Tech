@@ -53,6 +53,16 @@ const AgriGradeAPI = (() => {
       });
     },
 
+    async saveReport(reportData) {
+      return request("/api/reports", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(reportData)
+      });
+    },
+
     async getReport(reportId) {
       return request(`/api/reports/${encodeURIComponent(reportId)}`);
     },

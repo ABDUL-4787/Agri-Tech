@@ -312,6 +312,76 @@ async def grade_tomatoes(
         "is_indicative_only": is_indicative_only,
         "annotated_image_urls": annotated_urls,
         "qr_data_url": qr_data_url,
+        "stored_on_server": True,
+        "acknowledgements": []
+    }
+
+@router.post("/reports")
+def create_report_on_server(
+    report_in: Dict[str, Any],
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    """
+    Saves a report on the server database.
+    Server makes the report ID and the time.
+    Browser storage is only an offline copy.
+    """
+    now_utc = datetime.datetime.now(datetime.timezone.utc)
+    report_id = f"AG-{now_utc.strftime('%Y%m%d')}-{uuid.uuid4().hex[:6].upper()}"
+    created_at_iso = now_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    lot_class = report_in.get("lot_class", "Reject")
+    fruit_results = report_in.get("fruit_results", [])
+    n_fruit = int(report_in.get("n_fruit", len(fruit_results)))
+    flags = report_in.get("flags", [])
+
+    report_dict = dict(report_in)
+    report_dict["id"] = report_id
+    report_dict["created_at"] = created_at_iso
+    report_dict["stored_on_server"] = True
+    report_dict["fingerprint_status"] = "Report not changed since saved"
+
+    canonical_str = canonicalize_report_data(report_dict)
+    report_sha256 = compute_report_hash(canonical_str)
+    report_dict["sha256"] = report_sha256
+
+    db_report = Report(
+        id=report_id,
+        created_at=now_utc.replace(tzinfo=None),
+        crop=report_in.get("crop", "tomato"),
+        lot_class=lot_class,
+        n_fruit=n_fruit,
+        result_json=json.dumps(report_dict),
+        sha256=report_sha256,
+        standards_version="2.0.0",
+        image_refs="[]"
+    )
+    db.add(db_report)
+    db.commit()
+    db.refresh(db_report)
+
+    base_url = str(request.base_url).rstrip("/") if request else settings.PUBLIC_BASE_URL
+    qr_data_url = generate_report_qr_data_url(report_id, base_url=base_url)
+
+    warning_flags = [f for f in flags if (f if isinstance(f, str) else f.get("code")) not in ("F0", "F0b", "F0c", "F0d", "F18", "F19")]
+
+    return {
+        "id": report_id,
+        "crop": report_dict.get("crop", "tomato"),
+        "created_at": created_at_iso,
+        "lot_class": lot_class,
+        "n_fruit": n_fruit,
+        "sha256": report_sha256,
+        "fingerprint_status": "Report not changed since saved",
+        "stored_on_server": True,
+        "lot_report": report_dict.get("lot_report", {}),
+        "fruit_results": fruit_results,
+        "calibration": report_dict.get("calibration"),
+        "flags": flags,
+        "is_indicative_only": len(warning_flags) > 0,
+        "annotated_image_urls": [],
+        "qr_data_url": qr_data_url,
         "acknowledgements": []
     }
 
@@ -342,7 +412,7 @@ def get_report(report_id: str, request: Request, db: Session = Depends(get_db)):
             "created_at": a.created_at.isoformat() + "Z",
             "prev_hash": a.prev_hash,
             "ack_hash": a.ack_hash,
-            "verification_status": "Verified with PIN" if (a.note and "PIN:" in a.note) else "Not verified who signed"
+            "verification_status": "Verified with PIN" if (a.note and "PIN:verified" in a.note) else "Not verified who signed"
         })
 
     try:
@@ -365,6 +435,7 @@ def get_report(report_id: str, request: Request, db: Session = Depends(get_db)):
         "n_fruit": report.n_fruit,
         "sha256": report.sha256,
         "fingerprint_status": "Report not changed since saved",
+        "stored_on_server": True,
         "lot_report": report_data.get("lot_report", {}),
         "fruit_results": report_data.get("fruit_results", []),
         "calibration": report_data.get("calibration"),
