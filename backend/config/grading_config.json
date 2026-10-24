@@ -1,0 +1,145 @@
+{
+  "system": {
+    "version": "2.0.0",
+    "name": "AgriGrade",
+    "crop": "tomato"
+  },
+  "lot_and_sampling": {
+    "default_crate_weight_kg": 22.0,
+    "batch_size_fruits": 15,
+    "min_fruits_hard": 20,
+    "sample_table": [
+      { "max_kg": 5.0, "sample_size": "all", "max_cap": 30, "label": "Up to 5 kg" },
+      { "max_kg": 100.0, "sample_size": 30, "label": "Up to 100 kg" },
+      { "max_kg": 500.0, "sample_size": 40, "label": "100 to 500 kg" },
+      { "max_kg": 2000.0, "sample_size": 50, "label": "500 to 2000 kg" },
+      { "max_kg": null, "sample_size": 60, "label": "Over 2000 kg" }
+    ],
+    "random_crates_per_batch": 1,
+    "layer_distribution": {
+      "top": 5,
+      "middle": 5,
+      "bottom": 5
+    },
+    "heap_zones": [
+      "front-left", "front-right",
+      "middle-left", "middle-right",
+      "back-left", "back-right"
+    ],
+    "heap_depths": ["top", "middle", "bottom"]
+  },
+  "measurement_and_calibration": {
+    "approx_size_margin_mm": 3.0,
+    "size_parallax_correction": 0.97,
+    "coins": {
+      "coin_10": {
+        "name": "Indian ₹10 Coin",
+        "diameter_mm": 27.0,
+        "min_circularity": 0.82
+      },
+      "coin_5": {
+        "name": "Indian ₹5 Coin",
+        "diameter_mm": 23.0,
+        "min_circularity": 0.80
+      },
+      "custom_card": {
+        "name": "Custom Reference",
+        "diameter_mm": null,
+        "min_circularity": 0.75
+      }
+    },
+    "shape_fit_error_threshold": 0.35,
+    "min_sharpness_laplacian": 65.0,
+    "min_brightness": 40.0,
+    "max_brightness": 245.0,
+    "max_tilt_degrees": 10.0
+  },
+  "grading_rules": {
+    "wilson_confidence_z": 1.96,
+    "grades": ["Grade A", "Grade B", "Grade C", "Reject"],
+    "tolerances": {
+      "Grade A": {
+        "max_out_of_grade_pct": 5.0,
+        "max_defect_area_pct": 1.0,
+        "min_axis_ratio": 0.85
+      },
+      "Grade B": {
+        "max_out_of_grade_pct": 10.0,
+        "max_defect_area_pct": 5.0,
+        "min_axis_ratio": 0.75
+      },
+      "Grade C": {
+        "max_out_of_grade_pct": 10.0,
+        "max_defect_area_pct": 10.0,
+        "min_axis_ratio": 0.65
+      },
+      "Reject": {
+        "max_out_of_grade_pct": 100.0,
+        "max_defect_area_pct": 100.0,
+        "min_axis_ratio": 0.0
+      }
+    },
+    "price_multipliers": {
+      "Grade A": 1.00,
+      "Grade B": 0.85,
+      "Grade C": 0.70,
+      "Reject": 0.00
+    },
+    "hand_check_soft_threshold": 1,
+    "buyer_sample_diff_threshold": 15.0,
+    "layer_defect_diff_ratio": 2.0,
+    "watershed_max_area_ratio": 1.6,
+    "gallery_max_age_seconds": 3600
+  },
+  "varieties": {
+    "Desi": {
+      "min_size_mm": 35.0,
+      "typical_min_mm": 45.0,
+      "typical_max_mm": 75.0,
+      "allow_slight_ribbing": true
+    },
+    "Hybrid": {
+      "min_size_mm": 40.0,
+      "typical_min_mm": 50.0,
+      "typical_max_mm": 85.0,
+      "allow_slight_ribbing": false
+    },
+    "Cherry": {
+      "min_size_mm": 20.0,
+      "typical_min_mm": 22.0,
+      "typical_max_mm": 35.0,
+      "allow_slight_ribbing": false
+    },
+    "Not sure": {
+      "min_size_mm": 30.0,
+      "typical_min_mm": 35.0,
+      "typical_max_mm": 95.0,
+      "allow_slight_ribbing": true
+    }
+  },
+  "flags_catalog": {
+    "F0": { "code": "F0", "type": "BLOCKING", "en": "No coin found in photo.", "te": "ఫోటోలో నాణెం కనపడలేదు.", "hi": "फ़ोटो में सिक्का नहीं मिला।" },
+    "F0b": { "code": "F0b", "type": "BLOCKING", "en": "Photo blurry or dark.", "te": "ఫోటో మసకగా లేదా చీకటిగా ఉంది.", "hi": "फ़ोटो धुंधली या अंधेरी है।" },
+    "F0c": { "code": "F0c", "type": "BLOCKING", "en": "Fewer than 20 fruit checked.", "te": "20 కన్నా తక్కువ టమోటాలు ఉన్నాయి.", "hi": "20 से कम फल जांचे गए।" },
+    "F0d": { "code": "F0d", "type": "BLOCKING", "en": "Flip side photo missing.", "te": "రెండవ వైపు ఫోటో లేదు.", "hi": "उल्टी तरफ़ की फ़ोटो नहीं है।" },
+    "F1": { "code": "F1", "type": "WARNING", "en": "Small sample checked.", "te": "తక్కువ టమోటాలు మాత్రమే చూశారు.", "hi": "कम फल जांचे गए।" },
+    "F2": { "code": "F2", "type": "WARNING", "en": "Few crates opened.", "te": "కొద్ది క్రేట్లు మాత్రమే తెరిచారు.", "hi": "बहुत कम क्रेट खोले गए।" },
+    "F3": { "code": "F3", "type": "WARNING", "en": "Only top view used.", "te": "పై భాగం మాత్రమే చూశారు.", "hi": "सिर्फ़ ऊपर का हिस्सा देखा।" },
+    "F4": { "code": "F4", "type": "WARNING", "en": "Phone was tilted.", "te": "ఫోన్ వాలుగా పట్టుకున్నారు.", "hi": "फ़ोन तिरछा पकड़ा गया था।" },
+    "F5": { "code": "F5", "type": "WARNING", "en": "Dark background or shadows.", "te": "చీకటి నేపథ్యం లేదా నీడలు ఉన్నాయి.", "hi": "गहरा बैकग्राउंड या परछाई है।" },
+    "F6": { "code": "F6", "type": "WARNING", "en": "Fruit touching in photo.", "te": "టమోటాలు ఒకదానికొకటి తాకుతున్నాయి.", "hi": "टमाटर आपस में छू रहे हैं।" },
+    "F7": { "code": "F7", "type": "WARNING", "en": "Single crate or tiny heap.", "te": "ఒక్క క్రేట్ లేదా చిన్న కుప్ప మాత్రమే.", "hi": "एक ही क्रेट या छोटा ढेर है।" },
+    "F8": { "code": "F8", "type": "WARNING", "en": "Fruit count differs between photos.", "te": "రెండు ఫోటోల్లో టమోటాల సంఖ్య వేరు.", "hi": "दोनों फ़ोटो में संख्या अलग है।" },
+    "F9": { "code": "F9", "type": "WARNING", "en": "Top layer much better than bottom.", "te": "పై భాగం కింది కంటే చాలా బాగుంది.", "hi": "ऊपर का माल नीचे से बहुत बेहतर है।" },
+    "F10": { "code": "F10", "type": "WARNING", "en": "Farmer and buyer samples differ.", "te": "రైతు, వ్యాపారి నమూనాలు వేరుగా ఉన్నాయి.", "hi": "किसान और खरीदार के सैंपल में बड़ा फ़र्क है।" },
+    "F11": { "code": "F11", "type": "WARNING", "en": "Same photo or fruit used twice.", "te": "అదే ఫోటోను మళ్ళీ వాడారు.", "hi": "वही फ़ोटो दोबारा इस्तेमाल हुई।" },
+    "F12": { "code": "F12", "type": "WARNING", "en": "Photo not taken just now.", "te": "ఈ ఫోటో ఇప్పుడే తీసింది కాదు.", "hi": "फ़ोटो अभी ताज़ा नहीं खींची गई।" },
+    "F13": { "code": "F13", "type": "WARNING", "en": "Soft fruit found by hand check.", "te": "చేతితో నొక్కితే మెత్తటి కాయలు తేలాయి.", "hi": "हाथ से दबाने पर पिलपिला फल मिला।" },
+    "F14": { "code": "F14", "type": "WARNING", "en": "Both parties not present at picking.", "te": "ఎంపిక సమయంలో ఇద్దరూ లేరు.", "hi": "सैंपल चुनते समय दोनों मौजूद नहीं थे।" },
+    "F15": { "code": "F15", "type": "WARNING", "en": "Coin looks worn or unclear.", "te": "నాణెం అస్పష్టంగా లేదా అరిగిపోయి ఉంది.", "hi": "सिक्का घिसा हुआ या अस्पष्ट है।" },
+    "F16": { "code": "F16", "type": "WARNING", "en": "Different tomato varieties mixed.", "te": "వేర్వేరు రకాల టమోటాలు కలిసి ఉన్నాయి.", "hi": "अलग-अलग किस्म के टमाटर मिले हुए हैं।" },
+    "F17": { "code": "F17", "type": "WARNING", "en": "Strong sun glare or colour tint.", "te": "ఎండ మెరుపు లేదా రంగు తేడా ఉంది.", "hi": "तेज़ धूप या रंग का असंतुलन है।" },
+    "F18": { "code": "F18", "type": "INFO", "en": "Inside rot cannot be seen by photo.", "te": "లోపలి కుళ్లు ఫోటోలో కనిపించదు.", "hi": "भीतरी सड़न फ़ोटो में नहीं दिखती।" },
+    "F19": { "code": "F19", "type": "INFO", "en": "Size is approximate (±3 mm).", "te": "పరిమాణం సుమారుగా ఉంటుంది (±3 మి.మీ).", "hi": "साइज़ अनुमानित है (±3 मिमी)।" }
+  }
+}

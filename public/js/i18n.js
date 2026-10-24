@@ -1,464 +1,642 @@
 // AgriGrade Internationalization (i18n) Module
 // Supported Languages: English (en), Hindi (hi), Telugu (te)
+// All Hindi and Telugu strings marked with TODO: needs native speaker review
 
 const TRANSLATIONS = {
   en: {
+    // Top banner & Footers
     app_title: "AgriGrade",
-    tagline: "AI-Powered Tomato Quality & Size Grading",
-    subtitle: "Independent, transparent quality benchmarking for Indian farmers and mandi buyers",
-    disclaimer_banner: "AgriGrade is an independent negotiation reference, not a certified grading authority.",
-    
+    tagline: "Tomato Quality & Size Helper",
+    disclaimer_banner: "Helper tool for market talks. Not official grade.",
+    mandatory_footer: "This is a helper tool. It is not an official grade. You both decide the final price.",
+    agreement_note: "This is a record of your talk. It is not a legal paper.",
+    how_we_grade_simple: "Our simple rules are made for market talks. They are not official.",
+
+    // Language Screen (First screen)
+    lang_screen_title: "Choose Your Language",
+    lang_screen_sub: "Select your language to continue.",
+    btn_listen: "🔊 Listen",
+    btn_stop_listen: "⏹️ Stop",
+    listen_unsupported: "Speech is not supported on this phone.",
+
     // Navigation
     nav_home: "Home",
     nav_new_grade: "New Grading",
-    nav_history: "Reports History",
+    nav_history: "Saved Reports",
     nav_methodology: "How We Grade",
-    nav_standards: "Standards & Rules",
-    nav_language: "Language",
-    
+    nav_standards: "Market Rules",
+    nav_admin: "Test Tools",
+
     // Home Screen
-    hero_title: "Grade Tomatoes Fairly with AI & Reference Coin",
-    hero_subtitle: "Snap a photo of your tomatoes with a ₹10 or ₹5 coin. Measure exact fruit size in mm, inspect surface blemishes, and generate a tamper-evident grade report for mandi negotiations.",
-    btn_start_grading: "Start Tomato Grading",
+    hero_title: "Grade Tomatoes Fairly with a Coin",
+    hero_subtitle: "Place tomatoes with a ₹10 or ₹5 coin. Check size and defects for fair mandi prices.",
+    btn_start_grading: "Start Grading",
     btn_view_history: "View Saved Reports",
     btn_learn_more: "How It Works",
-    photo_guide_heading: "Photo Guidelines for Reliable Grading",
-    guide_step1: "Place 1 to 20 tomatoes separated on a flat, light-coloured surface (newspaper, white cloth, or tray).",
-    guide_step2: "Place a standard ₹10 or ₹5 coin flat beside the tomatoes at the same height.",
-    guide_step3: "Photograph directly from above in clear daylight. Avoid harsh shadows or strong camera tilt.",
-    guide_step4: "Ensure fruit do not overlap heavily so individual contours can be measured accurately.",
 
-    // Upload & Options
-    upload_heading: "Photograph Upload & Calibration",
-    upload_desc: "Capture or select 1 to 3 photographs of your tomatoes with the reference coin.",
-    camera_btn: "Open Camera",
-    gallery_btn: "Upload Photos",
-    drag_drop_text: "Drag & drop photos here or tap to upload",
-    max_photos_hint: "Up to 3 photographs allowed (JPG, PNG, WebP up to 15MB each)",
-    reference_heading: "Select Reference Object",
-    ref_coin_10: "Indian ₹10 Coin (27 mm nominal diameter)",
-    ref_coin_5: "Indian ₹5 Coin (23 mm nominal diameter)",
-    ref_custom: "Custom Card / Object (Enter exact mm)",
-    custom_mm_label: "Custom Dimension (mm)",
-    custom_mm_placeholder: "e.g. 50.0",
-    price_heading: "Optional Mandi Base Price (₹/kg)",
-    price_hint: "Enter your local mandi benchmark rate to calculate indicative price per grade.",
-    price_placeholder: "e.g. 25.00",
-    btn_submit_grade: "Analyze & Grade Tomatoes",
-    btn_clear: "Reset Selection",
+    // Step 2: Lot Setup
+    lot_setup_title: "How much tomato do you have?",
+    lot_setup_subtitle: "Choose crates, total kg, or loose heap.",
+    opt_crates: "Number of crates",
+    opt_kg: "Total kilograms (kg)",
+    opt_heap: "Loose heap (kg)",
+    crate_weight_hint: "1 crate is about 22 kg.",
+    input_crates_label: "Enter number of crates",
+    input_kg_label: "Enter total kg",
+    input_heap_label: "Enter heap weight in kg",
+    variety_label: "Tomato variety",
+    variety_desi: "Desi",
+    variety_hybrid: "Hybrid",
+    variety_cherry: "Cherry",
+    variety_unsure: "Not sure",
+    btn_calc_plan: "Make Checking Plan",
 
-    // Progress
-    progress_heading: "AI Computer Vision in Progress...",
-    step_validating: "Validating image resolution, sharpness, and daylight lighting...",
-    step_calibrating: "Detecting reference coin and computing pixel-to-millimetre scale...",
-    step_segmenting: "Executing watershed contour segmentation on touching tomatoes...",
-    step_defects: "Measuring color ripening stage and surface blemish percentage...",
-    step_lot: "Applying AGMARK/UNECE tolerance rules and generating lot fingerprint...",
+    // Step 3: Sampling Plan
+    plan_title: "Your Tomato Sampling Plan",
+    plan_fruits_needed: "Total fruit to check: {n} tomatoes.",
+    plan_batches_needed: "Photo batches: {b} batches (15 fruit each).",
+    plan_min_note: "Need at least 20 fruit for a grade.",
 
-    // Results & Reports
-    report_title: "Observed Lot Grading Report",
-    report_id_label: "Report ID",
-    created_at_label: "Created At",
-    observed_fruit_label: "Observed Fruit Count",
-    lot_grade_label: "Overall Observed Lot Grade",
-    tamper_verified: "SHA-256 Verified Authentic",
-    tamper_invalid: "Integrity Warning: Report Tampered!",
-    tamper_chain_corrupt: "Warning: Acknowledgement Chain Disrupted",
-    calibration_status_label: "Calibration Status",
-    size_uncalibrated: "Size Not Measured (Coin Uncalibrated)",
-    lot_reasons_label: "Why This Lot Grade Was Assigned",
-    lot_warnings_label: "Sampling & Calibration Notices",
-    indicative_price_title: "Indicative Mandi Valuation",
-    base_price_label: "Base Benchmark Price",
-    multiplier_label: "Quality Class Multiplier",
-    indicative_rate_label: "Estimated Lot Rate",
-    price_formula_label: "Calculation",
-    price_disclaimer: "Indicative estimate for negotiation reference only. Mandi prices vary by local supply, moisture, and transport costs.",
+    // Step 4: Random Picker
+    random_picker_title: "Where to pick fruit (Anti-Bias)",
+    random_crates_pick: "Open crate number: {list}",
+    random_layer_pick: "Take 5 top, 5 middle, 5 bottom.",
+    random_heap_zones: "Take 5 fruit from each zone: {zones}",
+    single_crate_note: "Single crate: take equal fruit from all levels.",
+    warning_anti_bias: "Do not pick best or worst fruit.",
+    chk_both_present: "Both farmer and buyer are here.",
+    btn_start_photos: "Start Photo Steps",
+    btn_buyer_repeat: "Buyer wants own check",
 
-    // Quality Classes
-    class_extra: "Extra Class",
-    class_1: "Class I",
-    class_2: "Class II",
-    class_below: "Below Standard",
+    // Step 5 & Section D: Photo Rules (Wizard)
+    photo_rule_1_title: "Rule 1: Use daylight",
+    photo_rule_1_desc: "Take photo in clear, bright daylight.",
+    photo_rule_2_title: "Rule 2: Plain cloth",
+    photo_rule_2_desc: "Use a plain light cloth or paper.",
+    photo_rule_3_title: "Rule 3: Flat coin",
+    photo_rule_3_desc: "Put coin flat on cloth at table level.",
+    photo_rule_4_title: "Rule 4: 15 tomatoes row",
+    photo_rule_4_desc: "Put 15 tomatoes in rows. No touching.",
+    photo_rule_5_title: "Rule 5: Stem up",
+    photo_rule_5_desc: "Stem side up. Take photo from top.",
+    photo_rule_6_title: "Rule 6: Phone flat",
+    photo_rule_6_desc: "Hold phone flat above. Not tilted.",
+    photo_rule_7_title: "Rule 7: Turn over",
+    photo_rule_7_desc: "Now turn each tomato over. Stem down.",
+    photo_rule_8_title: "Rule 8: Same place",
+    photo_rule_8_desc: "Keep the same place. Take photo again.",
+    photo_rule_9_title: "Rule 9: Keep coin",
+    photo_rule_9_desc: "Keep coin in the exact same place.",
 
-    // Color Stages
-    color_mature_green: "Mature Green (0-2% red)",
-    color_breaker: "Breaker (2-10% red)",
-    color_turning: "Turning (10-30% red)",
-    color_pink: "Pink (30-60% red)",
-    color_red: "Red (60-90% red)",
-    color_mature_red: "Mature Red (>90% red)",
+    // Live Camera & Capture Checks
+    camera_heading: "Batch {curr} of {total}: Photo {type}",
+    photo_a_label: "Photo A (Stem Up)",
+    photo_b_label: "Photo B (Stem Down)",
+    photo_c_label: "Photo C (Sides - Optional)",
+    check_coin_found: "Coin found",
+    check_not_blurry: "Photo is sharp",
+    check_not_dark: "Lighting is good",
+    check_not_tilted: "Phone is flat",
+    check_no_touch: "Fruit not touching",
+    btn_capture: "Capture Photo",
+    btn_retake: "Retake Photo",
+    gallery_warning: "Photo from gallery may be older.",
+    progress_batch_bar: "Batch {curr} of {total} done. {fcurr} of {ftarget} fruit.",
+    btn_finish_early: "Finish with fewer fruit",
 
-    // Fruit results
-    fruit_list_title: "Individual Fruit Inspection Breakdown",
-    fruit_id_col: "Fruit #",
-    fruit_size_col: "Diameter (mm)",
-    fruit_size_code_col: "Size Code",
-    fruit_shape_col: "Shape (Axis Ratio)",
-    fruit_color_col: "Color Stage",
-    fruit_defects_col: "Surface Defects",
-    fruit_grade_col: "Assigned Grade",
-    fruit_reasons_col: "Rule Reasons",
+    // Hand Check & Weight Check (Section E6, E7)
+    hand_check_title: "Hand Softness Check",
+    hand_check_prompt: "Press 10 fruit with your hand. How many are soft?",
+    hand_check_count: "Number of soft fruit (0 to 10)",
+    weight_check_title: "Optional Sample Weight",
+    weight_check_prompt: "Weigh your sample fruit. Enter total kg.",
+    weight_check_placeholder: "e.g. 1.8 kg",
+    btn_compute_grade: "Calculate Grade",
 
-    // Acknowledgements
-    ack_heading: "Farmer & Buyer Acknowledgement (Append-Only Audit Trail)",
-    ack_desc: "Both parties can formally record agreement or dispute. Each acknowledgement is cryptographically chained to the report SHA-256 fingerprint.",
-    farmer_ack_title: "Farmer Verdict",
-    buyer_ack_title: "Buyer / Mandi Trader Verdict",
+    // Results & Verdicts (Section E4, Section B)
+    results_heading: "Tomato Lot Result",
+    lot_grade_label: "Observed Grade",
+    grade_a: "Grade A",
+    grade_b: "Grade B",
+    grade_c: "Grade C",
+    grade_reject: "Reject",
+    verdict_sure: "Sure",
+    verdict_unsure: "Not sure. Check 20 more fruit.",
+    verdict_not_this: "Not this grade",
+    btn_add_20_more: "Add 20 more fruit",
+    no_grade_zero: "No grade. No fruit found.",
+    no_grade_few: "Too few fruit. No grade.",
+    indicative_badge: "INDICATIVE ONLY",
+    server_saved_badge: "Report not changed since saved",
+    local_saved_badge: "Saved on phone only",
+
+    // Wilson Range Bar
+    wilson_bar_text: "Bad fruit: about {p} in 100. Could be {low} to {high} in 100.",
+    surface_seen_85: "About 85% of fruit surface seen.",
+    surface_seen_45: "About 45% of fruit surface seen.",
+    hidden_defect_warning: "Inside rot and soft fruit cannot be seen by photo.",
+
+    // Price Open Table (Section B)
+    price_title: "Example Price Multipliers",
+    price_example_tag: "Example only",
+    price_base_label: "Base Price (₹/kg)",
+    price_rate_label: "Estimated Lot Rate",
+    price_mult_a: "Grade A = Base price (x 1.00)",
+    price_mult_b: "Grade B = Base price x 0.85",
+    price_mult_c: "Grade C = Base price x 0.70",
+    price_mult_reject: "Reject = ₹0.00",
+
+    // Fruit Details Toggle
+    btn_toggle_details: "Show Fruit Details",
+    btn_hide_details: "Hide Fruit Details",
+    fruit_size_approx: "Approx. Size (± {x} mm)",
+    fruit_defects: "Defect %",
+    fruit_grade: "Grade",
+    btn_mark_not_damage: "Mark as not damage",
+    user_edited_tag: "Edited by user",
+
+    // Flags (Section F)
+    flag_f0: "F0: No coin found.",
+    flag_f0b: "F0b: Photo blurry or dark.",
+    flag_f0c: "F0c: Fewer than 20 fruit.",
+    flag_f0d: "F0d: Photo B (flip side) missing.",
+    flag_f1: "F1: Small sample. Checked {n} of {target} needed.",
+    flag_f2: "F2: Few crates opened.",
+    flag_f3: "F3: Only top view used (no flip).",
+    flag_f4: "F4: Photo not top-down (tilted).",
+    flag_f5: "F5: Dark shadows near fruit.",
+    flag_f6: "F6: Fruit touching or overlapping in photo.",
+    flag_f7: "F7: Single crate or tiny heap.",
+    flag_f8: "F8: Fruit count differs between photos.",
+    flag_f9: "F9: Top layer much better than bottom.",
+    flag_f10: "F10: Farmer and buyer samples differ a lot.",
+    flag_f11: "F11: Same photo or fruit used twice.",
+    flag_f12: "F12: Photo uploaded from gallery (older).",
+    flag_f13: "F13: Soft fruit found by hand check.",
+    flag_f14: "F14: Both parties not present at picking.",
+    flag_f15: "F15: Coin looks worn, bent or wrong.",
+    flag_f16: "F16: Different tomato varieties mixed.",
+    flag_f17: "F17: Strong sun glare or uneven color.",
+    flag_f18: "F18: Inside rot cannot be seen.",
+    flag_f19: "F19: Size is approximate (± {x} mm).",
+
+    // Agreement & Audit (Section H)
+    ack_heading: "Record of Your Talk",
     party_label: "Your Role",
-    verdict_label: "Verdict",
-    verdict_accept: "Accept Grade & Pricing",
-    verdict_dispute: "Dispute / Renegotiate",
-    note_label: "Comments / Reason for dispute",
-    note_placeholder: "e.g., Moisture content high, accepted at 5% discount, or agreed on Class I rate.",
-    btn_submit_ack: "Sign & Record Acknowledgement",
-    ack_recorded_msg: "Acknowledgement cryptographically recorded and chained.",
-    already_acked_msg: "Acknowledgement already submitted for this party.",
+    party_farmer: "Farmer",
+    party_buyer: "Buyer / Trader",
+    verdict_accept: "Agree with this grade",
+    verdict_dispute: "Dispute / Negotiate",
+    pin_label: "Enter 4-digit PIN",
+    pin_placeholder: "4 digits",
+    pin_unverified: "Not verified who signed",
+    note_label: "Note / Remarks",
+    note_placeholder: "e.g. 5% discount agreed.",
+    btn_submit_ack: "Save Record",
+    ack_recorded_msg: "Record saved.",
 
-    // Sharing & QR
-    share_heading: "Share & Verify Grading Report",
-    share_desc: "Anyone can scan this QR code or open the report link to inspect the exact measurements and verify tamper-proof integrity.",
-    btn_copy_link: "Copy Report Link",
-    btn_download_qr: "Download QR Code",
-    btn_share_native: "Share via WhatsApp / Mobile",
-    btn_read_aloud: "Read Report Aloud",
-    read_aloud_stop: "Stop Reading",
-    read_aloud_unsupported: "Speech synthesis is not available in your browser for this language.",
+    // Share & QR
+    share_heading: "Share Report",
+    btn_whatsapp_share: "Share on WhatsApp",
+    btn_copy_link: "Copy Link",
+    btn_download_qr: "Download QR",
+    btn_print_pdf: "Print / PDF",
+    btn_delete_photos: "Delete my photos",
+    privacy_note: "Photos are used only for this report.",
+    photos_deleted_msg: "Photos removed from server.",
 
-    // Standards Page
-    standards_title: "Tomato Grading Standards & Thresholds",
-    standards_intro: "AgriGrade applies deterministic engineering interpretations based on DMI/AGMARK (Directorate of Marketing & Inspection, Government of India) and UNECE FFV-36 standards.",
-    standards_table_class: "Class",
-    standards_table_defects: "Max Surface Defects",
-    standards_table_shape: "Min Axis Ratio",
-    standards_table_notes: "Requirements & Tolerances",
-    standards_extra_desc: "Superficial defects < 1%, axis ratio >= 0.90, uniform color, no cracks/decay.",
-    standards_class1_desc: "Defects <= 3%, axis ratio >= 0.80, slight shape variation allowed.",
-    standards_class2_desc: "Defects <= 8%, axis ratio >= 0.65, greenback allowed provided fruit is firm.",
-    standards_below_desc: "Defects > 8%, axis ratio < 0.65, undersized fruit (<35mm round, <30mm oblong), or cracks/decay.",
-    tolerances_note: "Lot Tolerances: Extra allows maximum 5% out-of-grade; Class I and Class II allow maximum 10% out-of-grade.",
-    agmark_field_note: "Field Validation Notice: These thresholds are provisional interpretations for market transparency and dispute resolution. Formal certification requires an authorized AGMARK grading inspector.",
-
-    // History
-    history_title: "Grading History & Audit Records",
-    history_empty: "No grading reports found yet. Start your first grading above!",
-    btn_view_report: "View Report",
-    history_status_col: "Status",
-    history_fruit_col: "Observed Fruit",
-
-    // Errors & Alerts
-    err_network: "Network connection error. Please verify your connection or backend server status.",
-    err_select_image: "Please select at least 1 photograph to proceed.",
-    err_invalid_image: "Selected file is not a supported image format. Please use JPG, PNG, or WebP.",
-    err_max_images: "Maximum 3 photographs can be submitted per report.",
-    copied_alert: "Report link copied to clipboard!",
-    link_shared_alert: "Report ready to share."
+    // Admin & Tests (Section I)
+    admin_test_title: "Test Mode: Hand-Graded CSV Compare",
+    admin_sim_title: "Sampling Simulation (100-Fruit Crate)",
+    admin_cal_title: "Caliper Parallax Calibration",
+    admin_checklist_title: "Field Test Checklist",
+    btn_export_csv: "Export CSV",
+    btn_run_sim: "Run Simulation",
+    btn_save_cal: "Save Parallax Factor"
   },
 
   hi: {
-    app_title: "एग्रीग्रेड (AgriGrade)",
-    tagline: "टमाटर गुणवत्ता और आकार ग्रेडिंग मंच",
-    subtitle: "भारतीय किसानों और मंडी व्यापारियों के लिए स्वतंत्र, पारदर्शी गुणवत्ता मूल्यांकन",
-    disclaimer_banner: "एग्रीग्रेड मंडी सौदों के लिए एक स्वतंत्र संदर्भ है, सरकारी प्रमाण पत्र नहीं।",
-    
+    // Top banner & Footers
+    app_title: "एग्री-ग्रेड", // TODO: needs native speaker review
+    tagline: "टमाटर गुणवत्ता और आकार साथी", // TODO: needs native speaker review
+    disclaimer_banner: "मंडी बातचीत का औज़ार। सरकारी ग्रेड नहीं।", // TODO: needs native speaker review
+    mandatory_footer: "यह सिर्फ़ मदद का औज़ार है। यह सरकारी ग्रेड नहीं है। अंतिम भाव आप दोनों तय करें।", // TODO: needs native speaker review
+    agreement_note: "यह आपकी बातचीत का रिकॉर्ड है। यह कोई कानूनी काग़ज़ नहीं है।", // TODO: needs native speaker review
+    how_we_grade_simple: "हमारे सरल नियम मंडी बातचीत के लिए हैं। ये सरकारी नहीं हैं।", // TODO: needs native speaker review
+
+    // Language Screen (First screen)
+    lang_screen_title: "अपनी भाषा चुनें", // TODO: needs native speaker review
+    lang_screen_sub: "आगे बढ़ने के लिए भाषा चुनें।", // TODO: needs native speaker review
+    btn_listen: "🔊 सुनें", // TODO: needs native speaker review
+    btn_stop_listen: "⏹️ रोकें", // TODO: needs native speaker review
+    listen_unsupported: "इस फोन में आवाज़ उपलब्ध नहीं है।", // TODO: needs native speaker review
+
     // Navigation
-    nav_home: "होम",
-    nav_new_grade: "नया ग्रेडिंग",
-    nav_history: "रिपोर्ट इतिहास",
-    nav_methodology: "ग्रेडिंग विधि",
-    nav_standards: "मानक और नियम",
-    nav_language: "भाषा (Language)",
-    
+    nav_home: "होम", // TODO: needs native speaker review
+    nav_new_grade: "नई जांच", // TODO: needs native speaker review
+    nav_history: "पुरानी रिपोर्ट", // TODO: needs native speaker review
+    nav_methodology: "जांच का तरीका", // TODO: needs native speaker review
+    nav_standards: "मंडी नियम", // TODO: needs native speaker review
+    nav_admin: "टेस्ट टूल्स", // TODO: needs native speaker review
+
     // Home Screen
-    hero_title: "सिक्के और एआई के साथ टमाटर की निष्पक्ष ग्रेडिंग करें",
-    hero_subtitle: "₹10 या ₹5 के सिक्के के साथ अपने टमाटरों की तस्वीर लें। मिलीमीटर में फल का सटीक आकार मापें, दाग-धब्बे जांचें और मंडी में मोलभाव के लिए छेड़छाड़-मुक्त रिपोर्ट बनाएं।",
-    btn_start_grading: "टमाटर ग्रेडिंग शुरू करें",
-    btn_view_history: "पुरानी रिपोर्टें देखें",
-    btn_learn_more: "यह कैसे काम करता है",
-    photo_guide_heading: "सटीक ग्रेडिंग के लिए फोटो नियम",
-    guide_step1: "1 से 20 टमाटरों को एक हल्के रंग की समतल सतह (सफेद कपड़ा, ट्रे या कागज) पर अलग-अलग रखें।",
-    guide_step2: "टमाटरों के ठीक बगल में ₹10 या ₹5 का मानक सिक्का रखें।",
-    guide_step3: "दिन की रोशनी में बिल्कुल ऊपर से सीधी फोटो लें। तिरछी फोटो या छाया से बचें।",
-    guide_step4: "टमाटर आपस में ज्यादा चिपके न हों ताकि हर फल की सीमा स्पष्ट पहचानी जा सके।",
+    hero_title: "सिक्के की मदद से टमाटर जांचें", // TODO: needs native speaker review
+    hero_subtitle: "₹10 या ₹5 का सिक्का रखकर फोटो लें। सही भाव के लिए आकार और दाग देखें।", // TODO: needs native speaker review
+    btn_start_grading: "जांच शुरू करें", // TODO: needs native speaker review
+    btn_view_history: "पुरानी रिपोर्ट देखें", // TODO: needs native speaker review
+    btn_learn_more: "तरीका समझें", // TODO: needs native speaker review
 
-    // Upload & Options
-    upload_heading: "फोटो अपलोड और पैमाना चयन",
-    upload_desc: "सिक्के के साथ टमाटरों की 1 से 3 तस्वीरें कैमरे से लें या अपलोड करें।",
-    camera_btn: "कैमरा खोलें",
-    gallery_btn: "गैलरी से चुनें",
-    drag_drop_text: "यहाँ फोटो खींचें या चुनने के लिए टैप करें",
-    max_photos_hint: "अधिकतम 3 तस्वीरें (JPG, PNG, WebP प्रारूप, 15MB तक)",
-    reference_heading: "संदर्भ सिक्का चुनें",
-    ref_coin_10: "भारतीय ₹10 का सिक्का (27 मिमी व्यास)",
-    ref_coin_5: "भारतीय ₹5 का सिक्का (23 मिमी व्यास)",
-    ref_custom: "कस्टम कार्ड / वस्तु (मिमी दर्ज करें)",
-    custom_mm_label: "कस्टम माप (मिमी)",
-    custom_mm_placeholder: "उदा. 50.0",
-    price_heading: "वैकल्पिक मंडी आधार भाव (₹/किलो)",
-    price_hint: "ग्रेड के अनुसार अनुमानित दर जानने के लिए स्थानीय मंडी का भाव दर्ज करें।",
-    price_placeholder: "उदा. 25.00",
-    btn_submit_grade: "टमाटरों की जांच और ग्रेडिंग करें",
-    btn_clear: "रीसेट करें",
+    // Step 2: Lot Setup
+    lot_setup_title: "आपके पास कितने टमाटर हैं?", // TODO: needs native speaker review
+    lot_setup_subtitle: "क्रेट, कुल किलो या खुला ढेर चुनें।", // TODO: needs native speaker review
+    opt_crates: "क्रेट की संख्या", // TODO: needs native speaker review
+    opt_kg: "कुल वज़न (किलो)", // TODO: needs native speaker review
+    opt_heap: "खुला ढेर (किलो)", // TODO: needs native speaker review
+    crate_weight_hint: "1 क्रेट लगभग 22 किलो होता है।", // TODO: needs native speaker review
+    input_crates_label: "क्रेट की संख्या लिखें", // TODO: needs native speaker review
+    input_kg_label: "कुल किलो लिखें", // TODO: needs native speaker review
+    input_heap_label: "ढेर का वज़न (किलो) लिखें", // TODO: needs native speaker review
+    variety_label: "टमाटर की किस्म", // TODO: needs native speaker review
+    variety_desi: "देसी", // TODO: needs native speaker review
+    variety_hybrid: "हाइब्रिड", // TODO: needs native speaker review
+    variety_cherry: "चेरी", // TODO: needs native speaker review
+    variety_unsure: "पक्का नहीं", // TODO: needs native speaker review
+    btn_calc_plan: "जांच योजना बनाएं", // TODO: needs native speaker review
 
-    // Progress
-    progress_heading: "कंप्यूटर विजन विश्लेषण जारी है...",
-    step_validating: "फोटो स्पष्टता, रिज़ॉल्यूशन और रोशनी की जांच हो रही है...",
-    step_calibrating: "सिक्के का पता लगाकर पिक्सेल से मिलीमीटर पैमाना तैयार किया जा रहा है...",
-    step_segmenting: "वाटरशेड तकनीक से प्रत्येक टमाटर को अलग किया जा रहा है...",
-    step_defects: "टमाटर के पकने का रंग और सतह के दाग-धब्बों की गणना की जा रही है...",
-    step_lot: "एगमार्क/यूएनईसीई नियमों के आधार पर लॉट रिपोर्ट और हैश फिंगरप्रिंट तैयार हो रहा है...",
+    // Step 3: Sampling Plan
+    plan_title: "टमाटर नमूना योजना", // TODO: needs native speaker review
+    plan_fruits_needed: "कुल जांच के फल: {n} टमाटर।", // TODO: needs native speaker review
+    plan_batches_needed: "फोटो बैच: {b} बार (हर बार 15 टमाटर)।", // TODO: needs native speaker review
+    plan_min_note: "ग्रेड के लिए कम से कम 20 टमाटर चाहिए।", // TODO: needs native speaker review
 
-    // Results & Reports
-    report_title: "टमाटर लॉट ग्रेडिंग रिपोर्ट",
-    report_id_label: "रिपोर्ट क्रमांक (ID)",
-    created_at_label: "तैयार होने का समय",
-    observed_fruit_label: "जांचे गए टमाटरों की संख्या",
-    lot_grade_label: "कुल लॉट का ग्रेड",
-    tamper_verified: "SHA-256 सुरक्षित: रिपोर्ट असली व असंशोधित है",
-    tamper_invalid: "चेतावनी: रिपोर्ट में छेड़छाड़ पाई गई!",
-    tamper_chain_corrupt: "चेतावनी: सहमति हैश श्रृंखला टूट गई है",
-    calibration_status_label: "माप पैमाना स्थिति",
-    size_uncalibrated: "आकार नहीं मापा गया (सिक्का नहीं मिला)",
-    lot_reasons_label: "यह ग्रेड मिलने का कारण",
-    lot_warnings_label: "नमूना व माप संबंधित सूचनाएं",
-    indicative_price_title: "अनुमानित मंडी मूल्य मूल्यांकन",
-    base_price_label: "दर्ज आधार भाव",
-    multiplier_label: "ग्रेड गुणक (Multiplier)",
-    indicative_rate_label: "अनुमानित दर प्रति किलो",
-    price_formula_label: "गणना सूत्र",
-    price_disclaimer: "यह केवल बातचीत के लिए सांकेतिक मूल्य है। वास्तविक मंडी मूल्य आवक और नमी पर निर्भर करता है।",
+    // Step 4: Random Picker
+    random_picker_title: "टमाटर कहां से निकालें (निष्पक्ष नियम)", // TODO: needs native speaker review
+    random_crates_pick: "ये क्रेट नंबर खोलें: {list}", // TODO: needs native speaker review
+    random_layer_pick: "5 ऊपर से, 5 बीच से, 5 नीचे से लें।", // TODO: needs native speaker review
+    random_heap_zones: "हर हिस्से से 5 फल लें: {zones}", // TODO: needs native speaker review
+    single_crate_note: "एक ही क्रेट: ऊपर, बीच और नीचे से बराबर लें।", // TODO: needs native speaker review
+    warning_anti_bias: "न सबसे अच्छे लें, न सबसे खराब फल।", // TODO: needs native speaker review
+    chk_both_present: "किसान और खरीदार दोनों यहाँ मौजूद हैं।", // TODO: needs native speaker review
+    btn_start_photos: "फोटो लेना शुरू करें", // TODO: needs native speaker review
+    btn_buyer_repeat: "खरीदार अपनी अलग जांच चाहता है", // TODO: needs native speaker review
 
-    // Quality Classes
-    class_extra: "एक्स्ट्रा क्लास (उत्कृष्ट)",
-    class_1: "क्लास I (प्रथम श्रेणी)",
-    class_2: "क्लास II (द्वितीय श्रेणी)",
-    class_below: "मानक से कम (Below Standard)",
+    // Step 5 & Section D: Photo Rules (Wizard)
+    photo_rule_1_title: "नियम 1: दिन का उजाला", // TODO: needs native speaker review
+    photo_rule_1_desc: "साफ़ और खुली रोशनी में फोटो लें।", // TODO: needs native speaker review
+    photo_rule_2_title: "नियम 2: साफ़ कपड़ा", // TODO: needs native speaker review
+    photo_rule_2_desc: "हल्के रंग का सादा कपड़ा या काग़ज़ रखें।", // TODO: needs native speaker review
+    photo_rule_3_title: "नियम 3: सिक्का सीधा रखें", // TODO: needs native speaker review
+    photo_rule_3_desc: "सिक्का कपड़े पर सीधा रखें, मेज़ के स्तर पर।", // TODO: needs native speaker review
+    photo_rule_4_title: "नियम 4: 15 टमाटर अलग-अलग", // TODO: needs native speaker review
+    photo_rule_4_desc: "15 टमाटर पंक्ति में रखें। छूने न दें।", // TODO: needs native speaker review
+    photo_rule_5_title: "नियम 5: डंठल ऊपर", // TODO: needs native speaker review
+    photo_rule_5_desc: "डंठल ऊपर रखें। सीधे ऊपर से फोटो लें।", // TODO: needs native speaker review
+    photo_rule_6_title: "नियम 6: फ़ोन सीधा रखें", // TODO: needs native speaker review
+    photo_rule_6_desc: "फ़ोन बिल्कुल सीधा रखें। झुकाएं नहीं।", // TODO: needs native speaker review
+    photo_rule_7_title: "नियम 7: टमाटर पलटें", // TODO: needs native speaker review
+    photo_rule_7_desc: "अब हर टमाटर पलटें। डंठल नीचे रखें।", // TODO: needs native speaker review
+    photo_rule_8_title: "नियम 8: उसी जगह फोटो", // TODO: needs native speaker review
+    photo_rule_8_desc: "स्थान न बदलें। दोबारा फोटो लें।", // TODO: needs native speaker review
+    photo_rule_9_title: "नियम 9: सिक्का न हिलाएं", // TODO: needs native speaker review
+    photo_rule_9_desc: "सिक्का उसी जगह पर रहने दें।", // TODO: needs native speaker review
 
-    // Color Stages
-    color_mature_green: "पक्का हरा (0-2% लाल)",
-    color_breaker: "ब्रेकर (2-10% हल्का लाल)",
-    color_turning: "टर्निंग (10-30% गुलाबी/लाल)",
-    color_pink: "गुलाबी (30-60% लाल)",
-    color_red: "लाल (60-90% लाल)",
-    color_mature_red: "पूर्ण परिपक्व लाल (>90% गहरा लाल)",
+    // Live Camera & Capture Checks
+    camera_heading: "बैच {curr}/{total}: फोटो {type}", // TODO: needs native speaker review
+    photo_a_label: "फोटो A (डंठल ऊपर)", // TODO: needs native speaker review
+    photo_b_label: "फोटो B (डंठल नीचे)", // TODO: needs native speaker review
+    photo_c_label: "फोटो C (करवट से - ऐच्छिक)", // TODO: needs native speaker review
+    check_coin_found: "सिक्का दिखा", // TODO: needs native speaker review
+    check_not_blurry: "फोटो साफ़ है", // TODO: needs native speaker review
+    check_not_dark: "रोशनी सही है", // TODO: needs native speaker review
+    check_not_tilted: "फ़ोन सीधा है", // TODO: needs native speaker review
+    check_no_touch: "फल अलग हैं", // TODO: needs native speaker review
+    btn_capture: "फोटो लें", // TODO: needs native speaker review
+    btn_retake: "दोबारा लें", // TODO: needs native speaker review
+    gallery_warning: "गैलरी की फोटो पुरानी हो सकती है।", // TODO: needs native speaker review
+    progress_batch_bar: "बैच {curr}/{total} पूरा। {fcurr}/{ftarget} फल।", // TODO: needs native speaker review
+    btn_finish_early: "कम फल पर समाप्त करें", // TODO: needs native speaker review
 
-    // Fruit results
-    fruit_list_title: "प्रत्येक टमाटर की विस्तृत जांच",
-    fruit_id_col: "टमाटर #",
-    fruit_size_col: "व्यास (मिमी)",
-    fruit_size_code_col: "साइज़ कोड",
-    fruit_shape_col: "आकार अनुपात",
-    fruit_color_col: "रंग अवस्था",
-    fruit_defects_col: "दाग-धब्बे (%)",
-    fruit_grade_col: "प्राप्त ग्रेड",
-    fruit_reasons_col: "ग्रेड का कारण",
+    // Hand Check & Weight Check
+    hand_check_title: "हाथ से दबाकर जांच", // TODO: needs native speaker review
+    hand_check_prompt: "10 टमाटर हाथ से दबाएं। कितने पिलपिले (नरम) हैं?", // TODO: needs native speaker review
+    hand_check_count: "नरम टमाटरों की संख्या (0 से 10)", // TODO: needs native speaker review
+    weight_check_title: "नमूने का वज़न (ऐच्छिक)", // TODO: needs native speaker review
+    weight_check_prompt: "जांचे गए फल तौलें। किलो दर्ज करें।", // TODO: needs native speaker review
+    weight_check_placeholder: "जैसे 1.8 किलो", // TODO: needs native speaker review
+    btn_compute_grade: "ग्रेड निकालें", // TODO: needs native speaker review
 
-    // Acknowledgements
-    ack_heading: "किसान और व्यापारी सहमति (अपरिवर्तनीय ऑडिट ट्रेल)",
-    ack_desc: "दोनों पक्ष ग्रेड पर अपनी सहमति या असहमति दर्ज कर सकते हैं। प्रत्येक प्रविष्टि क्रिप्टोग्राफिक हैश द्वारा सुरक्षित रहती है।",
-    farmer_ack_title: "किसान का निर्णय",
-    buyer_ack_title: "खरीदार / आढ़ती का निर्णय",
-    party_label: "आपकी भूमिका",
-    verdict_label: "निर्णय",
-    verdict_accept: "ग्रेड और भाव स्वीकार है",
-    verdict_dispute: "आपत्ति / दोबारा मोलभाव",
-    note_label: "टिप्पणी / आपत्ति का कारण",
-    note_placeholder: "उदा. नमी अधिक है, 5% छूट पर तय हुआ, या क्लास I दर मंजूर है।",
-    btn_submit_ack: "हस्ताक्षर व सहमति दर्ज करें",
-    ack_recorded_msg: "सहमति सफलतापूर्वक हैश श्रृंखला में दर्ज हो गई।",
-    already_acked_msg: "इस पक्ष द्वारा पहले ही सहमति दर्ज की जा चुकी है।",
+    // Results & Verdicts
+    results_heading: "टमाटर का परिणाम", // TODO: needs native speaker review
+    lot_grade_label: "मिला हुआ ग्रेड", // TODO: needs native speaker review
+    grade_a: "ग्रेड A", // TODO: needs native speaker review
+    grade_b: "ग्रेड B", // TODO: needs native speaker review
+    grade_c: "ग्रेड C", // TODO: needs native speaker review
+    grade_reject: "रद्द (रिजेक्ट)", // TODO: needs native speaker review
+    verdict_sure: "पक्का", // TODO: needs native speaker review
+    verdict_unsure: "पक्का नहीं। 20 और टमाटर जांचें।", // TODO: needs native speaker review
+    verdict_not_this: "यह ग्रेड नहीं", // TODO: needs native speaker review
+    btn_add_20_more: "20 और टमाटर जोड़ें", // TODO: needs native speaker review
+    no_grade_zero: "कोई ग्रेड नहीं। कोई टमाटर नहीं मिला।", // TODO: needs native speaker review
+    no_grade_few: "बहुत कम फल। कोई ग्रेड नहीं।", // TODO: needs native speaker review
+    indicative_badge: "सिर्फ़ संकेत", // TODO: needs native speaker review
+    server_saved_badge: "Report not changed since saved", // Server-only status
+    local_saved_badge: "सिर्फ़ फोन में सुरक्षित", // TODO: needs native speaker review
 
-    // Sharing & QR
-    share_heading: "रिपोर्ट साझा करें और जांचें",
-    share_desc: "कोई भी व्यक्ति इस क्यूआर कोड को स्कैन करके रिपोर्ट की प्रामाणिकता की पुष्टि कर सकता है।",
-    btn_copy_link: "रिपोर्ट लिंक कॉपी करें",
-    btn_download_qr: "क्यूआर कोड डाउनलोड करें",
-    btn_share_native: "व्हाट्सएप पर भेजें",
-    btn_read_aloud: "रिपोर्ट बोलकर सुनाएं (Audio)",
-    read_aloud_stop: "बोलना रोकें",
-    read_aloud_unsupported: "आपके ब्राउज़र में हिंदी आवाज उपलब्ध नहीं है।",
+    // Wilson Range Bar
+    wilson_bar_text: "खराब टमाटर: 100 में से लगभग {p}। {low} से {high} हो सकते हैं।", // TODO: needs native speaker review
+    surface_seen_85: "टमाटर की लगभग 85% सतह देखी गई।", // TODO: needs native speaker review
+    surface_seen_45: "टमाटर की लगभग 45% सतह देखी गई।", // TODO: needs native speaker review
+    hidden_defect_warning: "अंदरूनी सड़न और नरमी फोटो में नहीं दिखती।", // TODO: needs native speaker review
 
-    // Standards Page
-    standards_title: "टमाटर ग्रेडिंग मानक और सीमाएं",
-    standards_intro: "एग्रीग्रेड भारत सरकार के एगमार्क (DMI/AGMARK) और UNECE FFV-36 नियमों पर आधारित पारदर्शी नियमों का उपयोग करता है।",
-    standards_table_class: "श्रेणी (Class)",
-    standards_table_defects: "अधिकतम दाग सीमा",
-    standards_table_shape: "न्यूनतम गोल अनुपात",
-    standards_table_notes: "विशेषताएं और सहनशीलता",
-    standards_extra_desc: "दाग < 1%, अनुपात >= 0.90, एक समान रंग, दरार या सड़न बिल्कुल नहीं।",
-    standards_class1_desc: "दाग <= 3%, अनुपात >= 0.80, मामूली आकार भिन्नता मान्य।",
-    standards_class2_desc: "दाग <= 8%, अनुपात >= 0.65, हरा कंधा मान्य यदि फल सख्त हो।",
-    standards_below_desc: "दाग > 8%, अनुपात < 0.65, छोटा आकार (<35मिमी गोल, <30मिमी लंबा), या सड़े-फटे फल।",
-    tolerances_note: "लॉट छूट (Tolerances): एक्स्ट्रा में 5% तक और क्लास I व II में 10% तक निम्न फल मान्य हैं।",
-    agmark_field_note: "क्षेत्र सत्यापन सूचना: ये नियम बाजार में निष्पक्ष बातचीत के लिए हैं। कानूनी प्रमाण के लिए अधिकृत ग्रेडर से जांच कराएं।",
+    // Price Open Table
+    price_title: "अनुमानित भाव तालिका", // TODO: needs native speaker review
+    price_example_tag: "सिर्फ़ उदाहरण", // TODO: needs native speaker review
+    price_base_label: "मूल भाव (₹/किलो)", // TODO: needs native speaker review
+    price_rate_label: "अनुमानित लॉट भाव", // TODO: needs native speaker review
+    price_mult_a: "ग्रेड A = मूल भाव (x 1.00)", // TODO: needs native speaker review
+    price_mult_b: "ग्रेड B = मूल भाव x 0.85", // TODO: needs native speaker review
+    price_mult_c: "ग्रेड C = मूल भाव x 0.70", // TODO: needs native speaker review
+    price_mult_reject: "रद्द = ₹0.00", // TODO: needs native speaker review
 
-    // History
-    history_title: "पिछली ग्रेडिंग रिपोर्टें",
-    history_empty: "अभी तक कोई रिपोर्ट नहीं है। ऊपर दिए गए बटन से नई ग्रेडिंग शुरू करें!",
-    btn_view_report: "रिपोर्ट खोलें",
-    history_status_col: "स्थिति",
-    history_fruit_col: "कुल फल",
+    // Fruit Details Toggle
+    btn_toggle_details: "फल विवरण देखें", // TODO: needs native speaker review
+    btn_hide_details: "विवरण छिपाएं", // TODO: needs native speaker review
+    fruit_size_approx: "अनुमानित आकार (± {x} मिमी)", // TODO: needs native speaker review
+    fruit_defects: "दाग प्रतिशत", // TODO: needs native speaker review
+    fruit_grade: "ग्रेड", // TODO: needs native speaker review
+    btn_mark_not_damage: "दाग नहीं है (हटाएं)", // TODO: needs native speaker review
+    user_edited_tag: "उपयोगकर्ता द्वारा सुधारा गया", // TODO: needs native speaker review
 
-    // Errors & Alerts
-    err_network: "सर्वर से संपर्क नहीं हो पाया। कृपया नेटवर्क या बैकएंड की स्थिति जांचें।",
-    err_select_image: "कृपया जांच के लिए कम से कम 1 फोटो चुनें।",
-    err_invalid_image: "चुनी गई फाइल सही फोटो प्रारूप में नहीं है। JPG या PNG का उपयोग करें।",
-    err_max_images: "एक रिपोर्ट में अधिकतम 3 फोटो ही अपलोड किए जा सकते हैं।",
-    copied_alert: "रिपोर्ट लिंक कॉपी कर लिया गया है!",
-    link_shared_alert: "रिपोर्ट साझा करने के लिए तैयार है।"
+    // Flags
+    flag_f0: "F0: सिक्का नहीं मिला।", // TODO: needs native speaker review
+    flag_f0b: "F0b: फोटो धुंधली या अंधेरी है।", // TODO: needs native speaker review
+    flag_f0c: "F0c: 20 से कम टमाटर हैं।", // TODO: needs native speaker review
+    flag_f0d: "F0d: फोटो B (पलटी हुई) गायब है।", // TODO: needs native speaker review
+    flag_f1: "F1: छोटा नमूना। {target} में से सिर्फ़ {n} जांचे गए।", // TODO: needs native speaker review
+    flag_f2: "F2: बहुत कम क्रेट खोले गए।", // TODO: needs native speaker review
+    flag_f3: "F3: सिर्फ़ ऊपर का हिस्सा देखा गया।", // TODO: needs native speaker review
+    flag_f4: "F4: फ़ोन 10 डिग्री से ज़्यादा झुका था।", // TODO: needs native speaker review
+    flag_f5: "F5: टमाटर के पास काली परछाई है।", // TODO: needs native speaker review
+    flag_f6: "F6: टमाटर आपस में जुड़े हुए हैं।", // TODO: needs native speaker review
+    flag_f7: "F7: एक ही क्रेट या छोटा ढेर।", // TODO: needs native speaker review
+    flag_f8: "F8: दोनों फोटो में टमाटरों की संख्या अलग है।", // TODO: needs native speaker review
+    flag_f9: "F9: ऊपर का माल नीचे से बहुत अच्छा है।", // TODO: needs native speaker review
+    flag_f10: "F10: किसान और व्यापारी के नमूनों में बड़ा अंतर।", // TODO: needs native speaker review
+    flag_f11: "F11: वही फोटो या फल दोबारा इस्तेमाल हुआ।", // TODO: needs native speaker review
+    flag_f12: "F12: गैलरी से पुरानी फोटो अपलोड की गई।", // TODO: needs native speaker review
+    flag_f13: "F13: हाथ लगाने पर नरम फल मिले।", // TODO: needs native speaker review
+    flag_f14: "F14: फल चुनते समय दोनों मौजूद नहीं थे।", // TODO: needs native speaker review
+    flag_f15: "F15: सिक्का घिसा हुआ या गलत प्रकार का है।", // TODO: needs native speaker review
+    flag_f16: "F16: अलग-अलग किस्म के टमाटर मिले हुए हैं।", // TODO: needs native speaker review
+    flag_f17: "F17: कड़क धूप या पीले/नीले रंग का असर।", // TODO: needs native speaker review
+    flag_f18: "F18: अंदरूनी सड़न नहीं देखी जा सकती।", // TODO: needs native speaker review
+    flag_f19: "F19: आकार अनुमानित है (± {x} मिमी)।", // TODO: needs native speaker review
+
+    // Agreement & Audit
+    ack_heading: "आपसी बातचीत का रिकॉर्ड", // TODO: needs native speaker review
+    party_label: "आपकी भूमिका", // TODO: needs native speaker review
+    party_farmer: "किसान", // TODO: needs native speaker review
+    party_buyer: "खरीदार / व्यापारी", // TODO: needs native speaker review
+    verdict_accept: "इस ग्रेड से सहमत हैं", // TODO: needs native speaker review
+    verdict_dispute: "आपत्ति / दोबारा बातचीत", // TODO: needs native speaker review
+    pin_label: "4 अंकों का पिन डालें", // TODO: needs native speaker review
+    pin_placeholder: "4 अंक", // TODO: needs native speaker review
+    pin_unverified: "हस्ताक्षरकर्ता की पुष्टि नहीं हुई", // TODO: needs native speaker review
+    note_label: "टिप्पणी / विवरण", // TODO: needs native speaker review
+    note_placeholder: "जैसे 5% छूट पर तय हुआ।", // TODO: needs native speaker review
+    btn_submit_ack: "रिकॉर्ड सुरक्षित करें", // TODO: needs native speaker review
+    ack_recorded_msg: "रिकॉर्ड सुरक्षित कर लिया गया।", // TODO: needs native speaker review
+
+    // Share & QR
+    share_heading: "रिपोर्ट साझा करें", // TODO: needs native speaker review
+    btn_whatsapp_share: "व्हाट्सएप पर भेजें", // TODO: needs native speaker review
+    btn_copy_link: "लिंक कॉपी करें", // TODO: needs native speaker review
+    btn_download_qr: "QR कोड डाउनलोड करें", // TODO: needs native speaker review
+    btn_print_pdf: "प्रिंट / PDF", // TODO: needs native speaker review
+    btn_delete_photos: "मेरी फोटो हटाएं", // TODO: needs native speaker review
+    privacy_note: "फोटो सिर्फ़ इसी रिपोर्ट के लिए हैं।", // TODO: needs native speaker review
+    photos_deleted_msg: "सर्वर से फोटो हटा दी गई हैं।", // TODO: needs native speaker review
+
+    // Admin & Tests
+    admin_test_title: "टेस्ट मोड: CSV से हाथ के ग्रेड की तुलना", // TODO: needs native speaker review
+    admin_sim_title: "नमूना सिमुलेशन (100-फल क्रेट)", // TODO: needs native speaker review
+    admin_cal_title: "कैलीपर लंबन अंशांकन", // TODO: needs native speaker review
+    admin_checklist_title: "फ़ील्ड टेस्ट चेकलिस्ट", // TODO: needs native speaker review
+    btn_export_csv: "CSV डाउनलोड करें", // TODO: needs native speaker review
+    btn_run_sim: "सिमुलेशन चलाएं", // TODO: needs native speaker review
+    btn_save_cal: "लंबन गुणांक सुरक्षित करें" // TODO: needs native speaker review
   },
 
   te: {
-    app_title: "అగ్రిగ్రేడ్ (AgriGrade)",
-    tagline: "ఏఐ ఆధారిత టమోటా నాణ్యత & సైజు గ్రేడింగ్",
-    subtitle: "రైతులు మరియు వ్యాపారుల కోసం పారదర్శకమైన టమోటా నాణ్యత నిర్ధారణ వేదిక",
-    disclaimer_banner: "అగ్రిగ్రేడ్ మార్కెట్ ధరల చర్చలకు స్వతంత్ర మార్గదర్శి మాత్రమే, ప్రభుత్వ ధృవీకరణ పత్రం కాదు.",
-    
+    // Top banner & Footers
+    app_title: "అగ్రి-గ్రేడ్", // TODO: needs native speaker review
+    tagline: "టమాటా నాణ్యత, పరిమాణ సహాయకం", // TODO: needs native speaker review
+    disclaimer_banner: "మార్కెట్ చర్చల సాధనం. అధికారిక గ్రేడ్ కాదు.", // TODO: needs native speaker review
+    mandatory_footer: "ఇది కేవలం సహాయక సాధనం. ఇది అధికారిక గ్రేడ్ కాదు. తుది ధరను మీరిద్దరూ నిర్ణయించుకోండి.", // TODO: needs native speaker review
+    agreement_note: "ఇది మీ మాటల రికార్డు మాత్రమే. ఇది చట్టపరమైన పత్రం కాదు.", // TODO: needs native speaker review
+    how_we_grade_simple: "మా సాధారణ నిబంధనలు మార్కెట్ చర్చల కొరకు. ఇవి అధికారికమైనవి కావు.", // TODO: needs native speaker review
+
+    // Language Screen (First screen)
+    lang_screen_title: "మీ భాషను ఎంచుకోండి", // TODO: needs native speaker review
+    lang_screen_sub: "కొనసాగడానికి భాషను ఎంచుకోండి.", // TODO: needs native speaker review
+    btn_listen: "🔊 వినండి", // TODO: needs native speaker review
+    btn_stop_listen: "⏹️ ఆపండి", // TODO: needs native speaker review
+    listen_unsupported: "ఈ ఫోన్‌లో వాయిస్ అందుబాటులో లేదు.", // TODO: needs native speaker review
+
     // Navigation
-    nav_home: "హోమ్",
-    nav_new_grade: "కొత్త గ్రేడింగ్",
-    nav_history: "రిపోర్టుల హిస్టరీ",
-    nav_methodology: "గ్రేడింగ్ విధానం",
-    nav_standards: "నాణ్యత ప్రమాణాలు",
-    nav_language: "భాష (Language)",
-    
+    nav_home: "హోమ్", // TODO: needs native speaker review
+    nav_new_grade: "కొత్త తనిఖీ", // TODO: needs native speaker review
+    nav_history: "పాత రిపోర్టులు", // TODO: needs native speaker review
+    nav_methodology: "తనిఖీ విధానం", // TODO: needs native speaker review
+    nav_standards: "మార్కెట్ నిబంధనలు", // TODO: needs native speaker review
+    nav_admin: "టెస్ట్ టూల్స్", // TODO: needs native speaker review
+
     // Home Screen
-    hero_title: "నాణెం మరియు ఏఐ సహాయంతో టమోటా నాణ్యతను కొలవండి",
-    hero_subtitle: "₹10 లేదా ₹5 నాణెంతో మీ టమోటాల ఫోటో తీయండి. మిల్లీమీటర్లలో పరిమాణం, మచ్చలు మరియు రంగు ఆధారంగా సురక్షితమైన గ్రేడింగ్ రిపోర్టును పొందండి.",
-    btn_start_grading: "టమోటా గ్రేడింగ్ ప్రారంభించండి",
-    btn_view_history: "పాత రిపోర్టులు చూడండి",
-    btn_learn_more: "ఇది ఎలా పనిచేస్తుంది",
-    photo_guide_heading: "ఖచ్చితమైన గ్రేడింగ్ కోసం ఫోటో సూచనలు",
-    guide_step1: "1 నుండి 20 టమోటాలను తెల్లని బట్ట లేదా ట్రేపై ఒకదానికొకటి తాకకుండా విడిగా ఉంచండి.",
-    guide_step2: "టమోటాల పక్కనే ఒక ₹10 లేదా ₹5 నాణేన్ని సమతలంగా ఉంచండి.",
-    guide_step3: "పగటి వెలుతురులో పైనుండి నిలువుగా స్పష్టమైన ఫోటో తీయండి. నీడలు పడకుండా చూసుకోండి.",
-    guide_step4: "టమోటాలు ఒకదానిపై ఒకటి ఉండకూడదు, ప్రతి టమోటా స్పష్టంగా కనిపించాలి.",
+    hero_title: "నాణెంతో టమాటాల నాణ్యతను కొలవండి", // TODO: needs native speaker review
+    hero_subtitle: "₹10 లేదా ₹5 నాణెం ఉంచి ఫోటో తీయండి. సరసమైన ధర కోసం పరిమాణం మరియు మచ్చలు చూడండి.", // TODO: needs native speaker review
+    btn_start_grading: "తనిఖీ ప్రారంభించండి", // TODO: needs native speaker review
+    btn_view_history: "సేవ్ చేసిన రిపోర్టులు", // TODO: needs native speaker review
+    btn_learn_more: "విధానం తెలుసుకోండి", // TODO: needs native speaker review
 
-    // Upload & Options
-    upload_heading: "ఫోటో అప్‌లోడ్ & కొలత నాణెం",
-    upload_desc: "నాణెంతో ఉన్న 1 నుండి 3 టమోటా ఫోటోలను కెమెరా ద్వారా తీయండి లేదా అప్‌లోడ్ చేయండి.",
-    camera_btn: "కెమెరా తెరవండి",
-    gallery_btn: "గ్యాలరీ నుండి ఎంచుకోండి",
-    drag_drop_text: "ఫోటోలను ఇక్కడ లాగండి లేదా ఎంచుకోవడానికి నొక్కండి",
-    max_photos_hint: "గరిష్టంగా 3 ఫోటోలు (JPG, PNG, WebP, గరిష్ట పరిమాణం 15MB)",
-    reference_heading: "నాణెం రకం ఎంచుకోండి",
-    ref_coin_10: "భారతీయ ₹10 నాణెం (27 మి.మీ వ్యాసం)",
-    ref_coin_5: "భారతీయ ₹5 నాణెం (23 మి.మీ వ్యాసం)",
-    ref_custom: "ఇతర కొలత కార్డు / వస్తువు (మి.మీ నమోదు చేయండి)",
-    custom_mm_label: "కొలత పరిమాణం (మి.మీ)",
-    custom_mm_placeholder: "ఉదా. 50.0",
-    price_heading: "ఐచ్ఛిక మార్కెట్ ధర (₹/కిలో)",
-    price_hint: "గ్రేడ్ ప్రకారం ధర అంచనా వేయడానికి మీ స్థానిక మార్కెట్ ధరను నమోదు చేయండి.",
-    price_placeholder: "ఉదా. 25.00",
-    btn_submit_grade: "టమోటా నాణ్యతను పరీక్షించండి",
-    btn_clear: "రీసెట్ చేయండి",
+    // Step 2: Lot Setup
+    lot_setup_title: "మీ వద్ద ఎంత టమాటా ఉంది?", // TODO: needs native speaker review
+    lot_setup_subtitle: "క్రేట్లు, కిలోలు లేదా కుప్ప ఎంచుకోండి.", // TODO: needs native speaker review
+    opt_crates: "క్రేట్ల సంఖ్య", // TODO: needs native speaker review
+    opt_kg: "మొత్తం కిలోలు (kg)", // TODO: needs native speaker review
+    opt_heap: "విడిగా ఉన్న కుప్ప (kg)", // TODO: needs native speaker review
+    crate_weight_hint: "1 క్రేట్ సుమారు 22 కిలోలు.", // TODO: needs native speaker review
+    input_crates_label: "క్రేట్ల సంఖ్య రాయండి", // TODO: needs native speaker review
+    input_kg_label: "మొత్తం కిలోలు రాయండి", // TODO: needs native speaker review
+    input_heap_label: "కుప్ప బరువు (కిలోలు) రాయండి", // TODO: needs native speaker review
+    variety_label: "టమాటా రకం", // TODO: needs native speaker review
+    variety_desi: "నాటు (దేశీ)", // TODO: needs native speaker review
+    variety_hybrid: "హైబ్రిడ్", // TODO: needs native speaker review
+    variety_cherry: "చెర్రీ", // TODO: needs native speaker review
+    variety_unsure: "స్పష్టత లేదు", // TODO: needs native speaker review
+    btn_calc_plan: "తనిఖీ ప్లాన్ చేయండి", // TODO: needs native speaker review
 
-    // Progress
-    progress_heading: "కంప్యూటర్ విజన్ విశ్లేషణ జరుగుతోంది...",
-    step_validating: "చిత్రం స్పష్టత మరియు కాంతిని పరీక్షిస్తోంది...",
-    step_calibrating: "నాణేన్ని గుర్తించి పిక్సెల్-మిల్లీమీటర్ కొలతను లెక్కిస్తోంది...",
-    step_segmenting: "వాటర్‌షెడ్ విధానం ద్వారా ప్రతి టమోటాను వేరు చేస్తోంది...",
-    step_defects: "పండు రంగు మరియు ఉపరితల మచ్చలను గణిస్తోంది...",
-    step_lot: "అగ్‌మార్క్ నియమాల ప్రకారం లాట్ గ్రేడ్ మరియు హాష్ ఫింగర్‌ప్రింట్‌ను సిద్ధం చేస్తోంది...",
+    // Step 3: Sampling Plan
+    plan_title: "టమాటా నమూనా ప్లాన్", // TODO: needs native speaker review
+    plan_fruits_needed: "తనిఖీ చేయాల్సిన పండ్లు: {n} టమాటాలు.", // TODO: needs native speaker review
+    plan_batches_needed: "ఫోటోల సంఖ్య: {b} బ్యాచ్‌లు (ఒక్కోటి 15 పండ్లు).", // TODO: needs native speaker review
+    plan_min_note: "గ్రేడ్ కోసం కనీసం 20 టమాటాలు కావాలి.", // TODO: needs native speaker review
 
-    // Results & Reports
-    report_title: "టమోటా లాట్ గ్రేడింగ్ నివేదిక",
-    report_id_label: "రిపోర్ట్ నంబర్ (ID)",
-    created_at_label: "తయారైన సమయం",
-    observed_fruit_label: "పరీక్షించిన టమోటాల సంఖ్య",
-    lot_grade_label: "మొత్తం లాట్ గ్రేడ్",
-    tamper_verified: "SHA-256 ధృవీకరించబడింది: నివేదిక అసలైనది",
-    tamper_invalid: "హెచ్చరిక: నివేదికలో మార్పులు జరిగాయి!",
-    tamper_chain_corrupt: "హెచ్చరిక: ఆమోద గొలుసులో లోపం ఉంది",
-    calibration_status_label: "కొలత స్థితి",
-    size_uncalibrated: "పరిమాణం కొలవబడలేదు (నాణెం కనుగొనబడలేదు)",
-    lot_reasons_label: "ఈ గ్రేడ్ రావడానికి గల కారణాలు",
-    lot_warnings_label: "నమూనా మరియు కొలతల వివరాలు",
-    indicative_price_title: "అంచనా మార్కెట్ విలువ",
-    base_price_label: "నమోదు చేసిన మూల ధర",
-    multiplier_label: "నాణ్యత గుణకం (Multiplier)",
-    indicative_rate_label: "అంచనా ధర ప్రతి కిలోకు",
-    price_formula_label: "లెక్కింపు విధానం",
-    price_disclaimer: "ఇది మార్కెట్ బేరసారాల కోసం సూచనాత్మక ధర మాత్రమే. తేమ మరియు రవాణా ఖర్చులపై ఆధారపడి ధర మారవచ్చు.",
+    // Step 4: Random Picker
+    random_picker_title: "టమాటాలు ఎక్కడినుండి తీయాలి (పక్షపాతం లేకుండా)", // TODO: needs native speaker review
+    random_crates_pick: "ఈ క్రేట్ నంబర్లు తెరవండి: {list}", // TODO: needs native speaker review
+    random_layer_pick: "5 పైనుండి, 5 మధ్యనుండి, 5 కిందనుండి తీయండి.", // TODO: needs native speaker review
+    random_heap_zones: "ఈ భాగాల నుండి 5 చొప్పున తీయండి: {zones}", // TODO: needs native speaker review
+    single_crate_note: "ఒకే క్రేట్: పైనుండి, మధ్యనుండి, కిందనుండి సమానంగా తీయండి.", // TODO: needs native speaker review
+    warning_anti_bias: "మరీ మంచివి వద్దు, మరీ చెడ్డవి వద్దు.", // TODO: needs native speaker review
+    chk_both_present: "రైతు, కొనుగోలుదారు ఇద్దరూ ఇక్కడే ఉన్నారు.", // TODO: needs native speaker review
+    btn_start_photos: "ఫోటోల తనిఖీ ప్రారంభించండి", // TODO: needs native speaker review
+    btn_buyer_repeat: "కొనుగోలుదారు స్వంత తనిఖీ కోరుతున్నారు", // TODO: needs native speaker review
 
-    // Quality Classes
-    class_extra: "ఎక్స్‌ట్రా క్లాస్ (ఉత్తమ నాణ్యత)",
-    class_1: "క్లాస్ I (మొదటి రకం)",
-    class_2: "క్లాస్ II (రెండవ రకం)",
-    class_below: "ప్రమాణం కంటే తక్కువ (Below Standard)",
+    // Step 5 & Section D: Photo Rules (Wizard)
+    photo_rule_1_title: "నియమం 1: పగటి వెలుతురు", // TODO: needs native speaker review
+    photo_rule_1_desc: "స్పష్టమైన పగటి వెలుతురులో ఫోటో తీయండి.", // TODO: needs native speaker review
+    photo_rule_2_title: "నియమం 2: లేత రంగు గుడ్డ", // TODO: needs native speaker review
+    photo_rule_2_desc: "సాదా లేత గుడ్డ లేదా కాగితం ఉంచండి.", // TODO: needs native speaker review
+    photo_rule_3_title: "నియమం 3: నాణెం సమాంతరంగా", // TODO: needs native speaker review
+    photo_rule_3_desc: "నాణెం గుడ్డపై బల్ల మట్టంలో ఫ్లాట్‌గా ఉంచండి.", // TODO: needs native speaker review
+    photo_rule_4_title: "నియమం 4: 15 టమాటాలు వేరుగా", // TODO: needs native speaker review
+    photo_rule_4_desc: "15 టమాటాలు వరుసలో ఉంచండి. తాకకూడదు.", // TODO: needs native speaker review
+    photo_rule_5_title: "నియమం 5: తొడిమ పైకి", // TODO: needs native speaker review
+    photo_rule_5_desc: "తొడిమ పైకి ఉంచి పైనుండి ఫోటో తీయండి.", // TODO: needs native speaker review
+    photo_rule_6_title: "నియమం 6: ఫోన్ వంచవద్దు", // TODO: needs native speaker review
+    photo_rule_6_desc: "ఫోన్ వంచకుండా సమాంతరంగా పైనే ఉంచండి.", // TODO: needs native speaker review
+    photo_rule_7_title: "నియమం 7: టమాటాలు తిప్పండి", // TODO: needs native speaker review
+    photo_rule_7_desc: "ఇప్పుడు ప్రతి టమాటాను తిప్పండి. తొడిమ కిందకు.", // TODO: needs native speaker review
+    photo_rule_8_title: "నియమం 8: అదే చోట ఫోటో", // TODO: needs native speaker review
+    photo_rule_8_desc: "స్థలం మార్చకుండా మళ్లీ ఫోటో తీయండి.", // TODO: needs native speaker review
+    photo_rule_9_title: "నియమం 9: నాణెం కదపవద్దు", // TODO: needs native speaker review
+    photo_rule_9_desc: "నాణెం అదే స్థానంలో ఉంచండి.", // TODO: needs native speaker review
 
-    // Color Stages
-    color_mature_green: "ముదురు ఆకుపచ్చ (0-2% ఎరుపు)",
-    color_breaker: "బ్రేకర్ (2-10% కొద్దిగా ఎరుపు)",
-    color_turning: "టర్నింగ్ (10-30% ఎరుపు)",
-    color_pink: "గులాబీ (30-60% ఎరుపు)",
-    color_red: "ఎరుపు (60-90% ఎరుపు)",
-    color_mature_red: "పూర్తి ఎరుపు (>90% ముదురు ఎరుపు)",
+    // Live Camera & Capture Checks
+    camera_heading: "బ్యాచ్ {curr}/{total}: ఫోటో {type}", // TODO: needs native speaker review
+    photo_a_label: "ఫోటో A (తొడిమ పైకి)", // TODO: needs native speaker review
+    photo_b_label: "ఫోటో B (తొడిమ కిందకు)", // TODO: needs native speaker review
+    photo_c_label: "ఫోటో C (పక్క వైపు - ఐచ్ఛికం)", // TODO: needs native speaker review
+    check_coin_found: "నాణెం దొరికింది", // TODO: needs native speaker review
+    check_not_blurry: "ఫోటో స్పష్టంగా ఉంది", // TODO: needs native speaker review
+    check_not_dark: "వెలుతురు బాగుంది", // TODO: needs native speaker review
+    check_not_tilted: "ఫోన్ సమాంతరంగా ఉంది", // TODO: needs native speaker review
+    check_no_touch: "పండ్లు విడివిడిగా ఉన్నాయి", // TODO: needs native speaker review
+    btn_capture: "ఫోటో తీయండి", // TODO: needs native speaker review
+    btn_retake: "మళ్లీ తీయండి", // TODO: needs native speaker review
+    gallery_warning: "గ్యాలరీ ఫోటో పాతది కావచ్చు.", // TODO: needs native speaker review
+    progress_batch_bar: "బ్యాచ్ {curr}/{total} పూర్తి. {fcurr}/{ftarget} టమాటాలు.", // TODO: needs native speaker review
+    btn_finish_early: "తక్కువ పండ్లతో ముగించండి", // TODO: needs native speaker review
 
-    // Fruit results
-    fruit_list_title: "ప్రతి టమోటా వ్యక్తిగత పరిశీలన",
-    fruit_id_col: "టమోటా #",
-    fruit_size_col: "వ్యాసం (మి.మీ)",
-    fruit_size_code_col: "సైజు కోడ్",
-    fruit_shape_col: "ఆకారం నిష్పత్తి",
-    fruit_color_col: "రంగు దశ",
-    fruit_defects_col: "మచ్చల శాతం (%)",
-    fruit_grade_col: "వచ్చిన గ్రేడ్",
-    fruit_reasons_col: "కారణాలు",
+    // Hand Check & Weight Check
+    hand_check_title: "చేతితో నొక్కి చూసే పరీక్ష", // TODO: needs native speaker review
+    hand_check_prompt: "10 టమాటాలను చేతితో నొక్కండి. ఎన్ని మెత్తగా ఉన్నాయి?", // TODO: needs native speaker review
+    hand_check_count: "మెత్తని టమాటాల సంఖ్య (0 నుండి 10)", // TODO: needs native speaker review
+    weight_check_title: "నమూనా బరువు (ఐచ్ఛికం)", // TODO: needs native speaker review
+    weight_check_prompt: "నమూనా పండ్లను తూచండి. కిలోలు నమోదు చేయండి.", // TODO: needs native speaker review
+    weight_check_placeholder: "ఉదా. 1.8 కిలోలు", // TODO: needs native speaker review
+    btn_compute_grade: "గ్రేడ్ లెక్కించండి", // TODO: needs native speaker review
 
-    // Acknowledgements
-    ack_heading: "రైతు & వ్యాపారి ఆమోదం (ఆడిట్ రికార్డు)",
-    ack_desc: "ఇరుపక్షాలు రిపోర్టుపై తమ ఆమోదం లేదా అభ్యంతరాన్ని నమోదు చేసుకోవచ్చు. ఇది హాష్ భద్రతతో శాశ్వతంగా నిల్వ చేయబడుతుంది.",
-    farmer_ack_title: "రైతు నిర్ణయం",
-    buyer_ack_title: "కొనుగోలుదారు / వ్యాపారి నిర్ణయం",
-    party_label: "మీ పాత్ర",
-    verdict_label: "నిర్ణయం",
-    verdict_accept: "గ్రేడ్ మరియు ధర ఆమోదించబడింది",
-    verdict_dispute: "అభ్యంతరం / పునరాలోచన",
-    note_label: "వ్యాఖ్య / అభ్యంతరానికి గల కారణం",
-    note_placeholder: "ఉదా. తేమ ఎక్కువగా ఉంది, 5% తగ్గింపుతో ఒప్పందం కుదిరింది.",
-    btn_submit_ack: "సంతకం చేసి నమోదు చేయండి",
-    ack_recorded_msg: "ఆమోదం విజయవంతంగా నమోదు చేయబడింది.",
-    already_acked_msg: "ఈ పక్షం నుండి ఇప్పటికే నిర్ణయం నమోదు చేయబడింది.",
+    // Results & Verdicts
+    results_heading: "టమాటా ఫలితం", // TODO: needs native speaker review
+    lot_grade_label: "వచ్చిన గ్రేడ్", // TODO: needs native speaker review
+    grade_a: "గ్రేడ్ A", // TODO: needs native speaker review
+    grade_b: "గ్రేడ్ B", // TODO: needs native speaker review
+    grade_c: "గ్రేడ్ C", // TODO: needs native speaker review
+    grade_reject: "రిజెక్ట్", // TODO: needs native speaker review
+    verdict_sure: "ఖచ్చితం", // TODO: needs native speaker review
+    verdict_unsure: "స్పష్టత లేదు. మరో 20 టమాటాలు చూడండి.", // TODO: needs native speaker review
+    verdict_not_this: "ఈ గ్రేడ్ కాదు", // TODO: needs native speaker review
+    btn_add_20_more: "మరో 20 టమాటాలు కలపండి", // TODO: needs native speaker review
+    no_grade_zero: "గ్రేడ్ లేదు. టమాటాలు కనుగొనబడలేదు.", // TODO: needs native speaker review
+    no_grade_few: "చాలా తక్కువ పండ్లు. గ్రేడ్ లేదు.", // TODO: needs native speaker review
+    indicative_badge: "కేవలం సూచన మాత్రమే", // TODO: needs native speaker review
+    server_saved_badge: "Report not changed since saved", // Server-only status
+    local_saved_badge: "ఫోన్‌లో మాత్రమే భద్రపరచబడింది", // TODO: needs native speaker review
 
-    // Sharing & QR
-    share_heading: "నివేదికను భాగస్వామ్యం చేయండి",
-    share_desc: "ఈ క్యూఆర్ కోడ్ స్కాన్ చేసి ఎవరైనా రిపోర్టు నిజమైనదా కాదా అని తనిఖీ చేయవచ్చు.",
-    btn_copy_link: "రిపోర్ట్ లింక్ కాపీ చేయండి",
-    btn_download_qr: "క్యూఆర్ కోడ్ డౌన్‌లోడ్ చేయండి",
-    btn_share_native: "వాట్సాప్ ద్వారా పంపండి",
-    btn_read_aloud: "రిపోర్టును చదివి వినిపించండి (Audio)",
-    read_aloud_stop: "ఆపండి",
-    read_aloud_unsupported: "మీ బ్రౌజర్‌లో తెలుగు వాయిస్ సపోర్ట్ అందుబాటులో లేదు.",
+    // Wilson Range Bar
+    wilson_bar_text: "చెడిపోయినవి: 100 లో సుమారు {p}. {low} నుండి {high} ఉండవచ్చు.", // TODO: needs native speaker review
+    surface_seen_85: "టమాటా సుమారు 85% ఉపరితలం చూడబడింది.", // TODO: needs native speaker review
+    surface_seen_45: "టమాటా సుమారు 45% ఉపరితలం చూడబడింది.", // TODO: needs native speaker review
+    hidden_defect_warning: "లోపలి కుళ్ళు మరియు మెత్తదనం ఫోటోలో కనిపించదు.", // TODO: needs native speaker review
 
-    // Standards Page
-    standards_title: "టమోటా నాణ్యతా ప్రమాణాలు & నిబంధనలు",
-    standards_intro: "అగ్రిగ్రేడ్ భారత ప్రభుత్వ అగ్‌మార్క్ (AGMARK) మరియు UNECE FFV-36 అంతర్జాతీయ ప్రమాణాల ఆధారంగా పనిచేస్తుంది.",
-    standards_table_class: "తరగతి (Class)",
-    standards_table_defects: "గరిష్ట మచ్చల శాతం",
-    standards_table_shape: "గుండ్రని నిష్పత్తి",
-    standards_table_notes: "లక్షణాలు మరియు నిబంధనలు",
-    standards_extra_desc: "మచ్చలు < 1%, నిష్పత్తి >= 0.90, ఒకే విధమైన రంగు, పగుళ్లు లేదా కుళ్లు ఉండకూడదు.",
-    standards_class1_desc: "మచ్చలు <= 3%, నిష్పత్తి >= 0.80, స్వల్ప ఆకార మార్పు అనుమతించబడుతుంది.",
-    standards_class2_desc: "మచ్చలు <= 8%, నిష్పత్తి >= 0.65, కాయ గట్టిగా ఉంటే ఆకుపచ్చ భుజాలు అనుమతించబడతాయి.",
-    standards_below_desc: "మచ్చలు > 8%, నిష్పత్తి < 0.65, చిన్న సైజు (<35మి.మీ గుండ్రని, <30మి.మీ పొడవు), లేదా పగుళ్లు/కుళ్లు.",
-    tolerances_note: "లాట్ మినహాయింపులు: ఎక్స్‌ట్రాలో 5% వరకు మరియు క్లాస్ I & II లలో 10% వరకు నాణ్యత తేడాలు అనుమతించబడతాయి.",
-    agmark_field_note: "క్షేత్ర స్థాయి గమనిక: ఇవి మార్కెట్ పారదర్శకత కోసం రూపొందించబడినవి. చట్టబద్ధమైన ధృవీకరణ కోసం అధికారిక ఇన్స్పెక్టర్ పరిశీలన అవసరం.",
+    // Price Open Table
+    price_title: "ధర గుణకాల ఉదాహరణ", // TODO: needs native speaker review
+    price_example_tag: "ఉదాహరణ మాత్రమే", // TODO: needs native speaker review
+    price_base_label: "మూల ధర (₹/కిలో)", // TODO: needs native speaker review
+    price_rate_label: "అంచనా ధర", // TODO: needs native speaker review
+    price_mult_a: "గ్రేడ్ A = మూల ధర (x 1.00)", // TODO: needs native speaker review
+    price_mult_b: "గ్రేడ్ B = మూల ధర x 0.85", // TODO: needs native speaker review
+    price_mult_c: "గ్రేడ్ C = మూల ధర x 0.70", // TODO: needs native speaker review
+    price_mult_reject: "రిజెక్ట్ = ₹0.00", // TODO: needs native speaker review
 
-    // History
-    history_title: "మునుపటి గ్రేడింగ్ నివేదికలు",
-    history_empty: "ఇప్పటివరకు ఎలాంటి నివేదికలు లేవు. పై బటన్ నొక్కి కొత్త గ్రేడింగ్ చేయండి!",
-    btn_view_report: "నివేదిక చూడండి",
-    history_status_col: "స్థితి",
-    history_fruit_col: "పండ్ల సంఖ్య",
+    // Fruit Details Toggle
+    btn_toggle_details: "పండ్ల వివరాలు చూడండి", // TODO: needs native speaker review
+    btn_hide_details: "వివరాలు దాచండి", // TODO: needs native speaker review
+    fruit_size_approx: "సుమారు పరిమాణం (± {x} మి.మీ)", // TODO: needs native speaker review
+    fruit_defects: "మచ్చల శాతం", // TODO: needs native speaker review
+    fruit_grade: "గ్రేడ్", // TODO: needs native speaker review
+    btn_mark_not_damage: "మచ్చ కాదు (తీసివేయండి)", // TODO: needs native speaker review
+    user_edited_tag: "వినియోగదారు సవరించారు", // TODO: needs native speaker review
 
-    // Errors & Alerts
-    err_network: "సర్వర్ అనుసంధానం విఫలమైంది. దయచేసి నెట్‌వర్క్ తనిఖీ చేయండి.",
-    err_select_image: "దయచేసి కనీసం 1 ఫోటోను ఎంచుకోండి.",
-    err_invalid_image: "ఎంచుకున్న ఫైల్ సరైన చిత్రం కాదు. JPG లేదా PNG ఫైళ్లను ఉపయోగించండి.",
-    err_max_images: "ఒక నివేదికకు గరిష్టంగా 3 ఫోటోలు మాత్రమే అనుమతించబడతాయి.",
-    copied_alert: "రిపోర్ట్ లింక్ కాపీ చేయబడింది!",
-    link_shared_alert: "రిపోర్ట్ షేరింగ్ కోసం సిద్ధంగా ఉంది."
+    // Flags
+    flag_f0: "F0: నాణెం దొరకలేదు.", // TODO: needs native speaker review
+    flag_f0b: "F0b: ఫోటో మసకగా లేదా చీకటిగా ఉంది.", // TODO: needs native speaker review
+    flag_f0c: "F0c: 20 కంటే తక్కువ టమాటాలు ఉన్నాయి.", // TODO: needs native speaker review
+    flag_f0d: "F0d: ఫోటో B (రెండవ వైపు) లేదు.", // TODO: needs native speaker review
+    flag_f1: "F1: చిన్న నమూనా. {target} లో {n} మాత్రమే చూశారు.", // TODO: needs native speaker review
+    flag_f2: "F2: చాలా తక్కువ క్రేట్లు తెరిచారు.", // TODO: needs native speaker review
+    flag_f3: "F3: పై భాగం మాత్రమే చూడబడింది.", // TODO: needs native speaker review
+    flag_f4: "F4: ఫోన్ 10 డిగ్రీలకు మించి వంగి ఉంది.", // TODO: needs native speaker review
+    flag_f5: "F5: పండ్ల దగ్గర చీకటి నీడలు ఉన్నాయి.", // TODO: needs native speaker review
+    flag_f6: "F6: పండ్లు ఒకదానికొకటి తాకుతున్నాయి.", // TODO: needs native speaker review
+    flag_f7: "F7: ఒకే క్రేట్ లేదా చిన్న కుప్ప.", // TODO: needs native speaker review
+    flag_f8: "F8: రెండు ఫోటోలలో పండ్ల సంఖ్య వేరుగా ఉంది.", // TODO: needs native speaker review
+    flag_f9: "F9: పై పొర కింద పొర కంటే చాలా బాగుంది.", // TODO: needs native speaker review
+    flag_f10: "F10: రైతు, కొనుగోలుదారు నమూనాలలో పెద్ద తేడా ఉంది.", // TODO: needs native speaker review
+    flag_f11: "F11: అదే ఫోటో లేదా పండు మళ్లీ వాడారు.", // TODO: needs native speaker review
+    flag_f12: "F12: గ్యాలరీ నుండి పాత ఫోటో పెట్టారు.", // TODO: needs native speaker review
+    flag_f13: "F13: చేతితో చూస్తే మెత్తని పండ్లు దొరికాయి.", // TODO: needs native speaker review
+    flag_f14: "F14: ఎంపిక సమయంలో ఇద్దరూ లేరు.", // TODO: needs native speaker review
+    flag_f15: "F15: నాణెం అరిగిపోయింది లేదా సరైనది కాదు.", // TODO: needs native speaker review
+    flag_f16: "F16: వేర్వేరు రకాల టమాటాలు కలిసి ఉన్నాయి.", // TODO: needs native speaker review
+    flag_f17: "F17: తీవ్రమైన ఎండ లేదా రంగు తేడా ఉంది.", // TODO: needs native speaker review
+    flag_f18: "F18: లోపలి కుళ్ళు చూడలేము.", // TODO: needs native speaker review
+    flag_f19: "F19: పరిమాణం సుమారుగా ఉంటుంది (± {x} మి.మీ).", // TODO: needs native speaker review
+
+    // Agreement & Audit
+    ack_heading: "మీ పరస్పర మాటల రికార్డు", // TODO: needs native speaker review
+    party_label: "మీ పాత్ర", // TODO: needs native speaker review
+    party_farmer: "రైతు", // TODO: needs native speaker review
+    party_buyer: "కొనుగోలుదారు / వ్యాపారి", // TODO: needs native speaker review
+    verdict_accept: "ఈ గ్రేడ్‌కు అంగీకరిస్తున్నాను", // TODO: needs native speaker review
+    verdict_dispute: "అసమ్మతి / పునరాలోచన", // TODO: needs native speaker review
+    pin_label: "4 అంకెల పిన్ నమోదు చేయండి", // TODO: needs native speaker review
+    pin_placeholder: "4 అంకెలు", // TODO: needs native speaker review
+    pin_unverified: "ఎవరు సంతకం చేశారో ధృవీకరించబడలేదు", // TODO: needs native speaker review
+    note_label: "గమనిక / కారణం", // TODO: needs native speaker review
+    note_placeholder: "ఉదా. 5% రాయితీతో అంగీకరించారు.", // TODO: needs native speaker review
+    btn_submit_ack: "రికార్డును భద్రపరచండి", // TODO: needs native speaker review
+    ack_recorded_msg: "రికార్డు భద్రపరచబడింది.", // TODO: needs native speaker review
+
+    // Share & QR
+    share_heading: "రిపోర్టును షేర్ చేయండి", // TODO: needs native speaker review
+    btn_whatsapp_share: "వాట్సాప్‌లో పంపండి", // TODO: needs native speaker review
+    btn_copy_link: "లింక్ కాపీ చేయండి", // TODO: needs native speaker review
+    btn_download_qr: "QR కోడ్ డౌన్‌లోడ్", // TODO: needs native speaker review
+    btn_print_pdf: "ప్రింట్ / PDF", // TODO: needs native speaker review
+    btn_delete_photos: "నా ఫోటోలను తొలగించండి", // TODO: needs native speaker review
+    privacy_note: "ఫోటోలు ఈ నివేదిక కోసమే వాడబడతాయి.", // TODO: needs native speaker review
+    photos_deleted_msg: "సర్వర్ నుండి ఫోటోలు తొలగించబడ్డాయి.", // TODO: needs native speaker review
+
+    // Admin & Tests
+    admin_test_title: "టెస్ట్ మోడ్: CSV తో చేతి గ్రేడ్ల పోలిక", // TODO: needs native speaker review
+    admin_sim_title: "శాంప్లింగ్ సిమ్యులేషన్ (100-పండ్ల క్రేట్)", // TODO: needs native speaker review
+    admin_cal_title: "కాలిపర్ పారలాక్స్ క్రమాంకనం", // TODO: needs native speaker review
+    admin_checklist_title: "ఫీల్డ్ టెస్ట్ చెక్‌లిస్ట్", // TODO: needs native speaker review
+    btn_export_csv: "CSV డౌన్‌లోడ్", // TODO: needs native speaker review
+    btn_run_sim: "సిమ్యులేషన్ రన్ చేయండి", // TODO: needs native speaker review
+    btn_save_cal: "పారలాక్స్ ఫ్యాక్టర్ భద్రపరచండి" // TODO: needs native speaker review
   }
 };
 
@@ -472,9 +650,17 @@ function setLanguage(lang) {
   }
 }
 
-function t(key) {
+function getLanguage() {
+  return currentLanguage;
+}
+
+function t(key, vars = {}) {
   const dict = TRANSLATIONS[currentLanguage] || TRANSLATIONS.en;
-  return dict[key] || TRANSLATIONS.en[key] || key;
+  let str = dict[key] || TRANSLATIONS.en[key] || key;
+  for (const [k, v] of Object.entries(vars)) {
+    str = str.replace(new RegExp(`\\{${k}\\}`, "g"), v);
+  }
+  return str;
 }
 
 function applyTranslations() {
@@ -499,11 +685,9 @@ function applyTranslations() {
     }
   });
 
-  // Update active state on language buttons
   document.querySelectorAll(".lang-btn").forEach(btn => {
     btn.classList.toggle("active", btn.dataset.lang === currentLanguage);
   });
 
-  // Document language attribute
   document.documentElement.lang = currentLanguage;
 }

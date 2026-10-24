@@ -77,6 +77,24 @@ const AgriGradeAPI = (() => {
 
     async getPrices() {
       return request("/api/prices");
+    },
+
+    async getConfig() {
+      return request("/api/config");
+    },
+
+    async calibrate(caliperMeasurements) {
+      return request("/api/admin/calibrate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ caliper_measurements: caliperMeasurements })
+      });
+    },
+
+    async deletePhotos(reportId) {
+      return request(`/api/reports/${encodeURIComponent(reportId)}/photos`, {
+        method: "DELETE"
+      });
     }
   };
 })();

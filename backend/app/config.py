@@ -29,8 +29,9 @@ class Settings(BaseModel):
     # Base URL for QR codes and report links
     PUBLIC_BASE_URL: str = os.getenv("PUBLIC_BASE_URL", "http://localhost:8000")
     
-    # Standards Config File
+    # Standards and Centralized Tuning Config
     TOMATO_STANDARDS_PATH: Path = CONFIG_DIR / "tomato_standards.json"
+    GRADING_CONFIG_PATH: Path = CONFIG_DIR / "grading_config.json"
     
     # Image constraints
     MAX_IMAGE_SIZE_BYTES: int = 15 * 1024 * 1024  # 15 MB

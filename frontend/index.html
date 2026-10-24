@@ -3,11 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <title>AgriGrade — AI-Powered Tomato Quality & Size Grading</title>
-  <meta name="description" content="Independent AI-powered tomato size and quality grading for Indian farmers and mandi buyers using standard ₹10 and ₹5 reference coins.">
-  <meta name="theme-color" content="#1b5e20">
+  <title>AgriGrade — Tomato Quality & Size Helper</title>
+  <meta name="description" content="AgriGrade is a simple helper tool for Indian farmers and mandi buyers to check tomato size and defects using a ₹10 or ₹5 coin.">
+  <meta name="theme-color" content="#0f5132">
   
   <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Noto+Sans+Telugu:wght@400;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='55' r='38' fill='%23d32f2f'/><path d='M50,15 Q55,28 65,22 Q52,32 50,38 Q48,32 35,22 Q45,28 50,15' fill='%232e7d32'/></svg>">
 </head>
@@ -15,17 +18,17 @@
 
   <!-- Top Global Legal & Scope Disclaimer Banner -->
   <div class="disclaimer-bar">
-    <span data-i18n="disclaimer_banner">AgriGrade is an independent negotiation reference, not a certified grading authority.</span>
+    <span data-i18n="disclaimer_banner">Helper tool for market talks. Not official grade.</span>
   </div>
 
   <!-- Header & Navigation -->
   <header class="header-nav">
     <div class="nav-container">
       <a href="#home" class="brand-link">
-        <div class="brand-logo-icon" aria-hidden="true">🍅</div>
+        <div class="brand-logo-icon" aria-hidden="true" style="font-size: 2rem;">🍅</div>
         <div class="brand-text">
           <h1 data-i18n="app_title">AgriGrade</h1>
-          <span data-i18n="tagline">AI Tomato Quality Grading</span>
+          <span data-i18n="tagline">Tomato Quality & Size Helper</span>
         </div>
       </a>
 
@@ -34,9 +37,10 @@
       <ul class="nav-links">
         <li><a href="#home" class="nav-link active" data-view="home" data-i18n="nav_home">Home</a></li>
         <li><a href="#new" class="nav-link" data-view="new-grade" data-i18n="nav_new_grade">New Grading</a></li>
-        <li><a href="#history" class="nav-link" data-view="history" data-i18n="nav_history">Reports History</a></li>
+        <li><a href="#history" class="nav-link" data-view="history" data-i18n="nav_history">Saved Reports</a></li>
         <li><a href="#methodology" class="nav-link" data-view="methodology" data-i18n="nav_methodology">How We Grade</a></li>
-        <li><a href="#standards" class="nav-link" data-view="standards" data-i18n="nav_standards">Standards & Rules</a></li>
+        <li><a href="#standards" class="nav-link" data-view="standards" data-i18n="nav_standards">Market Rules</a></li>
+        <li><a href="#admin-test" class="nav-link" data-view="admin-test" data-i18n="nav_admin">Test Tools</a></li>
         <li>
           <!-- Language Switcher -->
           <div class="lang-switch" role="group" aria-label="Select Language">
@@ -49,335 +53,575 @@
     </div>
   </header>
 
+  <!-- ============================================================
+       FIRST SCREEN: LANGUAGE PICKER MODAL (తెలుగు / हिन्दी / English)
+       ============================================================ -->
+  <div id="lang-first-modal" class="lang-modal-backdrop" style="display: none;">
+    <div class="lang-big-modal">
+      <div style="font-size: 3rem; margin-bottom: 12px;">🌐</div>
+      <h2 class="lang-big-title" data-i18n="lang_screen_title">Choose Your Language</h2>
+      <p class="lang-big-sub" data-i18n="lang_screen_sub">Select your language to continue.</p>
+      
+      <div class="lang-big-grid">
+        <button type="button" class="btn-lang-big" data-choose-lang="te">
+          <span>తెలుగు</span>
+          <span>Telugu 👉</span>
+        </button>
+        <button type="button" class="btn-lang-big" data-choose-lang="hi">
+          <span>हिन्दी</span>
+          <span>Hindi 👉</span>
+        </button>
+        <button type="button" class="btn-lang-big" data-choose-lang="en">
+          <span>English</span>
+          <span>English 👉</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Main Application Body -->
   <main class="main-wrapper">
 
-    <!-- 1. HOME VIEW -->
+    <!-- ============================================================
+         1. HOME VIEW
+         ============================================================ -->
     <section id="view-home" class="view-panel active-view">
       <div class="hero-card">
-        <div class="hero-badge">🇮🇳 Farmer & Mandi Transparency Initiative</div>
-        <h2 class="hero-title" data-i18n="hero_title">Grade Tomatoes Fairly with AI & Reference Coin</h2>
+        <div class="hero-badge">🇮🇳 Farmer & Mandi Helper</div>
+        <h2 class="hero-title" data-i18n="hero_title">Grade Tomatoes Fairly with a Coin</h2>
         <p class="hero-subtitle" data-i18n="hero_subtitle">
-          Snap a photo of your tomatoes with a ₹10 or ₹5 coin. Measure exact fruit size in mm, inspect surface blemishes, and generate a tamper-evident grade report for mandi negotiations.
+          Place tomatoes with a ₹10 or ₹5 coin. Check size and defects for fair mandi prices.
         </p>
-        <div class="hero-actions">
-          <a href="#new" class="btn btn-primary" id="btn-hero-start" data-i18n="btn_start_grading">Start Tomato Grading</a>
+
+        <button type="button" class="btn-listen" data-speak-target="home-intro">
+          🔊 <span data-i18n="btn_listen">Listen</span>
+        </button>
+        <div id="home-intro-text" style="display: none;">
+          AgriGrade helps farmers and mandi buyers talk price fairly. Put tomatoes with a coin.
+        </div>
+
+        <div class="hero-actions" style="margin-top: 18px;">
+          <a href="#new" class="btn btn-primary" id="btn-hero-start" data-i18n="btn_start_grading">Start Grading</a>
           <a href="#history" class="btn btn-secondary" data-i18n="btn_view_history">View Saved Reports</a>
           <a href="#methodology" class="btn btn-secondary" data-i18n="btn_learn_more">How It Works</a>
         </div>
       </div>
 
-      <!-- Photo Guidelines Grid -->
-      <h3 style="font-family: var(--font-heading); font-size: 1.3rem; margin-bottom: 16px;" data-i18n="photo_guide_heading">Photo Guidelines for Reliable Grading</h3>
+      <!-- Quick 4 Guide Cards -->
       <div class="guide-card-grid">
         <div class="guide-step-card">
           <div class="step-num">1</div>
           <div class="step-text">
             <h4>Spread Fruit</h4>
-            <p data-i18n="guide_step1">Place 1 to 20 tomatoes separated on a flat, light-coloured surface (newspaper, white cloth, or tray).</p>
+            <p>15 tomatoes in row. No touching.</p>
           </div>
         </div>
         <div class="guide-step-card">
           <div class="step-num">2</div>
           <div class="step-text">
-            <h4>Place Reference Coin</h4>
-            <p data-i18n="guide_step2">Place a standard ₹10 or ₹5 coin flat beside the tomatoes at the same height.</p>
+            <h4>Place Coin Flat</h4>
+            <p>₹10 or ₹5 flat on cloth.</p>
           </div>
         </div>
         <div class="guide-step-card">
           <div class="step-num">3</div>
           <div class="step-text">
-            <h4>Direct Top-Down Photo</h4>
-            <p data-i18n="guide_step3">Photograph directly from above in clear daylight. Avoid harsh shadows or strong camera tilt.</p>
+            <h4>Stem Up (Photo A)</h4>
+            <p>Phone flat directly above tomatoes.</p>
           </div>
         </div>
         <div class="guide-step-card">
           <div class="step-num">4</div>
           <div class="step-text">
-            <h4>Avoid Severe Overlap</h4>
-            <p data-i18n="guide_step4">Ensure fruit do not overlap heavily so individual contours can be measured accurately.</p>
+            <h4>Turn Over (Photo B)</h4>
+            <p>Stem down. Take photo again.</p>
           </div>
         </div>
       </div>
+
+      <div class="mandatory-footer-box" data-i18n="mandatory_footer">
+        This is a helper tool. It is not an official grade. You both decide the final price.
+      </div>
     </section>
 
-    <!-- 2. NEW GRADING VIEW (Capture, Upload, Reference & Options) -->
+    <!-- ============================================================
+         2. NEW GRADING VIEW (Wizard Flow)
+         ============================================================ -->
     <section id="view-new-grade" class="view-panel">
-      <div class="workflow-card">
-        <div class="workflow-header">
-          <h2 data-i18n="upload_heading">Photograph Upload & Calibration</h2>
-          <p data-i18n="upload_desc">Capture or select 1 to 3 photographs of your tomatoes with the reference coin.</p>
+
+      <!-- WIZARD STEP 1: LOT SETUP -->
+      <div id="wizard-step-lot" class="wizard-card">
+        <div class="wizard-step-header">
+          <span class="wizard-step-badge">Step 1 of 5</span>
+          <button type="button" class="btn-listen" data-speak-target="lot-prompt">
+            🔊 <span data-i18n="btn_listen">Listen</span>
+          </button>
         </div>
 
-        <!-- Drag & Drop Zone -->
-        <div class="dropzone" id="photo-dropzone">
-          <div class="dropzone-icon">📷</div>
-          <h3 data-i18n="drag_drop_text">Drag & drop photos here or tap to upload</h3>
-          <p data-i18n="max_photos_hint">Up to 3 photographs allowed (JPG, PNG, WebP up to 15MB each)</p>
-          
-          <div class="dropzone-actions">
-            <!-- Mobile Camera direct trigger -->
-            <label for="camera-input" class="btn btn-primary" style="cursor: pointer;">
-              📸 <span data-i18n="camera_btn">Open Camera</span>
-            </label>
-            <input type="file" id="camera-input" accept="image/*" capture="environment" style="display: none;">
+        <div class="wizard-big-icon">🧺</div>
+        <h2 class="wizard-instruction-title" id="lot-prompt" data-i18n="lot_setup_title">How much tomato do you have?</h2>
+        <p class="wizard-instruction-desc" data-i18n="lot_setup_subtitle">Choose crates, total kg, or loose heap.</p>
 
-            <!-- Gallery/File Upload -->
-            <label for="file-input" class="btn btn-secondary" style="cursor: pointer;">
-              🖼️ <span data-i18n="gallery_btn">Upload Photos</span>
-            </label>
-            <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" multiple style="display: none;">
+        <!-- Lot Quantity Mode Selector -->
+        <div class="radio-cards-grid" style="margin-bottom: 20px;">
+          <label class="radio-card">
+            <input type="radio" name="lot-mode" value="crates" checked>
+            <div class="radio-card-content">
+              <strong data-i18n="opt_crates">Number of crates</strong>
+              <span data-i18n="crate_weight_hint">1 crate is about 22 kg.</span>
+            </div>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="lot-mode" value="kg">
+            <div class="radio-card-content">
+              <strong data-i18n="opt_kg">Total kilograms (kg)</strong>
+              <span>Exact weighed lot weight</span>
+            </div>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="lot-mode" value="heap">
+            <div class="radio-card-content">
+              <strong data-i18n="opt_heap">Loose heap (kg)</strong>
+              <span>Tomatoes piled loose on floor</span>
+            </div>
+          </label>
+        </div>
+
+        <!-- Quantity Input Field -->
+        <div class="input-group">
+          <label id="lot-qty-label" for="lot-qty-input" class="input-label" data-i18n="input_crates_label">Enter number of crates</label>
+          <input type="number" id="lot-qty-input" class="input-field" value="10" min="1" step="1">
+          <p id="lot-equiv-hint" style="font-size: 1rem; color: #15803d; font-weight: 700; margin-top: 6px;">Estimated: ~220 kg (10 crates)</p>
+        </div>
+
+        <!-- Tomato Variety Dropdown (Section G) -->
+        <div class="input-group" style="margin-top: 14px;">
+          <label for="tomato-variety" class="input-label" data-i18n="variety_label">Tomato variety</label>
+          <select id="tomato-variety" class="input-field">
+            <option value="desi" data-i18n="variety_desi">Desi</option>
+            <option value="hybrid" selected data-i18n="variety_hybrid">Hybrid</option>
+            <option value="cherry" data-i18n="variety_cherry">Cherry</option>
+            <option value="unsure" data-i18n="variety_unsure">Not sure</option>
+          </select>
+        </div>
+
+        <button type="button" class="btn btn-primary btn-block" id="btn-goto-plan" style="margin-top: 20px;" data-i18n="btn_calc_plan">
+          Make Checking Plan 👉
+        </button>
+      </div>
+
+      <!-- WIZARD STEP 2: SAMPLING PLAN & ANTI-BIAS RANDOM PICKER -->
+      <div id="wizard-step-plan" class="wizard-card" style="display: none;">
+        <div class="wizard-step-header">
+          <span class="wizard-step-badge">Step 2 of 5</span>
+          <button type="button" class="btn-listen" data-speak-target="plan-prompt">
+            🔊 <span data-i18n="btn_listen">Listen</span>
+          </button>
+        </div>
+
+        <div class="wizard-big-icon">🎲</div>
+        <h2 class="wizard-instruction-title" id="plan-prompt" data-i18n="plan_title">Your Tomato Sampling Plan</h2>
+
+        <div style="background: #f8fafc; border: 2px solid #cbd5e1; border-radius: var(--radius-md); padding: 18px; margin: 16px 0;">
+          <p id="plan-fruits-text" style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin-bottom: 6px;">Total fruit to check: 40 tomatoes.</p>
+          <p id="plan-batches-text" style="font-size: 1.1rem; color: #334155; margin-bottom: 8px;">Photo batches: 3 batches (15 fruit each).</p>
+          <p style="font-size: 0.95rem; color: #64748b;" data-i18n="plan_min_note">Need at least 20 fruit for a grade.</p>
+        </div>
+
+        <!-- Random Picker Card (Anti-Bias) -->
+        <div style="background: #eff6ff; border: 2px solid #3b82f6; border-radius: var(--radius-md); padding: 18px; margin-bottom: 18px;">
+          <h3 style="font-size: 1.25rem; color: #1e3a8a; margin-bottom: 8px;" data-i18n="random_picker_title">Where to pick fruit (Anti-Bias)</h3>
+          <p id="random-instructions" style="font-size: 1.2rem; font-weight: 700; color: #1d4ed8; margin-bottom: 8px;">
+            Open crate number: 2, 7, 10
+          </p>
+          <p id="random-layer-note" style="font-size: 1.1rem; color: #1e40af; margin-bottom: 12px;" data-i18n="random_layer_pick">
+            Take 5 top, 5 middle, 5 bottom.
+          </p>
+
+          <div style="background: #fef2f2; border: 2px solid #ef4444; border-radius: var(--radius-sm); padding: 12px; margin-top: 10px;">
+            <strong style="color: #991b1b; font-size: 1.15rem; display: block;" data-i18n="warning_anti_bias">Do not pick best or worst fruit.</strong>
           </div>
         </div>
 
-        <!-- Selected Photos Preview Gallery -->
-        <div class="preview-gallery" id="preview-gallery"></div>
+        <!-- Checkbox: Both present -->
+        <label style="display: flex; align-items: center; gap: 12px; font-size: 1.15rem; font-weight: 700; cursor: pointer; margin-bottom: 20px;">
+          <input type="checkbox" id="chk-both-present" checked style="width: 24px; height: 24px; accent-color: #15803d;">
+          <span data-i18n="chk_both_present">Both farmer and buyer are here.</span>
+        </label>
 
-        <!-- Reference Object Selection -->
-        <div class="form-section">
-          <h3 data-i18n="reference_heading">Select Reference Object</h3>
-          <div class="radio-cards-grid">
-            <label class="radio-card">
-              <input type="radio" name="ref-type" value="coin_10" checked>
-              <div class="radio-card-content">
-                <strong data-i18n="ref_coin_10">Indian ₹10 Coin (27 mm nominal diameter)</strong>
-                <span>Recommended standard reference coin</span>
-              </div>
-            </label>
-            <label class="radio-card">
-              <input type="radio" name="ref-type" value="coin_5">
-              <div class="radio-card-content">
-                <strong data-i18n="ref_coin_5">Indian ₹5 Coin (23 mm nominal diameter)</strong>
-                <span>Nickel-brass / stainless steel disc</span>
-              </div>
-            </label>
-            <label class="radio-card">
-              <input type="radio" name="ref-type" value="custom_card">
-              <div class="radio-card-content">
-                <strong data-i18n="ref_custom">Custom Card / Object</strong>
-                <span>Enter known diameter or width in mm</span>
-              </div>
-            </label>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <button type="button" class="btn btn-secondary" id="btn-back-to-lot">👈 Back</button>
+          <button type="button" class="btn btn-primary" id="btn-goto-rules" style="flex: 1;" data-i18n="btn_start_photos">
+            Start Photo Steps 👉
+          </button>
+        </div>
+      </div>
+
+      <!-- WIZARD STEP 3: PHOTO RULES GUIDE -->
+      <div id="wizard-step-rules" class="wizard-card" style="display: none;">
+        <div class="wizard-step-header">
+          <span class="wizard-step-badge" id="photo-rule-badge">Rule 1 of 9</span>
+          <button type="button" class="btn-listen" id="btn-listen-rule">
+            🔊 <span data-i18n="btn_listen">Listen</span>
+          </button>
+        </div>
+
+        <div class="wizard-big-icon" id="photo-rule-icon">☀️</div>
+        <h2 class="wizard-instruction-title" id="photo-rule-title">Rule 1: Use daylight</h2>
+        <p class="wizard-instruction-desc" id="photo-rule-desc">Take photo in clear, bright daylight.</p>
+
+        <div style="display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap;">
+          <button type="button" class="btn btn-secondary" id="btn-rule-prev">👈 Previous</button>
+          <button type="button" class="btn btn-primary" id="btn-rule-next" style="flex: 1;">Next Rule 👉</button>
+          <button type="button" class="btn btn-accent" id="btn-skip-rules" style="display: none;">Go to Camera 📸</button>
+        </div>
+      </div>
+
+      <!-- WIZARD STEP 4: CAMERA & VIEWFINDER (3x5 Grid, Pre-flight checks) -->
+      <div id="wizard-step-camera" class="wizard-card" style="display: none;">
+        <div class="wizard-step-header">
+          <span class="wizard-step-badge" id="camera-step-badge">Batch 1 of 2: Photo A</span>
+          <button type="button" class="btn-listen" data-speak-target="camera-instruction-text">
+            🔊 <span data-i18n="btn_listen">Listen</span>
+          </button>
+        </div>
+
+        <h2 class="wizard-instruction-title" id="camera-instruction-text">Photo A: Stem side up</h2>
+        <p class="wizard-instruction-desc">Put coin flat beside 15 tomatoes.</p>
+
+        <!-- Progress Bar across batches -->
+        <div style="margin-bottom: 14px;">
+          <div style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 6px;">
+            <span id="batch-progress-text">Batch 1 of 2 done. 0 of 30 fruit.</span>
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-finish-early" data-i18n="btn_finish_early">Finish with fewer fruit</button>
           </div>
-
-          <!-- Custom Dimension Input (revealed if custom selected) -->
-          <div class="input-group" id="custom-mm-group" style="display: none;">
-            <label for="custom-dimension-mm" class="input-label" data-i18n="custom_mm_label">Custom Dimension (mm)</label>
-            <input type="number" step="0.1" id="custom-dimension-mm" class="input-field" placeholder="e.g. 50.0" data-i18n-placeholder="custom_mm_placeholder">
-          </div>
-
-          <!-- Mandi Price Input (Optional) -->
-          <div class="input-group">
-            <label for="mandi-price-input" class="input-label" data-i18n="price_heading">Optional Mandi Base Price (₹/kg)</label>
-            <input type="number" step="0.5" id="mandi-price-input" class="input-field" placeholder="e.g. 25.00" data-i18n-placeholder="price_placeholder">
-            <p class="input-hint" data-i18n="price_hint">Enter your local mandi benchmark rate to calculate indicative price per grade.</p>
-          </div>
-
-          <!-- Form Submit Actions -->
-          <div style="display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap;">
-            <button type="button" class="btn btn-primary" id="btn-submit-grade" style="flex: 2;" data-i18n="btn_submit_grade">
-              🔍 Analyze & Grade Tomatoes
-            </button>
-            <button type="button" class="btn btn-secondary" id="btn-clear-selection" style="flex: 1;" data-i18n="btn_clear">
-              Reset Selection
-            </button>
+          <div style="height: 12px; background: #e2e8f0; border-radius: 6px; overflow: hidden;">
+            <div id="batch-progress-bar" style="height: 100%; width: 0%; background: #15803d; transition: width 0.3s;"></div>
           </div>
         </div>
+
+        <!-- Camera Viewfinder with 3x5 Grid Overlay -->
+        <div class="camera-viewfinder" id="camera-viewfinder">
+          <video id="live-video" class="camera-video" playsinline autoplay muted style="display: none;"></video>
+          <img id="captured-preview" class="camera-preview-img" alt="Captured preview" style="display: none;">
+          <div id="viewfinder-placeholder" style="color: #94a3b8; text-align: center; padding: 20px;">
+            <div style="font-size: 3rem; margin-bottom: 10px;">📸</div>
+            <p style="font-size: 1.15rem; font-weight: 700;">Tap camera or gallery below</p>
+          </div>
+
+          <!-- 3 rows x 5 columns grid overlay -->
+          <div class="grid-3x5-overlay" id="grid-overlay">
+            <div class="grid-3x5-cell">1</div><div class="grid-3x5-cell">2</div><div class="grid-3x5-cell">3</div><div class="grid-3x5-cell">4</div><div class="grid-3x5-cell">5</div>
+            <div class="grid-3x5-cell">6</div><div class="grid-3x5-cell">7</div><div class="grid-3x5-cell">8</div><div class="grid-3x5-cell">9</div><div class="grid-3x5-cell">10</div>
+            <div class="grid-3x5-cell">11</div><div class="grid-3x5-cell">12</div><div class="grid-3x5-cell">13</div><div class="grid-3x5-cell">14</div><div class="grid-3x5-cell">15</div>
+          </div>
+
+          <!-- Coin spot guide circle -->
+          <div class="coin-spot-overlay">🪙 Coin</div>
+        </div>
+
+        <!-- Live Pre-flight Checks Bar -->
+        <div class="live-checks-bar">
+          <span class="live-tick" id="tick-coin">🪙 Coin: Checking</span>
+          <span class="live-tick" id="tick-blur">🔍 Sharp: Checking</span>
+          <span class="live-tick" id="tick-light">☀️ Light: Checking</span>
+          <span class="live-tick" id="tick-tilt">📐 Flat: Checking</span>
+          <span class="live-tick" id="tick-touch">🍅 Spaced: Checking</span>
+        </div>
+
+        <!-- Hidden inputs & triggers -->
+        <input type="file" id="camera-input" accept="image/*" capture="environment" style="display: none;">
+        <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" style="display: none;">
+
+        <div style="display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap;">
+          <label for="camera-input" class="btn btn-primary" style="flex: 2; cursor: pointer;">
+            📸 <span data-i18n="btn_capture">Capture Photo</span>
+          </label>
+          <label for="file-input" class="btn btn-secondary" style="flex: 1; cursor: pointer;">
+            🖼️ Gallery
+          </label>
+        </div>
+
+        <!-- Reference Object Selection (Preserved for compatibility) -->
+        <div style="margin-top: 18px; border-top: 1px solid #e2e8f0; padding-top: 14px;">
+          <h4 style="font-size: 1.05rem; margin-bottom: 10px;" data-i18n="reference_heading">Select Reference Object</h4>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <label style="display: flex; align-items: center; gap: 6px; font-weight: 700;">
+              <input type="radio" name="ref-type" value="coin_10" checked> ₹10 Coin (27 mm)
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; font-weight: 700;">
+              <input type="radio" name="ref-type" value="coin_5"> ₹5 Coin (23 mm)
+            </label>
+            <label style="display: flex; align-items: center; gap: 6px; font-weight: 700;">
+              <input type="radio" name="ref-type" value="custom_card"> Custom
+            </label>
+          </div>
+          <div id="custom-mm-group" style="display: none; margin-top: 8px;">
+            <input type="number" step="0.1" id="custom-dimension-mm" class="input-field" placeholder="e.g. 50.0">
+          </div>
+        </div>
+
+        <!-- Captured Batch Status -->
+        <div id="batch-status-box" style="margin-top: 16px; padding: 12px; background: #f0fdf4; border-radius: var(--radius-sm); border: 1px solid #86efac; display: none;">
+          <p id="batch-status-msg" style="font-weight: 700; color: #166534;"></p>
+        </div>
+
+        <button type="button" class="btn btn-primary btn-block" id="btn-batch-confirm" style="margin-top: 16px; display: none;">
+          Save Photo & Continue 👉
+        </button>
+      </div>
+
+      <!-- WIZARD STEP 5: HAND CHECK & OPTIONAL WEIGHT (Section E6, E7) -->
+      <div id="wizard-step-handcheck" class="wizard-card" style="display: none;">
+        <div class="wizard-step-header">
+          <span class="wizard-step-badge">Step 5 of 5</span>
+          <button type="button" class="btn-listen" data-speak-target="hand-prompt">
+            🔊 <span data-i18n="btn_listen">Listen</span>
+          </button>
+        </div>
+
+        <div class="wizard-big-icon">🖐️</div>
+        <h2 class="wizard-instruction-title" id="hand-prompt" data-i18n="hand_check_title">Hand Softness Check</h2>
+        <p class="wizard-instruction-desc" data-i18n="hand_check_prompt">Press 10 fruit with your hand. How many are soft?</p>
+
+        <div class="input-group">
+          <label for="hand-soft-input" class="input-label" data-i18n="hand_check_count">Number of soft fruit (0 to 10)</label>
+          <input type="number" id="hand-soft-input" class="input-field" min="0" max="10" value="0">
+        </div>
+
+        <!-- Optional Weight Check -->
+        <div class="input-group" style="margin-top: 14px;">
+          <label for="sample-kg-input" class="input-label" data-i18n="weight_check_title">Optional Sample Weight</label>
+          <input type="number" step="0.1" id="sample-kg-input" class="input-field" placeholder="e.g. 1.8 kg" data-i18n-placeholder="weight_check_placeholder">
+        </div>
+
+        <!-- Optional Mandi Benchmark Price -->
+        <div class="input-group" style="margin-top: 14px;">
+          <label for="mandi-price-input" class="input-label">Mandi Base Price (₹/kg)</label>
+          <input type="number" step="0.5" id="mandi-price-input" class="input-field" placeholder="e.g. 25.00">
+        </div>
+
+        <button type="button" class="btn btn-primary btn-block" id="btn-submit-grade" style="margin-top: 24px;" data-i18n="btn_compute_grade">
+          🔍 Calculate Grade
+        </button>
+      </div>
+
+      <div class="mandatory-footer-box" data-i18n="mandatory_footer">
+        This is a helper tool. It is not an official grade. You both decide the final price.
       </div>
     </section>
 
-    <!-- 3. GRADING PROGRESS VIEW -->
+    <!-- ============================================================
+         3. GRADING PROGRESS VIEW
+         ============================================================ -->
     <section id="view-progress" class="view-panel">
       <div class="progress-card">
         <div class="progress-spinner"></div>
         <h2 data-i18n="progress_heading">AI Computer Vision in Progress...</h2>
-        <p style="color: var(--text-secondary); font-size: 0.95rem;">Analyzing photograph geometry, reference coin scale, and tomato skin quality.</p>
-
-        <ul class="progress-steps-list">
-          <li class="progress-step-item active" id="prog-step-1">
-            <span class="step-dot"></span>
-            <span data-i18n="step_validating">Validating image resolution, sharpness, and daylight lighting...</span>
-          </li>
-          <li class="progress-step-item" id="prog-step-2">
-            <span class="step-dot"></span>
-            <span data-i18n="step_calibrating">Detecting reference coin and computing pixel-to-millimetre scale...</span>
-          </li>
-          <li class="progress-step-item" id="prog-step-3">
-            <span class="step-dot"></span>
-            <span data-i18n="step_segmenting">Executing watershed contour segmentation on touching tomatoes...</span>
-          </li>
-          <li class="progress-step-item" id="prog-step-4">
-            <span class="step-dot"></span>
-            <span data-i18n="step_defects">Measuring color ripening stage and surface blemish percentage...</span>
-          </li>
-          <li class="progress-step-item" id="prog-step-5">
-            <span class="step-dot"></span>
-            <span data-i18n="step_lot">Applying AGMARK/UNECE tolerance rules and generating lot fingerprint...</span>
-          </li>
-        </ul>
+        <p style="color: var(--text-secondary); font-size: 1.1rem; margin-top: 8px;">Analyzing fruit size, flip views, and surface quality.</p>
       </div>
     </section>
 
-    <!-- 4. REPORT & DETAILED RESULTS VIEW -->
+    <!-- ============================================================
+         4. REPORT VIEW (Color + Icon + Sentence, Wilson Bar, Flags)
+         ============================================================ -->
     <section id="view-report" class="view-panel">
-      
-      <!-- Report Header Card -->
-      <div class="report-hero">
-        <div class="report-top-meta">
-          <div class="report-meta-id">
-            <h2 id="report-id-display">AG-20261023-XXXX</h2>
-            <span id="report-date-display">Generated just now</span>
-          </div>
 
-          <!-- SHA-256 Tamper Badge -->
-          <div id="tamper-badge" class="tamper-badge verified">
-            <span>🛡️</span>
-            <span id="tamper-text" data-i18n="tamper_verified">SHA-256 Verified Authentic</span>
-          </div>
-        </div>
-
-        <!-- Lot Grade Hero Display -->
-        <div class="lot-grade-display">
-          <div>
-            <span style="font-size: 0.85rem; color: var(--text-muted); display: block;" data-i18n="lot_grade_label">Overall Observed Lot Grade</span>
-            <div id="lot-grade-pill" class="grade-pill Class-I">Class I</div>
-          </div>
-        </div>
-
-        <!-- Lot Stats Grid -->
-        <div class="lot-stats-grid">
-          <div class="stat-box">
-            <span data-i18n="observed_fruit_label">Observed Fruit Count</span>
-            <strong id="fruit-count-stat">0</strong>
-          </div>
-          <div class="stat-box">
-            <span data-i18n="calibration_status_label">Calibration Status</span>
-            <strong id="cal-status-stat">₹10 Coin</strong>
-          </div>
-        </div>
-
-        <!-- Optional Mandi Valuation Box -->
-        <div id="pricing-card" class="pricing-card" style="display: none;">
-          <h3 data-i18n="indicative_price_title">Indicative Mandi Valuation</h3>
-          <div id="pricing-rate" class="pricing-rate-large">₹0.00 / kg</div>
-          <p id="pricing-formula" style="font-size: 0.85rem; color: #5d4037; margin: 4px 0 8px;">₹25.00 × 1.00 = ₹25.00/kg</p>
-          <p style="font-size: 0.78rem; color: var(--text-muted);" data-i18n="price_disclaimer">Indicative estimate for negotiation reference only. Mandi prices vary by local supply, moisture, and transport costs.</p>
-        </div>
-
-        <!-- Lot Reasons & Explanation -->
-        <div style="margin-top: 18px;">
-          <h4 style="font-size: 0.95rem; font-weight: 600; margin-bottom: 6px;" data-i18n="lot_reasons_label">Why This Lot Grade Was Assigned</h4>
-          <ul id="lot-reasons-list" style="padding-left: 20px; font-size: 0.88rem; color: var(--text-secondary);"></ul>
-        </div>
+      <!-- Indicative Warning Banner (Shown if ANY warning flag exists) -->
+      <div id="indicative-banner" class="indicative-banner" style="display: none;">
+        <span>⚠️</span>
+        <span data-i18n="indicative_badge">INDICATIVE ONLY</span>
       </div>
 
-      <!-- Warnings & Sampling Notice -->
-      <div class="notice-box">
-        <h4 data-i18n="lot_warnings_label">Sampling & Calibration Notices</h4>
-        <ul id="lot-warnings-list"></ul>
+      <!-- Top Flags List (Section F) -->
+      <div id="flags-container" class="flags-list-container"></div>
+
+      <!-- Lot Verdict Hero: Color + Big Icon + One Short Sentence (Section E4) -->
+      <div id="verdict-hero" class="verdict-hero-card sure">
+        <div id="verdict-icon" class="verdict-icon">🟢</div>
+        <div id="verdict-grade-title" class="verdict-grade-title">Grade A</div>
+        <div id="verdict-sentence" class="verdict-sentence">Sure: Grade A</div>
+        <button type="button" class="btn-listen" id="btn-read-aloud">
+          🔊 <span data-i18n="btn_listen">Listen</span>
+        </button>
       </div>
 
-      <!-- Annotated Photo Showcase -->
-      <div class="annotated-showcase">
-        <h3 style="font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 12px;">Computer Vision Fruit & Calibration Overlay</h3>
-        <div class="annotated-img-frame">
-          <img id="annotated-img" src="" alt="Annotated tomatoes photograph showing diameter and grade overlays">
+      <!-- Amber Verdict Option: Add 20 more fruit -->
+      <div id="amber-action-box" style="display: none; margin-bottom: 20px; text-align: center;">
+        <button type="button" class="btn btn-accent btn-block" id="btn-add-20-more" data-i18n="btn_add_20_more">
+          ➕ Add 20 more fruit
+        </button>
+      </div>
+
+      <!-- Buyer Repeat Option: Buyer wants own check (Section C Step 4) -->
+      <div style="margin-bottom: 20px; text-align: center;">
+        <button type="button" class="btn btn-secondary btn-block" id="btn-buyer-repeat" data-i18n="btn_buyer_repeat">
+          🔄 Buyer wants own check
+        </button>
+      </div>
+
+      <!-- Wilson Range Bar (Section E3) -->
+      <div class="wilson-bar-container">
+        <div class="wilson-text" id="wilson-text-display">
+          Bad fruit: about 8 in 100. Could be 4 to 15 in 100.
         </div>
-        <p style="font-size: 0.8rem; color: var(--text-muted); text-align: center;">Green/Orange/Red contours denote fruit quality classification. Cyan circle indicates reference coin calibration.</p>
+        <div class="wilson-track">
+          <div class="wilson-range" id="wilson-range-bar" style="left: 4%; width: 11%;"></div>
+          <div class="wilson-point" id="wilson-center-point" style="left: 8%;"></div>
+        </div>
+        <span class="surface-seen-badge" id="surface-seen-display" data-i18n="surface_seen_85">
+          About 85% of fruit surface seen.
+        </span>
+        <p style="font-size: 0.95rem; color: #b45309; margin-top: 8px; font-weight: 600;" data-i18n="hidden_defect_warning">
+          Inside rot and soft fruit cannot be seen by photo.
+        </p>
       </div>
 
-      <!-- Individual Fruit Inspection Table -->
-      <div class="fruit-table-card">
-        <h3 style="font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 14px;" data-i18n="fruit_list_title">Individual Fruit Inspection Breakdown</h3>
-        <table class="fruit-table">
-          <thead>
-            <tr>
-              <th data-i18n="fruit_id_col">Fruit #</th>
-              <th data-i18n="fruit_size_col">Diameter (mm)</th>
-              <th data-i18n="fruit_size_code_col">Size Code</th>
-              <th data-i18n="fruit_shape_col">Shape (Axis Ratio)</th>
-              <th data-i18n="fruit_color_col">Color Stage</th>
-              <th data-i18n="fruit_defects_col">Surface Defects</th>
-              <th data-i18n="fruit_grade_col">Assigned Grade</th>
-              <th data-i18n="fruit_reasons_col">Rule Reasons</th>
-            </tr>
-          </thead>
-          <tbody id="fruit-table-body"></tbody>
+      <!-- Open Price Multiplier Table (Section B) -->
+      <div id="pricing-card" style="background: #ffffff; border: 2px solid #cbd5e1; border-radius: var(--radius-md); padding: 18px; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <h3 style="font-size: 1.2rem; font-weight: 800;" data-i18n="price_title">Example Price Multipliers</h3>
+          <span style="background: #f1f5f9; color: #475569; font-size: 0.85rem; font-weight: 700; padding: 4px 10px; border-radius: 9999px;" data-i18n="price_example_tag">Example only</span>
+        </div>
+        <div id="pricing-rate" style="font-size: 1.8rem; font-weight: 900; color: #0f5132; margin-bottom: 8px;">₹25.00 / kg</div>
+        <table class="price-open-table">
+          <tbody>
+            <tr><td>Grade A</td><td data-i18n="price_mult_a">Base price (x 1.00)</td></tr>
+            <tr><td>Grade B</td><td data-i18n="price_mult_b">Base price x 0.85</td></tr>
+            <tr><td>Grade C</td><td data-i18n="price_mult_c">Base price x 0.70</td></tr>
+            <tr><td>Reject</td><td data-i18n="price_mult_reject">Reject = ₹0.00</td></tr>
+          </tbody>
         </table>
       </div>
 
-      <!-- Farmer & Buyer Acknowledgement Audit Form -->
-      <div class="audit-card">
-        <h3 data-i18n="ack_heading">Farmer & Buyer Acknowledgement (Append-Only Audit Trail)</h3>
-        <p style="font-size: 0.88rem; color: var(--text-secondary);" data-i18n="ack_desc">Both parties can formally record agreement or dispute. Each acknowledgement is cryptographically chained to the report SHA-256 fingerprint.</p>
+      <!-- Server Storage & Fingerprint Badge (Section B) -->
+      <div id="server-status-box" style="margin-bottom: 20px; text-align: center;">
+        <span id="server-badge" style="display: none; background: #ecfdf5; color: #065f46; font-size: 0.95rem; font-weight: 700; padding: 6px 14px; border-radius: 9999px; border: 1px solid #a7f3d0;" data-i18n="server_saved_badge">
+          Report not changed since saved
+        </span>
+      </div>
 
-        <!-- Existing Acknowledgement Events List -->
-        <div id="ack-records-list" class="ack-records-list"></div>
+      <!-- Toggle Fruit Details Button -->
+      <div style="text-align: center; margin-bottom: 20px;">
+        <button type="button" class="btn btn-secondary btn-block" id="btn-toggle-details" data-i18n="btn_toggle_details">
+          Show Fruit Details 🔽
+        </button>
+      </div>
 
-        <!-- Acknowledgement Submission Form -->
-        <form id="ack-form" style="margin-top: 18px; border-top: 1px solid var(--border-color); padding-top: 16px;">
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 14px;">
+      <!-- Detailed Breakdown (Initially Hidden) -->
+      <div id="details-section" style="display: none;">
+        
+        <!-- Annotated Photo Overlay with Defect Correction -->
+        <div class="annotated-showcase" style="margin-bottom: 24px;">
+          <h3 style="font-size: 1.25rem; margin-bottom: 10px;">Fruit & Defect Photo Overlay</h3>
+          <div class="annotated-img-frame">
+            <img id="annotated-img" src="" alt="Annotated fruit photo" style="width: 100%; border-radius: var(--radius-sm);">
+          </div>
+          <p style="font-size: 0.95rem; color: #475569; text-align: center; margin-top: 8px;">
+            Tap a red defect contour on image to mark as not damage. Size corrected for camera parallax (0.97).
+          </p>
+        </div>
+
+        <!-- Individual Fruit Table -->
+        <div class="fruit-table-card" style="margin-bottom: 24px;">
+          <h3 style="font-size: 1.25rem; margin-bottom: 14px;">Individual Fruit Breakdown</h3>
+          <table class="fruit-table">
+            <thead>
+              <tr>
+                <th>Fruit #</th>
+                <th>Approx Size</th>
+                <th>Defects %</th>
+                <th>Grade</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="fruit-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Farmer & Buyer Agreement Screen (Section B & H) -->
+      <div class="audit-card" style="margin-bottom: 24px;">
+        <h3 data-i18n="ack_heading">Record of Your Talk</h3>
+        <p style="font-size: 1.05rem; font-weight: 700; color: #b45309; margin: 6px 0 14px;" data-i18n="agreement_note">
+          This is a record of your talk. It is not a legal paper.
+        </p>
+
+        <!-- Append-only Audit Trail -->
+        <div id="ack-records-list" class="ack-records-list" style="margin-bottom: 14px;"></div>
+
+        <form id="ack-form" style="border-top: 1px solid #cbd5e1; padding-top: 16px;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 12px;">
             <div>
               <label for="ack-party" class="input-label" data-i18n="party_label">Your Role</label>
-              <select id="ack-party" class="input-field" style="max-width: 100%;">
-                <option value="farmer">Farmer (किसान / రైతు)</option>
-                <option value="buyer">Mandi Buyer / Trader (व्यापारी / కొనుగోలుదారు)</option>
+              <select id="ack-party" class="input-field">
+                <option value="farmer" data-i18n="party_farmer">Farmer</option>
+                <option value="buyer" data-i18n="party_buyer">Buyer / Trader</option>
               </select>
             </div>
             <div>
-              <label for="ack-verdict" class="input-label" data-i18n="verdict_label">Verdict</label>
-              <select id="ack-verdict" class="input-field" style="max-width: 100%;">
-                <option value="accept" data-i18n="verdict_accept">Accept Grade & Pricing</option>
-                <option value="dispute" data-i18n="verdict_dispute">Dispute / Renegotiate</option>
+              <label for="ack-verdict" class="input-label">Verdict</label>
+              <select id="ack-verdict" class="input-field">
+                <option value="accept" data-i18n="verdict_accept">Agree with this grade</option>
+                <option value="dispute" data-i18n="verdict_dispute">Dispute / Negotiate</option>
               </select>
             </div>
           </div>
+
           <div class="input-group">
-            <label for="ack-note" class="input-label" data-i18n="note_label">Comments / Reason for dispute</label>
-            <input type="text" id="ack-note" class="input-field" style="max-width: 100%;" placeholder="e.g. Agreed at Class I rate with 2% tare deduction." data-i18n-placeholder="note_placeholder">
+            <label for="ack-pin" class="input-label" data-i18n="pin_label">Enter 4-digit PIN</label>
+            <input type="password" maxlength="4" id="ack-pin" class="input-field" placeholder="4 digits" data-i18n-placeholder="pin_placeholder">
           </div>
-          <button type="submit" class="btn btn-primary" id="btn-submit-ack" data-i18n="btn_submit_ack">
-            ✍️ Sign & Record Acknowledgement
+
+          <div class="input-group" style="margin-top: 10px;">
+            <label for="ack-note" class="input-label" data-i18n="note_label">Note / Remarks</label>
+            <input type="text" id="ack-note" class="input-field" placeholder="e.g. 5% discount agreed" data-i18n-placeholder="note_placeholder">
+          </div>
+
+          <button type="submit" class="btn btn-primary" id="btn-submit-ack" style="margin-top: 14px;" data-i18n="btn_submit_ack">
+            Save Record
           </button>
         </form>
       </div>
 
-      <!-- QR Code & Share Box -->
-      <div class="qr-share-box">
-        <h3 data-i18n="share_heading">Share & Verify Grading Report</h3>
-        <p style="font-size: 0.88rem; color: var(--text-secondary);" data-i18n="share_desc">Anyone can scan this QR code or open the report link to inspect the exact measurements and verify tamper-proof integrity.</p>
-        
-        <img id="report-qr-img" class="qr-code-img" src="" alt="Report verification QR code">
+      <!-- Share, QR, WhatsApp, Delete Photos -->
+      <div class="qr-share-box" style="margin-bottom: 24px;">
+        <h3 data-i18n="share_heading">Share Report</h3>
+        <img id="report-qr-img" class="qr-code-img" src="" alt="Report QR code" style="margin: 14px auto; display: block;">
 
-        <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
-          <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-link" data-i18n="btn_copy_link">📋 Copy Report Link</button>
-          <button type="button" class="btn btn-secondary btn-sm" id="btn-download-qr" data-i18n="btn_download_qr">📥 Download QR Code</button>
-          <button type="button" class="btn btn-secondary btn-sm" id="btn-share-native" data-i18n="btn_share_native">📤 Share via WhatsApp</button>
-          <button type="button" class="btn btn-accent btn-sm" id="btn-read-aloud" data-i18n="btn_read_aloud">🔊 Read Report Aloud</button>
+        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 14px;">
+          <button type="button" class="btn btn-primary" id="btn-share-native" data-i18n="btn_whatsapp_share">Share on WhatsApp</button>
+          <button type="button" class="btn btn-secondary" id="btn-copy-link" data-i18n="btn_copy_link">Copy Link</button>
+          <button type="button" class="btn btn-secondary" id="btn-print-pdf" data-i18n="btn_print_pdf">Print / PDF</button>
+          <button type="button" class="btn btn-accent" id="btn-delete-photos" data-i18n="btn_delete_photos">Delete my photos</button>
         </div>
+        <p style="font-size: 0.95rem; color: #64748b; margin-top: 12px; text-align: center;" data-i18n="privacy_note">
+          Photos are used only for this report.
+        </p>
+      </div>
+
+      <div class="mandatory-footer-box" data-i18n="mandatory_footer">
+        This is a helper tool. It is not an official grade. You both decide the final price.
       </div>
     </section>
 
-    <!-- 5. HISTORY VIEW -->
+    <!-- ============================================================
+         5. HISTORY VIEW
+         ============================================================ -->
     <section id="view-history" class="view-panel">
       <div class="workflow-card">
-        <h2 style="font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 8px;" data-i18n="history_title">Grading History & Audit Records</h2>
-        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px;">Review past tomato grading reports and cryptographic verification hashes.</p>
-
-        <div id="history-empty" style="display: none; text-align: center; padding: 40px 20px; color: var(--text-muted);">
-          <p data-i18n="history_empty">No grading reports found yet. Start your first grading above!</p>
-          <a href="#new" class="btn btn-primary btn-sm" style="margin-top: 12px;" data-i18n="btn_start_grading">Start Tomato Grading</a>
+        <h2 style="font-family: var(--font-heading); font-size: 1.6rem; margin-bottom: 10px;" data-i18n="nav_history">Saved Reports</h2>
+        <div id="history-empty" style="display: none; text-align: center; padding: 30px; color: #64748b;">
+          No saved reports found yet.
         </div>
-
         <div style="overflow-x: auto;">
           <table class="fruit-table">
             <thead>
               <tr>
-                <th data-i18n="report_id_label">Report ID</th>
-                <th data-i18n="created_at_label">Date</th>
-                <th data-i18n="history_fruit_col">Observed Fruit</th>
-                <th data-i18n="lot_grade_label">Grade</th>
-                <th data-i18n="history_status_col">Acknowledgements</th>
+                <th>Report ID</th>
+                <th>Date</th>
+                <th>Fruit Count</th>
+                <th>Grade</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -385,104 +629,175 @@
           </table>
         </div>
       </div>
-    </section>
 
-    <!-- 6. HOW WE GRADE (Methodology & Vision Pipeline Explanation) -->
-    <section id="view-methodology" class="view-panel">
-      <div class="workflow-card">
-        <h2 style="font-family: var(--font-heading); font-size: 1.6rem; color: var(--primary-900); margin-bottom: 12px;">How AgriGrade Inspects & Measures Tomatoes</h2>
-        <p style="font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 24px;">
-          AgriGrade employs transparent, reproducible computer vision algorithms running on standard CPU hardware. Here is how each photograph is processed:
-        </p>
-
-        <div style="display: flex; flex-direction: column; gap: 16px;">
-          <div class="stat-box" style="padding: 18px;">
-            <h4 style="color: var(--primary-800); margin-bottom: 4px;">1. Image Validation & Lighting Check</h4>
-            <p style="font-size: 0.88rem; color: var(--text-secondary);">Photographs are checked for blur using Laplacian variance (threshold ≥ 65) and lighting intensity. Blurry or extremely dark photographs produce calibration warnings.</p>
-          </div>
-
-          <div class="stat-box" style="padding: 18px;">
-            <h4 style="color: var(--primary-800); margin-bottom: 4px;">2. Reference Coin Calibration</h4>
-            <p style="font-size: 0.88rem; color: var(--text-secondary);">The application detects the standard ₹10 (27mm) or ₹5 (23mm) coin using circularity and color thresholding. By dividing coin diameter in pixels by nominal diameter in millimetres, it calculates the exact <code>pixels_per_mm</code> scale.</p>
-          </div>
-
-          <div class="stat-box" style="padding: 18px;">
-            <h4 style="color: var(--primary-800); margin-bottom: 4px;">3. Watershed Segmentation for Touching Fruit</h4>
-            <p style="font-size: 0.88rem; color: var(--text-secondary);">Euclidean distance transformation separates tomatoes that touch each other on the table without confusing them as a single large fruit.</p>
-          </div>
-
-          <div class="stat-box" style="padding: 18px;">
-            <h4 style="color: var(--primary-800); margin-bottom: 4px;">4. Surface Color & Defect Heuristics</h4>
-            <p style="font-size: 0.88rem; color: var(--text-secondary);">Using HSV and Lab color spaces, AgriGrade calculates the red surface percentage to identify ripening stages (Mature Green to Mature Red) and detects dark blemishes, necrotic spots, or surface cracks.</p>
-          </div>
-
-          <div class="stat-box" style="padding: 18px; border-left: 4px solid var(--accent-gold);">
-            <h4 style="color: #f57f17; margin-bottom: 4px;">5. Important Technical Limitations</h4>
-            <p style="font-size: 0.88rem; color: var(--text-secondary);">An ordinary external photograph cannot detect internal fruit rot, hollow cavities, or seed gel ripeness. A single coin cannot fully correct severe camera tilt or perspective angle. AgriGrade is an independent benchmark for mandi negotiations, not a certified legal grading system.</p>
-          </div>
-        </div>
+      <div class="mandatory-footer-box" data-i18n="mandatory_footer">
+        This is a helper tool. It is not an official grade. You both decide the final price.
       </div>
     </section>
 
-    <!-- 7. STANDARDS & RULES TRANSPARENCY VIEW -->
+    <!-- ============================================================
+         6. HOW WE GRADE VIEW
+         ============================================================ -->
+    <section id="view-methodology" class="view-panel">
+      <div class="workflow-card">
+        <h2 style="font-size: 1.6rem; color: var(--primary-900); margin-bottom: 12px;" data-i18n="nav_methodology">How We Grade</h2>
+        <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 16px; margin-bottom: 20px;">
+          <p style="font-size: 1.15rem; font-weight: 700; color: #1e40af;" data-i18n="how_we_grade_simple">
+            Our simple rules are made for market talks. They are not official.
+          </p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div class="stat-box" style="padding: 16px;">
+            <h4>1. Reference Coin</h4>
+            <p>A ₹10 or ₹5 coin on the cloth gives the scale in millimetres.</p>
+          </div>
+          <div class="stat-box" style="padding: 16px;">
+            <h4>2. Two Photos per Batch</h4>
+            <p>Photo A (stem up) and Photo B (stem down) reveal both sides.</p>
+          </div>
+          <div class="stat-box" style="padding: 16px;">
+            <h4>3. Count of Out-of-Grade Fruit</h4>
+            <p>Grading is by number of bad fruit in the sample.</p>
+          </div>
+          <div class="stat-box" style="padding: 16px; border-left: 4px solid #f59e0b;">
+            <h4>4. Limitations</h4>
+            <p>Inside rot and soft fruit cannot be seen in a photo.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mandatory-footer-box" data-i18n="mandatory_footer">
+        This is a helper tool. It is not an official grade. You both decide the final price.
+      </div>
+    </section>
+
+    <!-- ============================================================
+         7. STANDARDS & RULES VIEW
+         ============================================================ -->
     <section id="view-standards" class="view-panel">
       <div class="workflow-card">
-        <h2 style="font-family: var(--font-heading); font-size: 1.6rem; color: var(--primary-900); margin-bottom: 8px;" data-i18n="standards_title">Tomato Grading Standards & Thresholds</h2>
-        <p style="font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 18px;" data-i18n="standards_intro">
-          AgriGrade applies deterministic engineering interpretations based on DMI/AGMARK (Directorate of Marketing & Inspection, Government of India) and UNECE FFV-36 standards.
+        <h2 style="font-size: 1.6rem; color: var(--primary-900); margin-bottom: 12px;" data-i18n="nav_standards">Market Rules</h2>
+        <p style="font-size: 1.05rem; margin-bottom: 18px;" data-i18n="how_we_grade_simple">
+          Our simple rules are made for market talks. They are not official.
         </p>
 
-        <!-- Standards Table -->
         <table class="standards-table">
           <thead>
             <tr>
-              <th data-i18n="standards_table_class">Class</th>
-              <th data-i18n="standards_table_defects">Max Surface Defects</th>
-              <th data-i18n="standards_table_shape">Min Axis Ratio</th>
-              <th data-i18n="standards_table_notes">Requirements & Tolerances</th>
+              <th>Grade</th>
+              <th>Max Defect %</th>
+              <th>Shape</th>
+              <th>Tolerances</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><strong>Extra Class</strong></td>
-              <td>&lt; 1.0%</td>
-              <td>≥ 0.90</td>
-              <td data-i18n="standards_extra_desc">Superficial defects &lt; 1%, axis ratio &ge; 0.90, uniform color, no cracks/decay.</td>
+              <td><strong>Grade A</strong></td>
+              <td>&lt; 1%</td>
+              <td>Round (≥ 0.90)</td>
+              <td>Max 5% out-of-grade</td>
             </tr>
             <tr>
-              <td><strong>Class I</strong></td>
-              <td>&le; 3.0%</td>
-              <td>≥ 0.80</td>
-              <td data-i18n="standards_class1_desc">Defects &le; 3%, axis ratio &ge; 0.80, slight shape variation allowed.</td>
+              <td><strong>Grade B</strong></td>
+              <td>&le; 3%</td>
+              <td>Regular (≥ 0.80)</td>
+              <td>Max 10% out-of-grade</td>
             </tr>
             <tr>
-              <td><strong>Class II</strong></td>
-              <td>&le; 8.0%</td>
-              <td>≥ 0.65</td>
-              <td data-i18n="standards_class2_desc">Defects &le; 8%, axis ratio &ge; 0.65, greenback allowed provided fruit is firm.</td>
+              <td><strong>Grade C</strong></td>
+              <td>&le; 8%</td>
+              <td>Fair (≥ 0.65)</td>
+              <td>Max 10% out-of-grade</td>
             </tr>
             <tr>
-              <td><strong>Below Standard</strong></td>
-              <td>&gt; 8.0%</td>
-              <td>&lt; 0.65</td>
-              <td data-i18n="standards_below_desc">Defects &gt; 8%, axis ratio &lt; 0.65, undersized fruit (&lt;35mm round, &lt;30mm oblong), or cracks/decay.</td>
+              <td><strong>Reject</strong></td>
+              <td>&gt; 8%</td>
+              <td>Irregular</td>
+              <td>Severe defect or decay</td>
             </tr>
           </tbody>
         </table>
+      </div>
 
-        <div class="notice-box" style="margin-top: 20px;">
-          <h4 data-i18n="tolerances_note">Lot Tolerances: Extra allows maximum 5% out-of-grade; Class I and Class II allow maximum 10% out-of-grade.</h4>
-          <p style="font-size: 0.85rem; color: #5d4037; margin-top: 4px;" data-i18n="agmark_field_note">Field Validation Notice: These thresholds are provisional interpretations for market transparency and dispute resolution. Formal certification requires an authorized AGMARK grading inspector.</p>
+      <div class="mandatory-footer-box" data-i18n="mandatory_footer">
+        This is a helper tool. It is not an official grade. You both decide the final price.
+      </div>
+    </section>
+
+    <!-- ============================================================
+         8. ADMIN TOOLS & SELF-TEST (Section I)
+         ============================================================ -->
+    <section id="view-admin-test" class="view-panel">
+      <div class="workflow-card">
+        <h2 style="font-size: 1.6rem; margin-bottom: 16px;">Admin & Self-Test Suite</h2>
+
+        <!-- Tab Bar for Admin Pages -->
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;">
+          <button type="button" class="btn btn-secondary btn-sm" id="tab-btn-csv">1. Hand CSV Compare</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="tab-btn-sim">2. Sampling Simulation</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="tab-btn-cal">3. Caliper Calibration</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="tab-btn-check">4. Field Checklist</button>
         </div>
+
+        <!-- 1. CSV Compare -->
+        <div id="admin-panel-csv" class="admin-card">
+          <h3 data-i18n="admin_test_title">Test Mode: Hand-Graded CSV Compare</h3>
+          <p style="margin-bottom: 12px;">Upload CSV with columns: <code>fruit_id, diameter_mm, defect_pct, grade</code></p>
+          <input type="file" id="admin-csv-file" accept=".csv" class="input-field" style="margin-bottom: 14px;">
+          <div id="admin-csv-results" style="display: none; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: var(--radius-sm); padding: 14px;">
+            <p id="csv-mean-error">Mean Size Error: 0.0 mm</p>
+            <p id="csv-max-error">Max Size Error: 0.0 mm</p>
+            <p id="csv-grade-match">Grade Match Rate: 100%</p>
+          </div>
+        </div>
+
+        <!-- 2. Sampling Simulation -->
+        <div id="admin-panel-sim" class="admin-card" style="display: none;">
+          <h3 data-i18n="admin_sim_title">Sampling Simulation (100-Fruit Crate)</h3>
+          <p style="margin-bottom: 12px;">Simulates taking 10, 20, 30, and 50 fruit samples from a full crate of 100 tomatoes.</p>
+          <button type="button" class="btn btn-primary" id="btn-run-simulation" data-i18n="btn_run_sim">Run 500 Simulations</button>
+          <div id="sim-results-box" style="margin-top: 16px;"></div>
+        </div>
+
+        <!-- 3. Caliper Calibration -->
+        <div id="admin-panel-cal" class="admin-card" style="display: none;">
+          <h3 data-i18n="admin_cal_title">Caliper Parallax Calibration</h3>
+          <p style="margin-bottom: 12px;">Enter actual caliper millimetre measurements for 5 photographed fruit.</p>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 14px;">
+            <input type="number" step="0.1" id="cal-actual-1" placeholder="Fruit 1 mm" class="input-field">
+            <input type="number" step="0.1" id="cal-actual-2" placeholder="Fruit 2 mm" class="input-field">
+            <input type="number" step="0.1" id="cal-actual-3" placeholder="Fruit 3 mm" class="input-field">
+            <input type="number" step="0.1" id="cal-actual-4" placeholder="Fruit 4 mm" class="input-field">
+            <input type="number" step="0.1" id="cal-actual-5" placeholder="Fruit 5 mm" class="input-field">
+          </div>
+          <button type="button" class="btn btn-primary" id="btn-compute-calibration" data-i18n="btn_save_cal">Calculate & Save Parallax Factor</button>
+          <p id="cal-output-text" style="font-weight: 700; margin-top: 10px; color: #15803d;"></p>
+        </div>
+
+        <!-- 4. Field Test Checklist -->
+        <div id="admin-panel-check" class="admin-card" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 data-i18n="admin_checklist_title">Field Test Checklist</h3>
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-export-checklist" data-i18n="btn_export_csv">Export CSV</button>
+          </div>
+          <div id="checklist-items-container"></div>
+        </div>
+      </div>
+
+      <div class="mandatory-footer-box" data-i18n="mandatory_footer">
+        This is a helper tool. It is not an official grade. You both decide the final price.
       </div>
     </section>
 
   </main>
 
-  <!-- Footer -->
+  <!-- Global Footer with 3-language rule -->
   <footer class="footer">
-    <p><strong>AgriGrade</strong> — Empowering Indian Farmers & Mandi Traders with Transparent Quality Evaluation.</p>
-    <p style="margin-top: 4px;">Independent Negotiation Reference System • Standards Version 1.0.0-provisional • SHA-256 Verified</p>
+    <p><strong>AgriGrade</strong></p>
+    <p style="margin-top: 6px;" data-i18n="mandatory_footer">
+      This is a helper tool. It is not an official grade. You both decide the final price.
+    </p>
   </footer>
 
   <!-- Scripts -->

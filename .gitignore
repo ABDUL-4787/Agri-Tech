@@ -33,3 +33,8 @@ Thumbs.db
 .vercel/
 node_modules/
 npm-debug.log*
+
+# Scratch & Generated Guides
+generate_pdf.py
+agrigrade_architecture_guide.html
+*.pdf

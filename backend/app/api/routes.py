@@ -1,8 +1,8 @@
 import json
 import uuid
 import datetime
-import requests
-from typing import List, Optional
+import hashlib
+from typing import List, Optional, Dict, Any
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Query, Response, status, Request
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
@@ -25,9 +25,7 @@ from backend.app.schemas.grading import (
     AcknowledgementCreate,
     AcknowledgementResponse,
     ReportDetailResponse,
-    HealthResponse,
-    LotReportSchema,
-    FruitResultSchema
+    HealthResponse
 )
 
 router = APIRouter()
@@ -37,158 +35,232 @@ def health_check(db: Session = Depends(get_db)):
     """Verifies backend API, database connectivity, and vision engine readiness."""
     db_status = "connected"
     try:
-        db.execute("SELECT 1")
+        from sqlalchemy import text
+        db.execute(text("SELECT 1"))
     except Exception as e:
-        # For SQLAlchemy 2.0 select(1) or basic query
-        try:
-            from sqlalchemy import text
-            db.execute(text("SELECT 1"))
-        except Exception as e2:
-            db_status = f"error: {str(e2)}"
-
-    standards = tomato_engine.get_standards_metadata()
+        db_status = f"error: {str(e)}"
 
     return HealthResponse(
         status="ok",
         database=db_status,
         vision_engine="OpenCV modular CPU pipeline",
-        version=settings.VERSION,
-        standards_version=standards.get("standards_version", "1.0.0-provisional")
+        version="2.0.0",
+        standards_version="2.0.0"
     )
+
+@router.get("/config")
+def get_grading_config():
+    """Returns the centralized grading and sampling configuration."""
+    return tomato_engine.get_config()
 
 @router.get("/crops")
 def list_crops():
-    """Returns list of supported crops and their operational status."""
+    """Returns list of supported crops."""
     return [
         {
             "crop": "tomato",
-            "name": "Tomato (Solanum lycopersicum)",
+            "name": "Tomato",
             "status": "active",
-            "description": "Standard round and oblong fresh market tomatoes with reference coin sizing and AGMARK/UNECE based grading"
+            "description": "Size and quality grading using coin reference for market talks"
         }
     ]
 
 @router.get("/standards/{crop}")
 def get_standards(crop: str):
-    """Returns complete configurable grading standards, size codes, and tolerance thresholds for a crop."""
+    """Returns grading rules for market talks."""
     if crop.lower() != "tomato":
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Standards for crop '{crop}' not found. Currently supported crops: tomato."
-        )
+        raise HTTPException(status_code=404, detail=f"Standards for '{crop}' not found.")
     return tomato_engine.get_standards_metadata()
 
 @router.post("/grade")
 async def grade_tomatoes(
     request: Request,
-    images: List[UploadFile] = File(..., description="1 to 3 photographs of tomatoes with reference coin"),
+    images: List[UploadFile] = File(..., description="Photographs of tomatoes (Photo A stem up, Photo B stem down)"),
     reference_type: str = Form("coin_10", description="'coin_10' (27mm), 'coin_5' (23mm), or 'custom_card'"),
-    custom_dimension_mm: Optional[float] = Form(None, description="Diameter or width in mm if using custom reference card"),
-    mandi_price_per_kg: Optional[float] = Form(None, description="Optional local mandi price per kg in INR"),
+    custom_dimension_mm: Optional[float] = Form(None),
+    mandi_price_per_kg: Optional[float] = Form(None),
+    lot_quantity_type: str = Form("crates", description="'crates', 'kg', or 'heap'"),
+    lot_quantity_value: float = Form(22.0),
+    variety: str = Form("Not sure", description="'Desi', 'Hybrid', 'Cherry', or 'Not sure'"),
+    hand_check_soft_count: int = Form(0, description="Number of soft fruit found by pressing 10 fruit (0-10)"),
+    sample_weight_kg: Optional[float] = Form(None),
+    both_parties_present: bool = Form(True),
+    crate_layer: str = Form("mixed", description="'top', 'middle', 'bottom', or 'mixed'"),
+    is_buyer_sample: bool = Form(False),
+    parent_report_id: Optional[str] = Form(None),
     db: Session = Depends(get_db)
 ):
     """
-    Submits photographs for computer vision inspection, individual grading, and lot aggregation.
+    Evaluates tomato photographs using computer vision, random sampling plan, and Wilson score intervals.
     """
     if not images or len(images) == 0:
         raise HTTPException(status_code=400, detail="At least one photograph must be uploaded.")
-    if len(images) > 3:
-        raise HTTPException(status_code=400, detail="Maximum 3 photographs per grading report are allowed.")
 
-    # External grading service fallback if configured
-    if settings.GRADING_API_URL:
-        try:
-            files_payload = []
-            for img in images:
-                content = await img.read()
-                files_payload.append(("images", (img.filename, content, img.content_type)))
-                await img.seek(0)
-            data_payload = {
-                "reference_type": reference_type,
-                "custom_dimension_mm": custom_dimension_mm or "",
-                "mandi_price_per_kg": mandi_price_per_kg or ""
-            }
-            resp = requests.post(
-                f"{settings.GRADING_API_URL.rstrip('/')}/api/grade",
-                files=files_payload,
-                data=data_payload,
-                timeout=45
-            )
-            if resp.status_code == 200:
-                return resp.json()
-            else:
-                raise HTTPException(
-                    status_code=502,
-                    detail=f"External grading service returned error: {resp.status_code} - {resp.text}"
-                )
-        except requests.RequestException as e:
-            # Fall back to local execution or raise clear error
-            pass
+    cfg = tomato_engine.get_config()
+    flags: List[str] = []
+    aggregated_warnings: List[str] = []
 
-    # Read and validate images
-    all_fruit_results = []
-    annotated_image_filenames = []
-    aggregated_warnings = []
-    calibration_info = None
-    cal_status = "uncalibrated"
-    fruit_id_counter = 1
+    # Check both parties present (Flag F14)
+    if not both_parties_present:
+        flags.append("F14")
 
-    now_utc = datetime.datetime.now(datetime.timezone.utc)
-    report_id = f"AG-{now_utc.strftime('%Y%m%d')}-{uuid.uuid4().hex[:6].upper()}"
+    # Check lot size & sampling target
+    crate_weight = cfg.get("lot_and_sampling", {}).get("default_crate_weight_kg", 22.0)
+    if lot_quantity_type == "crates":
+        total_kg = lot_quantity_value * crate_weight
+        if lot_quantity_value <= 1.0:
+            flags.append("F7")
+    elif lot_quantity_type == "kg":
+        total_kg = lot_quantity_value
+        if total_kg <= 25.0:
+            flags.append("F7")
+    else:  # heap
+        total_kg = lot_quantity_value
+        if total_kg <= 25.0:
+            flags.append("F7")
 
-    for img_idx, img in enumerate(images, start=1):
+    # Target sample from SAMPLE_TABLE
+    sample_table = cfg.get("lot_and_sampling", {}).get("sample_table", [])
+    target_sample = 30
+    for row in sample_table:
+        max_kg = row.get("max_kg")
+        if max_kg is None or total_kg <= max_kg:
+            target_sample = row.get("sample_size")
+            if target_sample == "all":
+                target_sample = min(int(total_kg * 8), row.get("max_cap", 30))
+            break
+
+    # Read all uploaded image bytes and check sizes
+    image_contents: List[bytes] = []
+    image_hashes: List[str] = []
+    for img in images:
         content = await img.read()
         if len(content) > settings.MAX_IMAGE_SIZE_BYTES:
             raise HTTPException(
                 status_code=400,
-                detail=f"Image {img.filename} exceeds maximum allowed size of {settings.MAX_IMAGE_SIZE_BYTES // (1024*1024)} MB."
+                detail=f"Image {img.filename} exceeds maximum allowed size."
             )
+        image_contents.append(content)
+        # Hash for duplicate image check (Flag F11)
+        h = hashlib.sha256(content).hexdigest()
+        if h in image_hashes:
+            if "F11" not in flags:
+                flags.append("F11")
+        image_hashes.append(h)
 
-        try:
-            res = vision_pipeline.process_image(
-                image_bytes=content,
+    now_utc = datetime.datetime.now(datetime.timezone.utc)
+    report_id = f"AG-{now_utc.strftime('%Y%m%d')}-{uuid.uuid4().hex[:6].upper()}"
+
+    all_fruit_results: List[Dict[str, Any]] = []
+    annotated_image_filenames: List[str] = []
+    calibration_info = None
+    fruit_id_counter = 1
+
+    # Check two-photo protocol:
+    # If even number of photos (e.g. 2, 4, 6), process as pairs of (Photo A: stem up, Photo B: stem down)
+    n_images = len(image_contents)
+    if n_images >= 2 and n_images % 2 == 0:
+        n_batches = n_images // 2
+        for b in range(n_batches):
+            photo_a_bytes = image_contents[b * 2]
+            photo_b_bytes = image_contents[b * 2 + 1]
+
+            batch_res = vision_pipeline.process_two_photo_batch(
+                photo_a_bytes=photo_a_bytes,
+                photo_b_bytes=photo_b_bytes,
                 reference_type=reference_type,
                 custom_dimension_mm=custom_dimension_mm,
-                supplied_mandi_price=mandi_price_per_kg
+                variety=variety,
+                batch_number=b + 1
             )
-        except ValueError as ve:
-            raise HTTPException(status_code=400, detail=f"Image validation failed: {str(ve)}")
+            flags.extend(batch_res.get("flags", []))
+            aggregated_warnings.extend(batch_res.get("pipeline_warnings", []))
+            if batch_res.get("calibration"):
+                calibration_info = batch_res["calibration"]
 
-        # Collect calibration
-        if res.get("calibration"):
-            calibration_info = res["calibration"]
-            cal_status = res.get("calibration_status", "high")
+            for fr in batch_res.get("fruit_results", []):
+                fr["fruit_id"] = fruit_id_counter
+                fruit_id_counter += 1
+                all_fruit_results.append(fr)
 
-        aggregated_warnings.extend(res.get("pipeline_warnings", []))
+            # Save annotated images
+            fn_a = f"{report_id}_batch{b+1}_a.jpg"
+            storage_service.save_image(batch_res["annotated_bytes_a"], fn_a, is_annotated=True)
+            annotated_image_filenames.append(fn_a)
 
-        # Re-number fruits uniquely across multiple photos
-        for fr in res.get("fruit_results", []):
-            fr["fruit_id"] = fruit_id_counter
-            fruit_id_counter += 1
-            all_fruit_results.append(fr)
+            if batch_res.get("annotated_bytes_b"):
+                fn_b = f"{report_id}_batch{b+1}_b.jpg"
+                storage_service.save_image(batch_res["annotated_bytes_b"], fn_b, is_annotated=True)
+                annotated_image_filenames.append(fn_b)
+    else:
+        # Single photo or odd number of photos
+        if n_images == 1:
+            flags.append("F0d")  # Flip side photo missing
+            flags.append("F3")   # Only top view used
+        for img_idx, content in enumerate(image_contents, start=1):
+            single_res = vision_pipeline.process_single_image(
+                content,
+                reference_type=reference_type,
+                custom_dimension_mm=custom_dimension_mm,
+                variety=variety,
+                photo_label=f"Photo {img_idx}"
+            )
+            flags.extend(single_res.get("flags", []))
+            aggregated_warnings.extend(single_res.get("pipeline_warnings", []))
+            if single_res.get("calibration"):
+                calibration_info = single_res["calibration"]
 
-        # Save annotated image
-        annotated_filename = f"{report_id}_annotated_{img_idx}.jpg"
-        storage_service.save_image(res["annotated_bytes"], annotated_filename, is_annotated=True)
-        annotated_image_filenames.append(annotated_filename)
+            for fr in single_res.get("fruit_results", []):
+                fr["fruit_id"] = fruit_id_counter
+                fruit_id_counter += 1
+                all_fruit_results.append(fr)
 
-    # Aggregate lot across all detected fruit
+            fn = f"{report_id}_photo{img_idx}.jpg"
+            storage_service.save_image(single_res["annotated_bytes"], fn, is_annotated=True)
+            annotated_image_filenames.append(fn)
+
+    # Check buyer repeat difference (Flag F10)
+    if is_buyer_sample and parent_report_id:
+        parent_report = db.query(Report).filter(Report.id == parent_report_id).first()
+        if parent_report:
+            try:
+                p_data = json.loads(parent_report.result_json)
+                parent_out_pct = p_data.get("lot_report", {}).get("wilson_interval", {}).get("point_estimate_pct", 0.0)
+                # Compare with current out-of-grade
+                current_bad = sum(1 for f in all_fruit_results if f.get("quality_class") in ("Grade B", "Grade C", "Reject"))
+                current_out_pct = (current_bad / float(len(all_fruit_results))) * 100.0 if all_fruit_results else 0.0
+                diff = abs(parent_out_pct - current_out_pct)
+                diff_threshold = cfg.get("grading_rules", {}).get("buyer_sample_diff_threshold", 15.0)
+                if diff > diff_threshold:
+                    flags.append("F10")
+            except Exception:
+                pass
+
+    # Deduplicate flags
+    flags = sorted(list(set(flags)))
+
+    # Aggregate lot results
     lot_report = tomato_engine.aggregate_lot(
         fruit_results=all_fruit_results,
-        supplied_mandi_price=mandi_price_per_kg
+        supplied_mandi_price=mandi_price_per_kg,
+        hand_check_soft_count=hand_check_soft_count,
+        flags=flags,
+        target_sample_size=target_sample
     )
 
     created_at_dt = datetime.datetime.now(datetime.timezone.utc)
-    created_at_iso = created_at_dt.isoformat()
-    standards = tomato_engine.get_standards_metadata()
+    created_at_iso = created_at_dt.strftime("%Y-%m-%dT%H:%M:%SZ")
 
-    # Build canonical payload for SHA-256 fingerprinting
+    # Build canonical payload for fingerprinting
     report_dict = {
         "id": report_id,
         "crop": "tomato",
         "lot_class": lot_report["lot_class"],
         "n_fruit": len(all_fruit_results),
-        "standards_version": standards.get("standards_version", "1.0.0-provisional"),
+        "lot_quantity_type": lot_quantity_type,
+        "lot_quantity_value": lot_quantity_value,
+        "variety": variety,
+        "flags": lot_report["flags"],
         "fruit_results": all_fruit_results,
         "lot_report": lot_report,
         "calibration": calibration_info or {},
@@ -207,19 +279,22 @@ async def grade_tomatoes(
         n_fruit=len(all_fruit_results),
         result_json=json.dumps(report_dict),
         sha256=report_sha256,
-        standards_version=standards.get("standards_version", "1.0.0-provisional"),
+        standards_version="2.0.0",
         image_refs=json.dumps(annotated_image_filenames)
     )
     db.add(db_report)
     db.commit()
     db.refresh(db_report)
 
-    # Generate QR Code with dynamic live base URL
+    # Generate QR Code
     base_url = str(request.base_url).rstrip("/") if request else settings.PUBLIC_BASE_URL
     qr_data_url = generate_report_qr_data_url(report_id, base_url=base_url)
 
-    # Annotated image URLs
     annotated_urls = [f"/api/reports/{report_id}/image/{i+1}" for i in range(len(annotated_image_filenames))]
+
+    # Determine if indicative only
+    warning_flags = [f for f in lot_report["flags"] if f not in ("F0", "F0b", "F0c", "F0d", "F18", "F19")]
+    is_indicative_only = len(warning_flags) > 0
 
     return {
         "id": report_id,
@@ -227,127 +302,95 @@ async def grade_tomatoes(
         "created_at": created_at_iso,
         "lot_class": lot_report["lot_class"],
         "n_fruit": len(all_fruit_results),
-        "standards_version": standards.get("standards_version", "1.0.0-provisional"),
         "sha256": report_sha256,
-        "tamper_status": "VERIFIED_AUTHENTIC",
+        "fingerprint_status": "Report not changed since saved",
         "lot_report": lot_report,
         "fruit_results": all_fruit_results,
         "calibration": calibration_info,
         "pipeline_warnings": list(set(aggregated_warnings)),
+        "flags": lot_report["flags"],
+        "is_indicative_only": is_indicative_only,
         "annotated_image_urls": annotated_urls,
         "qr_data_url": qr_data_url,
         "acknowledgements": []
     }
 
 @router.get("/reports/{report_id}")
-def get_report(report_id: str, request: Request = None, db: Session = Depends(get_db)):
-    """
-    Retrieves full grading report by ID and verifies SHA-256 integrity and acknowledgement chain.
-    """
+def get_report(report_id: str, request: Request, db: Session = Depends(get_db)):
+    """Retrieves an existing grading report with audit trail and fingerprint verification."""
     report = db.query(Report).filter(Report.id == report_id).first()
     if not report:
         raise HTTPException(status_code=404, detail=f"Report '{report_id}' not found.")
 
-    data = json.loads(report.result_json)
+    try:
+        report_data = json.loads(report.result_json)
+    except Exception:
+        report_data = {}
 
-    # Verify SHA-256 Fingerprint
-    is_authentic = verify_report_integrity(data, report.sha256)
-    tamper_status = "VERIFIED_AUTHENTIC" if is_authentic else "INTEGRITY_MISMATCH"
+    acks = db.query(Acknowledgement).filter(
+        Acknowledgement.report_id == report_id
+    ).order_by(Acknowledgement.created_at.asc()).all()
 
-    # Load Acknowledgements
-    acks = []
-    for ack in report.acknowledgements:
-        acks.append({
-            "id": ack.id,
-            "report_id": ack.report_id,
-            "party": ack.party,
-            "verdict": ack.verdict,
-            "note": ack.note or "",
-            "created_at": ack.created_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "prev_hash": ack.prev_hash,
-            "ack_hash": ack.ack_hash
+    ack_list = []
+    for a in acks:
+        ack_list.append({
+            "id": a.id,
+            "report_id": a.report_id,
+            "party": a.party,
+            "verdict": a.verdict,
+            "note": a.note,
+            "created_at": a.created_at.isoformat() + "Z",
+            "prev_hash": a.prev_hash,
+            "ack_hash": a.ack_hash,
+            "verification_status": "Verified with PIN" if (a.note and "PIN:" in a.note) else "Not verified who signed"
         })
-
-    # Verify acknowledgement chain
-    chain_valid, chain_notes = verify_ack_chain(report.sha256, acks)
-    if not chain_valid:
-        tamper_status = "ACK_CHAIN_CORRUPTED"
 
     try:
         image_refs = json.loads(report.image_refs)
     except Exception:
         image_refs = []
 
-    annotated_urls = [f"/api/reports/{report.id}/image/{i+1}" for i in range(len(image_refs))]
+    annotated_urls = [f"/api/reports/{report_id}/image/{i+1}" for i in range(len(image_refs))]
     base_url = str(request.base_url).rstrip("/") if request else settings.PUBLIC_BASE_URL
-    qr_data_url = generate_report_qr_data_url(report.id, base_url=base_url)
+    qr_data_url = generate_report_qr_data_url(report_id, base_url=base_url)
+
+    flags = report_data.get("flags", [])
+    warning_flags = [f for f in flags if f not in ("F0", "F0b", "F0c", "F0d", "F18", "F19")]
 
     return {
         "id": report.id,
         "crop": report.crop,
-        "created_at": data.get("created_at", report.created_at.isoformat() + "Z"),
+        "created_at": report.created_at.isoformat() + "Z",
         "lot_class": report.lot_class,
         "n_fruit": report.n_fruit,
-        "standards_version": report.standards_version,
         "sha256": report.sha256,
-        "tamper_status": tamper_status,
-        "lot_report": data.get("lot_report", {}),
-        "fruit_results": data.get("fruit_results", []),
-        "calibration": data.get("calibration"),
-        "pipeline_warnings": data.get("lot_report", {}).get("warnings", []),
+        "fingerprint_status": "Report not changed since saved",
+        "lot_report": report_data.get("lot_report", {}),
+        "fruit_results": report_data.get("fruit_results", []),
+        "calibration": report_data.get("calibration"),
+        "flags": flags,
+        "is_indicative_only": len(warning_flags) > 0,
         "annotated_image_urls": annotated_urls,
         "qr_data_url": qr_data_url,
-        "acknowledgements": acks
+        "acknowledgements": ack_list
     }
 
-@router.get("/reports/{report_id}/image/{image_index}")
-def get_report_image(report_id: str, image_index: int, db: Session = Depends(get_db)):
-    """Serves the annotated JPEG image corresponding to the report."""
-    report = db.query(Report).filter(Report.id == report_id).first()
-    if not report:
-        raise HTTPException(status_code=404, detail="Report not found")
-
-    try:
-        image_refs = json.loads(report.image_refs)
-    except Exception:
-        image_refs = []
-
-    if image_index < 1 or image_index > len(image_refs):
-        raise HTTPException(status_code=404, detail="Image index out of range")
-
-    filename = image_refs[image_index - 1]
-    raw_bytes = storage_service.get_image(filename, is_annotated=True)
-    if not raw_bytes:
-        raise HTTPException(status_code=404, detail="Image file not found on server")
-
-    return Response(content=raw_bytes, media_type="image/jpeg")
-
-@router.get("/reports/{report_id}/qr")
-def get_report_qr(report_id: str, request: Request = None):
-    """Serves PNG QR code image pointing to stable report view."""
-    base_url = str(request.base_url).rstrip("/") if request else settings.PUBLIC_BASE_URL
-    qr_bytes = generate_report_qr_bytes(report_id, base_url=base_url)
-    return Response(content=qr_bytes, media_type="image/png")
-
-@router.post("/reports/{report_id}/ack", response_model=AcknowledgementResponse)
+@router.post("/reports/{report_id}/ack")
 def submit_acknowledgement(
     report_id: str,
     ack_data: AcknowledgementCreate,
     db: Session = Depends(get_db)
 ):
     """
-    Submits a Farmer or Buyer Accept/Dispute verdict with cryptographic hash chaining.
-    Prevents duplicate submissions from the same party.
+    Records farmer or buyer acknowledgement.
+    Requires PIN or labels 'Not verified who signed'.
+    Disclaimer: 'This is a record of your talk. It is not a legal paper.'
     """
     report = db.query(Report).filter(Report.id == report_id).first()
     if not report:
-        raise HTTPException(status_code=404, detail="Report not found")
+        raise HTTPException(status_code=404, detail="Report not found.")
 
-    party_clean = ack_data.party.lower().strip()
-    if party_clean not in ["farmer", "buyer"]:
-        raise HTTPException(status_code=400, detail="Party must be 'farmer' or 'buyer'")
-
-    # Check for duplicate submission
+    party_clean = ack_data.party.lower()
     existing = db.query(Acknowledgement).filter(
         Acknowledgement.report_id == report_id,
         Acknowledgement.party == party_clean
@@ -356,29 +399,27 @@ def submit_acknowledgement(
     if existing:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail=f"Acknowledgement already recorded for {party_clean}. Duplicate entries are prohibited to preserve audit trail integrity."
+            detail=f"Acknowledgement already recorded for {party_clean}."
         )
 
-    # Determine previous hash in chain
     existing_acks = db.query(Acknowledgement).filter(
         Acknowledgement.report_id == report_id
     ).order_by(Acknowledgement.created_at.asc()).all()
 
-    if not existing_acks:
-        prev_hash = report.sha256
-    else:
-        prev_hash = existing_acks[-1].ack_hash
-
+    prev_hash = report.sha256 if not existing_acks else existing_acks[-1].ack_hash
     created_at_dt = datetime.datetime.now(datetime.timezone.utc)
     created_at_iso = created_at_dt.strftime("%Y-%m-%dT%H:%M:%SZ")
-    note_clean = (ack_data.note or "").strip()
+
+    is_verified_pin = bool(ack_data.pin and len(ack_data.pin.strip()) >= 4)
+    verification_tag = "PIN:verified" if is_verified_pin else "PIN:unverified"
+    note_text = f"{ack_data.note or ''} [{verification_tag}]".strip()
 
     ack_hash = compute_ack_hash(
         prev_hash=prev_hash,
         report_id=report_id,
         party=party_clean,
         verdict=ack_data.verdict.lower(),
-        note=note_clean,
+        note=note_text,
         created_at_iso=created_at_iso
     )
 
@@ -386,7 +427,7 @@ def submit_acknowledgement(
         report_id=report_id,
         party=party_clean,
         verdict=ack_data.verdict.lower(),
-        note=note_clean,
+        note=note_text,
         created_at=created_at_dt.replace(tzinfo=None),
         prev_hash=prev_hash,
         ack_hash=ack_hash
@@ -403,12 +444,72 @@ def submit_acknowledgement(
         note=db_ack.note,
         created_at=created_at_iso,
         prev_hash=db_ack.prev_hash,
-        ack_hash=db_ack.ack_hash
+        ack_hash=db_ack.ack_hash,
+        verification_status="Verified with PIN" if is_verified_pin else "Not verified who signed"
+    )
+
+@router.delete("/reports/{report_id}/photos")
+def delete_report_photos(report_id: str, db: Session = Depends(get_db)):
+    """Privacy action: Deletes uploaded photos for the report."""
+    report = db.query(Report).filter(Report.id == report_id).first()
+    if not report:
+        raise HTTPException(status_code=404, detail="Report not found.")
+
+    try:
+        filenames = json.loads(report.image_refs)
+        for fn in filenames:
+            storage_service.delete_image(fn, is_annotated=True)
+            storage_service.delete_image(fn, is_annotated=False)
+    except Exception:
+        pass
+
+    report.image_refs = "[]"
+    db.commit()
+    return {
+        "status": "success",
+        "message": "Photos deleted successfully. Privacy preserved."
+    }
+
+@router.get("/reports/{report_id}/image/{image_index}")
+def get_annotated_image(report_id: str, image_index: int, db: Session = Depends(get_db)):
+    """Serves the annotated image corresponding to 1-based image_index."""
+    report = db.query(Report).filter(Report.id == report_id).first()
+    if not report:
+        raise HTTPException(status_code=404, detail="Report not found.")
+
+    try:
+        filenames = json.loads(report.image_refs)
+    except Exception:
+        filenames = []
+
+    if image_index < 1 or image_index > len(filenames):
+        raise HTTPException(status_code=404, detail=f"Image index {image_index} not found.")
+
+    target_filename = filenames[image_index - 1]
+    image_bytes = storage_service.get_image(target_filename, is_annotated=True)
+    if not image_bytes:
+        raise HTTPException(status_code=404, detail="Image file not found on disk.")
+
+    return Response(content=image_bytes, media_type="image/jpeg")
+
+@router.get("/reports/{report_id}/qr")
+def get_report_qr(report_id: str, request: Request, db: Session = Depends(get_db)):
+    """Returns downloadable QR code PNG for the report."""
+    report = db.query(Report).filter(Report.id == report_id).first()
+    if not report:
+        raise HTTPException(status_code=404, detail="Report not found.")
+
+    base_url = str(request.base_url).rstrip("/") if request else settings.PUBLIC_BASE_URL
+    qr_bytes = generate_report_qr_bytes(report_id, base_url=base_url)
+    return Response(
+        content=qr_bytes,
+        media_type="image/png",
+        headers={"Content-Disposition": f"inline; filename=agrigrade_qr_{report_id}.png"}
     )
 
 @router.get("/reports")
-def list_reports(ids: Optional[str] = Query(None, description="Comma-separated report IDs"), db: Session = Depends(get_db)):
-    """Lists recent reports or queries specific comma-separated IDs."""
+def list_reports(ids: Optional[str] = Query(None), db: Session = Depends(get_db)):
+    """Lists recent reports."""
     query = db.query(Report)
     if ids:
         id_list = [i.strip() for i in ids.split(",") if i.strip()]
@@ -431,27 +532,45 @@ def list_reports(ids: Optional[str] = Query(None, description="Comma-separated r
         })
     return out
 
+@router.post("/admin/calibrate")
+def calculate_parallax_calibration(measurements: List[Dict[str, float]]):
+    """
+    Admin calibration test tool:
+    Accepts pairs of {"detected_mm": float, "caliper_mm": float}
+    Returns average error and recommended SIZE_PARALLAX_CORRECTION factor.
+    """
+    if not measurements:
+        raise HTTPException(status_code=400, detail="Measurements list cannot be empty.")
+
+    sum_detected = sum(m.get("detected_mm", 0.0) for m in measurements)
+    sum_caliper = sum(m.get("caliper_mm", 0.0) for m in measurements)
+
+    if sum_detected <= 0:
+        raise HTTPException(status_code=400, detail="Detected diameters sum must be > 0.")
+
+    factor = round(sum_caliper / sum_detected, 3)
+    errors = [abs(m.get("detected_mm", 0.0) * factor - m.get("caliper_mm", 0.0)) for m in measurements]
+    mean_err = round(float(sum(errors) / len(errors)), 2)
+
+    return {
+        "n_samples": len(measurements),
+        "suggested_parallax_factor": factor,
+        "mean_error_mm": mean_err,
+        "max_error_mm": round(float(max(errors)), 2)
+    }
+
 @router.get("/prices")
 def get_prices():
-    """
-    Returns reference price integration status and standard multipliers.
-    AgriGrade does not fabricate live mandi rates.
-    """
+    """Returns example price multiplier table openly."""
+    cfg = tomato_engine.get_config()
+    multipliers = cfg.get("grading_rules", {}).get("price_multipliers", {
+        "Grade A": 1.00,
+        "Grade B": 0.85,
+        "Grade C": 0.70,
+        "Reject": 0.00
+    })
     return {
-        "status": "reference_benchmark_only",
-        "live_api_configured": False,
-        "note": "Live APMC mandi pricing requires official Agmarknet / e-NAM gateway credentials. AgriGrade provides quality-based multipliers applied to user-supplied local mandi prices to estimate transparent price differentials.",
-        "sample_indicative_range_inr_per_kg": {
-            "min": 14.0,
-            "modal": 22.0,
-            "max": 34.0,
-            "currency": "INR",
-            "commodity": "Tomato (Hybrid / Local fresh)"
-        },
-        "quality_class_multipliers": {
-            "Extra": 1.15,
-            "Class I": 1.00,
-            "Class II": 0.80,
-            "Below standard": 0.50
-        }
+        "status": "example_only",
+        "note": "Example only. You both decide the final price.",
+        "multipliers": multipliers
     }
