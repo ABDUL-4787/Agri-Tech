@@ -1,9 +1,14 @@
 // AgriGrade Service Worker
-const CACHE_NAME = "agrigrade-v1";
+const CACHE_NAME = "agrigrade-v5";
 const STATIC_ASSETS = [
   "/",
   "/index.html",
   "/css/style.css",
+  "/js/config.js",
+  "/js/flags.js",
+  "/js/match.js",
+  "/js/wilson.js",
+  "/js/verdict.js",
   "/js/i18n.js",
   "/js/api.js",
   "/js/app.js",
@@ -40,25 +45,27 @@ self.addEventListener("fetch", (e) => {
     return;
   }
 
+  // Network-first strategy: fetches latest version online, falls back to offline cache
   e.respondWith(
-    caches.match(e.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(e.request).then((networkResponse) => {
-        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== "basic") {
-          return networkResponse;
+    fetch(e.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(e.request, responseToCache);
+          });
         }
-        const responseToCache = networkResponse.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(e.request, responseToCache);
-        });
         return networkResponse;
-      }).catch(() => {
-        if (e.request.mode === "navigate") {
-          return caches.match("/index.html");
-        }
-      });
-    })
+      })
+      .catch(() => {
+        return caches.match(e.request).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          if (e.request.mode === "navigate") {
+            return caches.match("/index.html");
+          }
+        });
+      })
   );
 });
