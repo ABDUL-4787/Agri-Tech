@@ -30,11 +30,12 @@ const AgriGradeFlags = {
   },
 
   getFlag(code) {
-    return this.CATALOG[code] || {
+    const upper = (code || "").toUpperCase();
+    return this.CATALOG[upper] || this.CATALOG[code] || {
       code,
       severity: "warning",
       icon: "⚠️",
-      textKey: `flag_${code.toLowerCase()}`
+      textKey: `flag_${(code || "").toLowerCase()}`
     };
   },
 
@@ -59,7 +60,11 @@ const AgriGradeFlags = {
     flags.forEach(flagItem => {
       const code = typeof flagItem === "string" ? flagItem : flagItem.code;
       const meta = this.getFlag(code);
-      const text = (typeof flagItem === "object" && flagItem.text) ? flagItem.text : t(meta.textKey);
+      let text = (typeof flagItem === "object" && flagItem.text) ? flagItem.text : (t(meta.textKey) || t(code) || t((code || "").toLowerCase()));
+      // Prevent double code e.g. "F0b: F0b:" -> show code once
+      if (text && typeof text === "string") {
+        text = text.replace(new RegExp(`^${code}:\\s*`, 'i'), '');
+      }
 
       const itemDiv = document.createElement("div");
       itemDiv.className = `flag-strip-item ${meta.severity}`;

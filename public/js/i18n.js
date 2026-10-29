@@ -24,7 +24,7 @@ const TRANSLATIONS = {
     // Language Screen (First screen)
     lang_screen_title: "Choose Your Language",
     lang_screen_sub: "Select your language to continue.",
-    btn_listen: "🔊 Listen",
+    btn_listen: "Listen",
     btn_stop_listen: "⏹️ Stop",
     listen_unsupported: "Speech is not supported on this phone.",
 
@@ -166,8 +166,10 @@ const TRANSLATIONS = {
     verdict_not_this: "Not this grade",
     btn_add_20_more: "Add 20 more fruit",
     no_grade_zero_fruit: "No grade. No fruit found.",
-    no_grade_zero: "No grade. No fruit found.",
-    no_grade_few: "Too few fruit. No grade.",
+    no_grade_zero: "Could not find fruit. Retake photo.",
+    no_grade_few: "Could not find fruit. Retake photo.",
+    could_not_find_fruit_retake: "Could not find fruit. Retake photo.",
+    lot_too_small: "Lot too small for a grade.",
     indicative_badge: "INDICATIVE ONLY",
     not_changed_since_saved: "Report not changed since saved",
     server_saved_badge: "Report not changed since saved",
@@ -214,29 +216,34 @@ const TRANSLATIONS = {
     user_edited_tag: "Edited by user",
 
     // Flags (Section F)
-    flag_f0: "F0: No coin found.",
-    flag_f0b: "F0b: Photo blurry or dark.",
-    flag_f0c: "F0c: Fewer than 20 fruit.",
-    flag_f0d: "F0d: Photo B (flip side) missing.",
+    flag_f0: "No coin found.",
+    flag_f0b: "Photo blurry or dark.",
+    flag_f0c: "Fewer than 20 fruit.",
+    flag_f0d: "Photo B (flip side) missing.",
     flag_f1: "Only {x} fruit checked from {y} kg. Need {z}.",
-    flag_f2: "F2: Few crates opened.",
-    flag_f3: "F3: Only top view used (no flip).",
-    flag_f4: "F4: Photo not top-down (tilted).",
-    flag_f5: "F5: Dark shadows near fruit.",
-    flag_f6: "F6: Fruit touching or overlapping in photo.",
-    flag_f7: "F7: Single crate or tiny heap.",
+    flag_f2: "Few crates opened.",
+    flag_f3: "Only top view used (no flip).",
+    flag_f4: "Photo not top-down (tilted).",
+    flag_f5: "Dark shadows near fruit.",
+    flag_f6: "Fruit touching or overlapping in photo.",
+    flag_f7: "Single crate or tiny heap.",
     flag_f8: "Fruit counts differ. Retake Photo B.",
-    flag_f9: "F9: Top layer much better than bottom.",
-    flag_f10: "F10: Farmer and buyer samples differ a lot.",
-    flag_f11: "F11: Same photo or fruit used twice.",
-    flag_f12: "F12: Photo uploaded from gallery (older).",
-    flag_f13: "F13: Soft fruit found by hand check.",
-    flag_f14: "F14: Both parties not present at picking.",
-    flag_f15: "F15: Coin looks worn, bent or wrong.",
-    flag_f16: "F16: Different tomato varieties mixed.",
-    flag_f17: "F17: Strong sun glare or uneven color.",
+    flag_f9: "Top layer much better than bottom.",
+    flag_f10: "Farmer and buyer samples differ a lot.",
+    flag_f11: "Same photo or fruit used twice.",
+    flag_f12: "Photo uploaded from gallery (older).",
+    flag_f13: "Soft fruit found by hand check.",
+    flag_f14: "Both parties not present at picking.",
+    flag_f15: "Coin looks worn, bent or wrong.",
+    flag_f16: "Different tomato varieties mixed.",
+    flag_f17: "Strong sun glare or uneven color.",
     flag_f18: "Inside rot cannot be seen.",
     flag_f19: "Size is approximate.",
+    f18: "Inside rot cannot be seen.",
+    f19: "Size is approximate.",
+    F18: "Inside rot cannot be seen.",
+    F19: "Size is approximate.",
+    btn_debug_view: "Debug view",
     indicative_title_all: "INDICATIVE ONLY / सिर्फ़ संकेत / కేవలం సూచన మాత్రమే",
 
     // Agreement & Audit (Section H)
@@ -305,7 +312,7 @@ const TRANSLATIONS = {
     // Language Screen (First screen)
     lang_screen_title: "अपनी भाषा चुनें", // TODO: needs native speaker review
     lang_screen_sub: "आगे बढ़ने के लिए भाषा चुनें।", // TODO: needs native speaker review
-    btn_listen: "🔊 सुनें", // TODO: needs native speaker review
+    btn_listen: "सुनें", // TODO: needs native speaker review
     btn_stop_listen: "⏹️ रोकें", // TODO: needs native speaker review
     listen_unsupported: "इस फोन में आवाज़ उपलब्ध नहीं है।", // TODO: needs native speaker review
 
@@ -449,8 +456,10 @@ const TRANSLATIONS = {
     verdict_not_this: "यह ग्रेड नहीं", // TODO: needs native speaker review
     btn_add_20_more: "20 और टमाटर जोड़ें", // TODO: needs native speaker review
     no_grade_zero_fruit: "कोई ग्रेड नहीं। कोई फल नहीं मिला।", // TODO: needs native speaker review
-    no_grade_zero: "कोई ग्रेड नहीं। कोई फल नहीं मिला।", // TODO: needs native speaker review
-    no_grade_few: "बहुत कम फल। कोई ग्रेड नहीं।", // TODO: needs native speaker review
+    no_grade_zero: "फल नहीं मिले। दोबारा फ़ोटो लें।", // TODO: needs native speaker review
+    no_grade_few: "फल नहीं मिले। दोबारा फ़ोटो लें।", // TODO: needs native speaker review
+    could_not_find_fruit_retake: "फल नहीं मिले। दोबारा फ़ोटो लें।", // TODO: needs native speaker review
+    lot_too_small: "लॉट ग्रेड के लिए बहुत छोटा है।", // TODO: needs native speaker review
     indicative_badge: "सिर्फ़ संकेत", // TODO: needs native speaker review
     not_changed_since_saved: "सेव करने के बाद रिपोर्ट बदली नहीं है", // TODO: needs native speaker review
     server_saved_badge: "सेव करने के बाद रिपोर्ट बदली नहीं है", // TODO: needs native speaker review
@@ -497,29 +506,34 @@ const TRANSLATIONS = {
     user_edited_tag: "उपयोगकर्ता द्वारा सुधारा गया", // TODO: needs native speaker review
 
     // Flags
-    flag_f0: "F0: सिक्का नहीं मिला।", // TODO: needs native speaker review
-    flag_f0b: "F0b: फोटो धुंधली या अंधेरी है।", // TODO: needs native speaker review
-    flag_f0c: "F0c: 20 से कम फल हैं।", // TODO: needs native speaker review
-    flag_f0d: "F0d: फोटो B (पलटी हुई) गायब है।", // TODO: needs native speaker review
+    flag_f0: "सिक्का नहीं मिला।", // TODO: needs native speaker review
+    flag_f0b: "फोटो धुंधली या अंधेरी है।", // TODO: needs native speaker review
+    flag_f0c: "20 से कम फल हैं।", // TODO: needs native speaker review
+    flag_f0d: "फोटो B (पलटी हुई) गायब है।", // TODO: needs native speaker review
     flag_f1: "{y} किलो में {x} फल जाँचे। {z} चाहिए।", // TODO: needs native speaker review
-    flag_f2: "F2: बहुत कम क्रेट खोले गए।", // TODO: needs native speaker review
-    flag_f3: "F3: सिर्फ़ ऊपर का हिस्सा देखा गया।", // TODO: needs native speaker review
-    flag_f4: "F4: फ़ोन 10 डिग्री से ज़्यादा झुका था।", // TODO: needs native speaker review
-    flag_f5: "F5: टमाटर के पास काली परछाई है।", // TODO: needs native speaker review
-    flag_f6: "F6: टमाटर आपस में जुड़े हुए हैं।", // TODO: needs native speaker review
-    flag_f7: "F7: एक ही क्रेट या छोटा ढेर।", // TODO: needs native speaker review
+    flag_f2: "बहुत कम क्रेट खोले गए।", // TODO: needs native speaker review
+    flag_f3: "सिर्फ़ ऊपर का हिस्सा देखा गया।", // TODO: needs native speaker review
+    flag_f4: "फ़ोन 10 डिग्री से ज़्यादा झुका था।", // TODO: needs native speaker review
+    flag_f5: "टमाटर के पास काली परछाई है।", // TODO: needs native speaker review
+    flag_f6: "टमाटर आपस में जुड़े हुए हैं।", // TODO: needs native speaker review
+    flag_f7: "एक ही क्रेट या छोटा ढेर।", // TODO: needs native speaker review
     flag_f8: "फलों की गिनती अलग। फोटो B फिर लें।", // TODO: needs native speaker review
-    flag_f9: "F9: ऊपर का माल नीचे से बहुत अच्छा है।", // TODO: needs native speaker review
-    flag_f10: "F10: किसान और व्यापारी के नमूनों में बड़ा अंतर।", // TODO: needs native speaker review
-    flag_f11: "F11: वही फोटो या फल दोबारा इस्तेमाल हुआ।", // TODO: needs native speaker review
-    flag_f12: "F12: गैलरी से पुरानी फोटो अपलोड की गई।", // TODO: needs native speaker review
-    flag_f13: "F13: हाथ लगाने पर नरम फल मिले।", // TODO: needs native speaker review
-    flag_f14: "F14: फल चुनते समय दोनों मौजूद नहीं थे।", // TODO: needs native speaker review
-    flag_f15: "F15: सिक्का घिसा हुआ या गलत प्रकार का है।", // TODO: needs native speaker review
-    flag_f16: "F16: अलग-अलग किस्म के टमाटर मिले हुए हैं।", // TODO: needs native speaker review
-    flag_f17: "F17: कड़क धूप या पीले/नीले रंग का असर।", // TODO: needs native speaker review
-    flag_f18: "अंदर का सड़न नहीं दिखता।", // TODO: needs native speaker review
+    flag_f9: "ऊपर का माल नीचे से बहुत अच्छा है।", // TODO: needs native speaker review
+    flag_f10: "किसान और व्यापारी के नमूनों में बड़ा अंतर।", // TODO: needs native speaker review
+    flag_f11: "वही फोटो या फल दोबारा इस्तेमाल हुआ।", // TODO: needs native speaker review
+    flag_f12: "गैलरी से पुरानी फोटो अपलोड की गई।", // TODO: needs native speaker review
+    flag_f13: "हाथ लगाने पर नरम फल मिले।", // TODO: needs native speaker review
+    flag_f14: "फल चुनते समय दोनों मौजूद नहीं थे।", // TODO: needs native speaker review
+    flag_f15: "सिक्का घिसा हुआ या गलत प्रकार का है।", // TODO: needs native speaker review
+    flag_f16: "अलग-अलग किस्म के टमाटर मिले हुए हैं।", // TODO: needs native speaker review
+    flag_f17: "कड़क धूप या पीले/नीले रंग का असर।", // TODO: needs native speaker review
+    flag_f18: "भीतरी सड़न फ़ोटो में नहीं दिखती।", // TODO: needs native speaker review
     flag_f19: "आकार केवल अनुमानित है।", // TODO: needs native speaker review
+    f18: "भीतरी सड़न फ़ोटो में नहीं दिखती।", // TODO: needs native speaker review
+    f19: "आकार केवल अनुमानित है।", // TODO: needs native speaker review
+    F18: "भीतरी सड़न फ़ोटो में नहीं दिखती।", // TODO: needs native speaker review
+    F19: "आकार केवल अनुमानित है।", // TODO: needs native speaker review
+    btn_debug_view: "डीबग दृश्य", // TODO: needs native speaker review
     indicative_title_all: "INDICATIVE ONLY / सिर्फ़ संकेत / కేవలం సూచన మాత్రమే", // TODO: needs native speaker review
 
     // Agreement & Audit
@@ -588,7 +602,7 @@ const TRANSLATIONS = {
     // Language Screen (First screen)
     lang_screen_title: "మీ భాషను ఎంచుకోండి", // TODO: needs native speaker review
     lang_screen_sub: "కొనసాగడానికి భాషను ఎంచుకోండి.", // TODO: needs native speaker review
-    btn_listen: "🔊 వినండి", // TODO: needs native speaker review
+    btn_listen: "వినండి", // TODO: needs native speaker review
     btn_stop_listen: "⏹️ ఆపండి", // TODO: needs native speaker review
     listen_unsupported: "ఈ ఫోన్‌లో వాయిస్ అందుబాటులో లేదు.", // TODO: needs native speaker review
 
@@ -732,8 +746,10 @@ const TRANSLATIONS = {
     verdict_not_this: "ఈ గ్రేడ్ కాదు", // TODO: needs native speaker review
     btn_add_20_more: "మరో 20 టమాటాలు కలపండి", // TODO: needs native speaker review
     no_grade_zero_fruit: "గ్రేడ్ లేదు. పండ్లు కనపడలేదు.", // TODO: needs native speaker review
-    no_grade_zero: "గ్రేడ్ లేదు. పండ్లు కనపడలేదు.", // TODO: needs native speaker review
-    no_grade_few: "చాలా తక్కువ పండ్లు. గ్రేడ్ లేదు.", // TODO: needs native speaker review
+    no_grade_zero: "పండ్లు దొరకలేదు. మళ్లీ ఫోటో తీయండి.", // TODO: needs native speaker review
+    no_grade_few: "పండ్లు దొరకలేదు. మళ్లీ ఫోటో తీయండి.", // TODO: needs native speaker review
+    could_not_find_fruit_retake: "పండ్లు దొరకలేదు. మళ్లీ ఫోటో తీయండి.", // TODO: needs native speaker review
+    lot_too_small: "గ్రేడ్ కోసం లాట్ చాలా చిన్నది.", // TODO: needs native speaker review
     indicative_badge: "కేవలం సూచన మాత్రమే", // TODO: needs native speaker review
     not_changed_since_saved: "సేవ్ చేసిన తర్వాత నివేదిక మారలేదు", // TODO: needs native speaker review
     server_saved_badge: "సేవ్ చేసిన తర్వాత నివేదిక మారలేదు", // TODO: needs native speaker review
@@ -780,29 +796,34 @@ const TRANSLATIONS = {
     user_edited_tag: "వినియోగదారు సవరించారు", // TODO: needs native speaker review
 
     // Flags
-    flag_f0: "F0: నాణెం దొరకలేదు.", // TODO: needs native speaker review
-    flag_f0b: "F0b: ఫోటో మసకగా లేదా చీకటిగా ఉంది.", // TODO: needs native speaker review
-    flag_f0c: "F0c: 20 కంటే తక్కువ పండ్లు ఉన్నాయి.", // TODO: needs native speaker review
-    flag_f0d: "F0d: ఫోటో B (రెండవ వైపు) లేదు.", // TODO: needs native speaker review
+    flag_f0: "నాణెం దొరకలేదు.", // TODO: needs native speaker review
+    flag_f0b: "ఫోటో మసకగా లేదా చీకటిగా ఉంది.", // TODO: needs native speaker review
+    flag_f0c: "20 కంటే తక్కువ పండ్లు ఉన్నాయి.", // TODO: needs native speaker review
+    flag_f0d: "ఫోటో B (రెండవ వైపు) లేదు.", // TODO: needs native speaker review
     flag_f1: "{y} కేజీల్లో {x} పండ్లు చూశారు. {z} కావాలి.", // TODO: needs native speaker review
-    flag_f2: "F2: చాలా తక్కువ క్రేట్లు తెరిచారు.", // TODO: needs native speaker review
-    flag_f3: "F3: పై భాగం మాత్రమే చూడబడింది.", // TODO: needs native speaker review
-    flag_f4: "F4: ఫోన్ 10 డిగ్రీలకు మించి వంగి ఉంది.", // TODO: needs native speaker review
-    flag_f5: "F5: పండ్ల దగ్గర చీకటి నీడలు ఉన్నాయి.", // TODO: needs native speaker review
-    flag_f6: "F6: పండ్లు ఒకదానికొకటి తాకుతున్నాయి.", // TODO: needs native speaker review
-    flag_f7: "F7: ఒకే క్రేట్ లేదా చిన్న కుప్ప.", // TODO: needs native speaker review
+    flag_f2: "చాలా తక్కువ క్రేట్లు తెరిచారు.", // TODO: needs native speaker review
+    flag_f3: "పై భాగం మాత్రమే చూడబడింది.", // TODO: needs native speaker review
+    flag_f4: "ఫోన్ 10 డిగ్రీలకు మించి వంగి ఉంది.", // TODO: needs native speaker review
+    flag_f5: "పండ్ల దగ్గర చీకటి నీడలు ఉన్నాయి.", // TODO: needs native speaker review
+    flag_f6: "పండ్లు ఒకదానికొకటి తాకుతున్నాయి.", // TODO: needs native speaker review
+    flag_f7: "ఒకే క్రేట్ లేదా చిన్న కుప్ప.", // TODO: needs native speaker review
     flag_f8: "పండ్ల సంఖ్య వేరు. ఫోటో B మళ్లీ తీయండి.", // TODO: needs native speaker review
-    flag_f9: "F9: పై పొర కింద పొర కంటే చాలా బాగుంది.", // TODO: needs native speaker review
-    flag_f10: "F10: రైతు, కొనుగోలుదారు నమూనాలలో పెద్ద తేడా ఉంది.", // TODO: needs native speaker review
-    flag_f11: "F11: అదే ఫోటో లేదా పండు మళ్లీ వాడారు.", // TODO: needs native speaker review
-    flag_f12: "F12: గ్యాలరీ నుండి పాత ఫోటో పెట్టారు.", // TODO: needs native speaker review
-    flag_f13: "F13: చేతితో చూస్తే మెత్తని పండ్లు దొరికాయి.", // TODO: needs native speaker review
-    flag_f14: "F14: ఎంపిక సమయంలో ఇద్దరూ లేరు.", // TODO: needs native speaker review
-    flag_f15: "F15: నాణెం అరిగిపోయింది లేదా సరైనది కాదు.", // TODO: needs native speaker review
-    flag_f16: "F16: వేర్వేరు రకాల టమాటాలు కలిసి ఉన్నాయి.", // TODO: needs native speaker review
-    flag_f17: "F17: తీవ్రమైన ఎండ లేదా రంగు తేడా ఉంది.", // TODO: needs native speaker review
-    flag_f18: "లోపలి కుళ్ళు చూడలేము.", // TODO: needs native speaker review
+    flag_f9: "పై పొర కింద పొర కంటే చాలా బాగుంది.", // TODO: needs native speaker review
+    flag_f10: "రైతు, కొనుగోలుదారు నమూనాలలో పెద్ద తేడా ఉంది.", // TODO: needs native speaker review
+    flag_f11: "అదే ఫోటో లేదా పండు మళ్లీ వాడారు.", // TODO: needs native speaker review
+    flag_f12: "గ్యాలరీ నుండి పాత ఫోటో పెట్టారు.", // TODO: needs native speaker review
+    flag_f13: "చేతితో చూస్తే మెత్తని పండ్లు దొరికాయి.", // TODO: needs native speaker review
+    flag_f14: "ఎంపిక సమయంలో ఇద్దరూ లేరు.", // TODO: needs native speaker review
+    flag_f15: "నాణెం అరిగిపోయింది లేదా సరైనది కాదు.", // TODO: needs native speaker review
+    flag_f16: "వేర్వేరు రకాల టమాటాలు కలిసి ఉన్నాయి.", // TODO: needs native speaker review
+    flag_f17: "తీవ్రమైన ఎండ లేదా రంగు తేడా ఉంది.", // TODO: needs native speaker review
+    flag_f18: "లోపలి కుళ్ళు ఫోటోలో కనిపించదు.", // TODO: needs native speaker review
     flag_f19: "పరిమాణం సుమారు మాత్రమే.", // TODO: needs native speaker review
+    f18: "లోపలి కుళ్ళు ఫోటోలో కనిపించదు.", // TODO: needs native speaker review
+    f19: "పరిమాణం సుమారు మాత్రమే.", // TODO: needs native speaker review
+    F18: "లోపలి కుళ్ళు ఫోటోలో కనిపించదు.", // TODO: needs native speaker review
+    F19: "పరిమాణం సుమారు మాత్రమే.", // TODO: needs native speaker review
+    btn_debug_view: "డీబగ్ వీక్షణ", // TODO: needs native speaker review
     indicative_title_all: "INDICATIVE ONLY / सिर्फ़ संकेत / కేవలం సూచన మాత్రమే", // TODO: needs native speaker review
 
     // Agreement & Audit

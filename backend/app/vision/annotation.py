@@ -90,3 +90,80 @@ def annotate_image(
         cv2.putText(annotated, label_line2, (bx + 7, by + h1 + h2 + 10), font, 0.40, (220, 220, 220), 1, cv2.LINE_AA)
 
     return annotated
+
+def annotate_debug_image(
+    image_bgr: np.ndarray,
+    ref_info: Optional[Dict[str, Any]],
+    accepted_fruits: List[Dict[str, Any]],
+    rejected_shapes: List[Dict[str, Any]],
+    debug_text: str
+) -> np.ndarray:
+    """
+    PART 1: Debug view (admin only)
+    Draws on the photo:
+      - A green circle on the coin the app chose.
+      - A numbered green box on every shape accepted as fruit.
+      - A grey box on every shape rejected, with the reason
+        (too small, too big, not round, glare, touching the edge).
+      - Text at the top: 'Coin: X px = 27 mm. Scale: Y px per mm. Found: N. Rejected: M.'
+    """
+    debug_img = image_bgr.copy()
+    h, w = debug_img.shape[:2]
+
+    # Top banner background bar
+    banner_h = 44
+    cv2.rectangle(debug_img, (0, 0), (w, banner_h), (25, 25, 25), -1)
+    cv2.putText(
+        debug_img,
+        debug_text,
+        (15, 29),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.62,
+        (255, 255, 255),
+        2,
+        cv2.LINE_AA
+    )
+
+    # 1. Green circle on the coin the app chose
+    if ref_info and "center" in ref_info and "radius" in ref_info:
+        cx, cy = int(ref_info["center"][0]), int(ref_info["center"][1])
+        r = int(ref_info["radius"])
+        cv2.circle(debug_img, (cx, cy), r, (0, 255, 0), 3)
+        cv2.putText(
+            debug_img,
+            "COIN",
+            (max(5, cx - 22), max(18, cy - r - 6)),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.55,
+            (0, 255, 0),
+            2,
+            cv2.LINE_AA
+        )
+
+    # 2. Numbered green box on every shape accepted as fruit
+    for idx, item in enumerate(accepted_fruits, start=1):
+        f_id = item.get("fruit_id") or item.get("id", idx)
+        bx, by, bw, bh = item["box"]
+        # Green box
+        cv2.rectangle(debug_img, (bx, by), (bx + bw, by + bh), (0, 255, 0), 2)
+        # Numbered tag
+        tag_str = f"#{f_id}"
+        (tw, th), _ = cv2.getTextSize(tag_str, cv2.FONT_HERSHEY_SIMPLEX, 0.55, 2)
+        tag_y = max(banner_h + 2, by)
+        cv2.rectangle(debug_img, (bx, tag_y - th - 6), (bx + tw + 8, tag_y), (0, 255, 0), -1)
+        cv2.putText(debug_img, tag_str, (bx + 4, tag_y - 4), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 0, 0), 2, cv2.LINE_AA)
+
+    # 3. Grey box on every shape rejected, with reason
+    for item in rejected_shapes:
+        bx, by, bw, bh = item["box"]
+        reason = item.get("reason", "rejected")
+        # Grey box (128, 128, 128)
+        cv2.rectangle(debug_img, (bx, by), (bx + bw, by + bh), (128, 128, 128), 2)
+        # Reason label
+        (tw, th), _ = cv2.getTextSize(reason, cv2.FONT_HERSHEY_SIMPLEX, 0.45, 1)
+        tag_y = max(banner_h + 2, by)
+        cv2.rectangle(debug_img, (bx, tag_y - th - 6), (bx + tw + 8, tag_y), (128, 128, 128), -1)
+        cv2.putText(debug_img, reason, (bx + 4, tag_y - 4), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 255, 255), 1, cv2.LINE_AA)
+
+    return debug_img
+

@@ -153,6 +153,8 @@ async def grade_tomatoes(
 
     all_fruit_results: List[Dict[str, Any]] = []
     annotated_image_filenames: List[str] = []
+    debug_image_filenames: List[str] = []
+    latest_debug_info = None
     calibration_info = None
     fruit_id_counter = 1
 
@@ -177,6 +179,8 @@ async def grade_tomatoes(
             aggregated_warnings.extend(batch_res.get("pipeline_warnings", []))
             if batch_res.get("calibration"):
                 calibration_info = batch_res["calibration"]
+            if batch_res.get("debug_info"):
+                latest_debug_info = batch_res["debug_info"]
 
             for fr in batch_res.get("fruit_results", []):
                 fr["fruit_id"] = fruit_id_counter
@@ -188,10 +192,20 @@ async def grade_tomatoes(
             storage_service.save_image(batch_res["annotated_bytes_a"], fn_a, is_annotated=True)
             annotated_image_filenames.append(fn_a)
 
+            if batch_res.get("debug_annotated_bytes_a"):
+                fn_a_dbg = f"{report_id}_batch{b+1}_a_debug.jpg"
+                storage_service.save_image(batch_res["debug_annotated_bytes_a"], fn_a_dbg, is_annotated=True)
+                debug_image_filenames.append(fn_a_dbg)
+
             if batch_res.get("annotated_bytes_b"):
                 fn_b = f"{report_id}_batch{b+1}_b.jpg"
                 storage_service.save_image(batch_res["annotated_bytes_b"], fn_b, is_annotated=True)
                 annotated_image_filenames.append(fn_b)
+
+            if batch_res.get("debug_annotated_bytes_b"):
+                fn_b_dbg = f"{report_id}_batch{b+1}_b_debug.jpg"
+                storage_service.save_image(batch_res["debug_annotated_bytes_b"], fn_b_dbg, is_annotated=True)
+                debug_image_filenames.append(fn_b_dbg)
     else:
         # Single photo or odd number of photos
         if n_images == 1:
@@ -209,6 +223,8 @@ async def grade_tomatoes(
             aggregated_warnings.extend(single_res.get("pipeline_warnings", []))
             if single_res.get("calibration"):
                 calibration_info = single_res["calibration"]
+            if single_res.get("debug_info"):
+                latest_debug_info = single_res["debug_info"]
 
             for fr in single_res.get("fruit_results", []):
                 fr["fruit_id"] = fruit_id_counter
@@ -218,6 +234,11 @@ async def grade_tomatoes(
             fn = f"{report_id}_photo{img_idx}.jpg"
             storage_service.save_image(single_res["annotated_bytes"], fn, is_annotated=True)
             annotated_image_filenames.append(fn)
+
+            if single_res.get("debug_annotated_bytes"):
+                fn_dbg = f"{report_id}_photo{img_idx}_debug.jpg"
+                storage_service.save_image(single_res["debug_annotated_bytes"], fn_dbg, is_annotated=True)
+                debug_image_filenames.append(fn_dbg)
 
     # Check buyer repeat difference (Flag F10)
     if is_buyer_sample and parent_report_id:
@@ -245,7 +266,8 @@ async def grade_tomatoes(
         supplied_mandi_price=mandi_price_per_kg,
         hand_check_soft_count=hand_check_soft_count,
         flags=flags,
-        target_sample_size=target_sample
+        target_sample_size=target_sample,
+        lot_weight_kg=total_kg
     )
 
     created_at_dt = datetime.datetime.now(datetime.timezone.utc)
@@ -311,6 +333,8 @@ async def grade_tomatoes(
         "flags": lot_report["flags"],
         "is_indicative_only": is_indicative_only,
         "annotated_image_urls": annotated_urls,
+        "debug_image_urls": [f"/api/reports/{report_id}/debug_image/{i+1}" for i in range(len(debug_image_filenames))],
+        "debug_info": latest_debug_info,
         "qr_data_url": qr_data_url,
         "stored_on_server": True,
         "acknowledgements": []
@@ -562,6 +586,20 @@ def get_annotated_image(report_id: str, image_index: int, db: Session = Depends(
         raise HTTPException(status_code=404, detail="Image file not found on disk.")
 
     return Response(content=image_bytes, media_type="image/jpeg")
+
+@router.get("/reports/{report_id}/debug_image/{image_index}")
+def get_debug_image(report_id: str, image_index: int, db: Session = Depends(get_db)):
+    """Serves the debug overlay image (admin debug view)."""
+    patterns = [
+        f"{report_id}_batch{image_index}_a_debug.jpg",
+        f"{report_id}_photo{image_index}_debug.jpg",
+        f"{report_id}_batch1_a_debug.jpg"
+    ]
+    for fn in patterns:
+        img_bytes = storage_service.get_image(fn, is_annotated=True)
+        if img_bytes:
+            return Response(content=img_bytes, media_type="image/jpeg")
+    return get_annotated_image(report_id, image_index, db)
 
 @router.get("/reports/{report_id}/qr")
 def get_report_qr(report_id: str, request: Request, db: Session = Depends(get_db)):

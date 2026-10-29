@@ -49,6 +49,11 @@
       }
     },
     "shape_fit_error_threshold": 0.35,
+    "fruit_min_width_mm": 35.0,
+    "fruit_max_width_mm": 110.0,
+    "fruit_min_roundness": 0.60,
+    "glare_min_brightness": 240.0,
+    "glare_max_saturation": 30.0,
     "min_sharpness_laplacian": 65.0,
     "min_brightness": 40.0,
     "max_brightness": 245.0,

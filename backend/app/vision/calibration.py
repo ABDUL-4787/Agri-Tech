@@ -40,9 +40,88 @@ def detect_reference_object(
     # Convert to HSV to differentiate coins from red/orange tomatoes
     hsv = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2HSV)
     
-    # We look for candidate circular contours:
-    # 1. Adaptive threshold and edge detection
+    # Filter glare mask: bright specular highlights (V > 238 and S < 35)
+    glare_mask = cv2.inRange(hsv, np.array([0, 0, 238]), np.array([180, 35, 255]))
+    
+    def check_is_glare(roi_hsv: np.ndarray) -> bool:
+        if roi_hsv.size == 0:
+            return False
+        mean_val = float(np.mean(roi_hsv[:, :, 2]))
+        mean_sat = float(np.mean(roi_hsv[:, :, 1]))
+        if mean_val > 238 and mean_sat < 35:
+            return True
+        white_ratio = np.sum((roi_hsv[:, :, 2] > 238) & (roi_hsv[:, :, 1] < 35)) / float(roi_hsv.shape[0] * roi_hsv.shape[1])
+        return white_ratio > 0.35
+
+    def evaluate_coin_candidate(cx: int, cy: int, radius: float, circularity: float, box: Tuple[int, int, int, int]) -> Optional[Dict[str, Any]]:
+        # 1. Size check: reasonable coin fraction of image
+        min_r = max(10.0, min(h, w) * 0.012)
+        max_r = min(h, w) * 0.16
+        if not (min_r <= radius <= max_r):
+            return None
+        if circularity < 0.68:
+            return None
+        
+        # Sample pixels inside the circle (inner 75% radius to avoid background edge bleeding)
+        sample_r = max(3, int(radius * 0.75))
+        sample_mask = np.zeros((h, w), dtype=np.uint8)
+        cv2.circle(sample_mask, (int(cx), int(cy)), sample_r, 255, -1)
+        sampled_hsv = hsv[sample_mask == 255]
+        if sampled_hsv.size == 0:
+            return None
+            
+        mean_sat = float(np.mean(sampled_hsv[:, 1]))
+        mean_val = float(np.mean(sampled_hsv[:, 2]))
+        mean_hue = float(np.mean(sampled_hsv[:, 0]))
+        
+        # 2. Glare check: ignore very bright white spots (specular reflections)
+        if mean_val > 238 and mean_sat < 32:
+            return None
+        glare_ratio = np.sum((sampled_hsv[:, 2] > 238) & (sampled_hsv[:, 1] < 32)) / float(len(sampled_hsv))
+        if glare_ratio > 0.35:
+            return None
+            
+        # 3. Exclude tomato red/orange fruit (high saturation red)
+        if (mean_sat > 80) and (mean_hue <= 11 or mean_hue >= 170):
+            return None
+            
+        # 4. Gold or silver colour check
+        # Gold/brass: hue 10 to 45, sat 20 to 170, val 45 to 235
+        is_gold = (10 <= mean_hue <= 48) and (20 <= mean_sat <= 170) and (45 <= mean_val <= 235)
+        # Silver/steel: low saturation (<= 45), metallic brightness 55 to 235
+        is_silver = (mean_sat <= 45) and (55 <= mean_val <= 235)
+        
+        if not (is_gold or is_silver):
+            return None
+            
+        color_score = 0.9 if is_gold else 0.8
+        if is_gold:
+            color_score -= (abs(mean_hue - 24) / 50.0)
+        else:
+            color_score -= (mean_sat / 100.0)
+        color_score = max(0.1, color_score)
+        
+        ideal_r = min(h, w) * 0.045
+        size_score = max(0.2, 1.0 - abs(radius - ideal_r) / (ideal_r * 2.5))
+        total_score = (circularity ** 2) * color_score * size_score
+        
+        x, y, bw, bh = box
+        return {
+            "center": (int(cx), int(cy)),
+            "radius": float(radius),
+            "diameter_px": float(radius * 2),
+            "box": (int(x), int(y), int(bw), int(bh)),
+            "circularity": float(circularity),
+            "mean_sat": mean_sat,
+            "mean_val": mean_val,
+            "is_gold": is_gold,
+            "is_silver": is_silver,
+            "score": float(total_score)
+        }
+
+    # Evaluate edges excluding glare
     edges = cv2.Canny(blurred, 40, 120)
+    edges[glare_mask == 255] = 0  # ignore glare edges
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
     edges_dilated = cv2.dilate(edges, kernel, iterations=1)
     
@@ -50,10 +129,9 @@ def detect_reference_object(
     
     candidate_coins = []
     
-    # Also attempt HoughCircles as a robust complementary method
-    min_radius = int(min(h, w) * 0.015)
-    max_radius = int(min(h, w) * 0.20)
-    
+    # 1. Hough circles
+    min_radius = int(min(h, w) * 0.012)
+    max_radius = int(min(h, w) * 0.16)
     detected_circles = cv2.HoughCircles(
         blurred,
         cv2.HOUGH_GRADIENT,
@@ -68,83 +146,54 @@ def detect_reference_object(
     if detected_circles is not None:
         detected_circles = np.uint16(np.around(detected_circles[0]))
         for (cx, cy, r) in detected_circles:
-            # Check bounding box
             x1, y1 = max(0, cx - r), max(0, cy - r)
             x2, y2 = min(w, cx + r), min(h, cy + r)
             if x2 <= x1 or y2 <= y1:
                 continue
-            
-            # Check color inside circle: tomatoes have high red/orange saturation
-            roi_hsv = hsv[y1:y2, x1:x2]
-            if roi_hsv.size == 0:
-                continue
-            mean_sat = float(np.mean(roi_hsv[:, :, 1]))
-            mean_val = float(np.mean(roi_hsv[:, :, 2]))
-            mean_hue = float(np.mean(roi_hsv[:, :, 0]))
+            cand = evaluate_coin_candidate(cx, cy, float(r), 0.95, (int(x1), int(y1), int(x2 - x1), int(y2 - y1)))
+            if cand:
+                candidate_coins.append(cand)
 
-            # Tomatoes have high saturation (>80) and red hue (0-16 or 165-180)
-            is_tomato_red = (mean_sat > 75) and (mean_hue <= 16 or mean_hue >= 165)
-            if is_tomato_red:
-                continue
-            
-            candidate_coins.append({
-                "type": "hough_circle",
-                "center": (int(cx), int(cy)),
-                "radius": float(r),
-                "diameter_px": float(r * 2),
-                "box": (int(x1), int(y1), int(x2 - x1), int(y2 - y1)),
-                "mean_sat": mean_sat,
-                "mean_val": mean_val,
-                "score": 1.0 / (1.0 + abs(mean_sat - 50))
-            })
-
-    # Evaluate contours for circularity
+    # 2. Contours for circularity
     for c in contours:
         area = cv2.contourArea(c)
         if area < (np.pi * (min_radius ** 2)) or area > (np.pi * (max_radius ** 2)):
             continue
-            
         perimeter = cv2.arcLength(c, True)
         if perimeter <= 0:
             continue
-            
         circularity = 4.0 * np.pi * area / (perimeter ** 2)
-        if circularity < 0.78:
-            continue
-            
         (cx, cy), radius = cv2.minEnclosingCircle(c)
         x, y, bw, bh = cv2.boundingRect(c)
         aspect_ratio = float(bw) / float(bh) if bh > 0 else 0
-        if not (0.80 <= aspect_ratio <= 1.25):
+        if not (0.75 <= aspect_ratio <= 1.30):
             continue
-            
-        # Check color
-        roi_hsv = hsv[max(0, y):min(h, y+bh), max(0, x):min(w, x+bw)]
-        if roi_hsv.size == 0:
-            continue
-        mean_sat = float(np.mean(roi_hsv[:, :, 1]))
-        mean_hue = float(np.mean(roi_hsv[:, :, 0]))
-
-        # Exclude tomato-red objects
-        is_tomato_red = (mean_sat > 75) and (mean_hue <= 16 or mean_hue >= 165)
-        if is_tomato_red:
-            continue
-        
-        candidate_coins.append({
-            "type": "contour_circle",
-            "center": (int(cx), int(cy)),
-            "radius": float(radius),
-            "diameter_px": float(radius * 2),
-            "box": (int(x), int(y), int(bw), int(bh)),
-            "circularity": float(circularity),
-            "mean_sat": mean_sat,
-            "score": circularity * (1.0 / (1.0 + abs(mean_sat - 50)))
-        })
+        cand = evaluate_coin_candidate(int(cx), int(cy), float(radius), float(circularity), (int(x), int(y), int(bw), int(bh)))
+        if cand:
+            candidate_coins.append(cand)
 
     if not candidate_coins:
         warnings.append(f"No plausible reference object ({reference_type}) was detected in the photograph.")
         warnings.append("Note: Place the coin flat beside tomatoes on a plain, light background.")
         return None, None, "uncalibrated", warnings
+
+    # Filter out inner concentric circles (e.g. inner core of bimetallic ₹10 coin)
+    outer_candidates = []
+    for cand in candidate_coins:
+        is_inner = False
+        cx, cy, r = cand["center"][0], cand["center"][1], cand["radius"]
+        for other in candidate_coins:
+            if cand is other:
+                continue
+            ocx, ocy, orad = other["center"][0], other["center"][1], other["radius"]
+            dist = np.hypot(cx - ocx, cy - ocy)
+            if dist < orad * 0.5 and r < orad * 0.85:
+                is_inner = True
+                break
+        if not is_inner:
+            outer_candidates.append(cand)
+    if outer_candidates:
+        candidate_coins = outer_candidates
 
     # Sort candidates by score and pick best candidate
     candidate_coins.sort(key=lambda x: x["score"], reverse=True)

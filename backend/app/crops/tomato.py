@@ -255,7 +255,8 @@ class TomatoGradingEngine:
         supplied_mandi_price: Optional[float] = None,
         hand_check_soft_count: int = 0,
         flags: Optional[List[str]] = None,
-        target_sample_size: int = 30
+        target_sample_size: int = 30,
+        lot_weight_kg: Optional[float] = None
     ) -> Dict[str, Any]:
         """
         E2. Lot grading by COUNT of fruits (not average damage area).
@@ -287,17 +288,19 @@ class TomatoGradingEngine:
         if n_fruit < min_hard:
             if "F0c" not in flags:
                 flags.append("F0c")
+            is_lot_under_20 = (lot_weight_kg is not None and lot_weight_kg < 2.0)
+            msg = "Lot too small for a grade." if is_lot_under_20 else "Could not find fruit. Retake photo."
             return {
                 "lot_class": "No grade",
                 "verdict_status": "BLOCKING",
                 "n_fruit": n_fruit,
-                "summary_sentence": f"Too few fruit ({n_fruit}). Need at least {min_hard}.",
+                "summary_sentence": msg,
                 "class_counts": {},
                 "class_percentages": {},
                 "wilson_interval": None,
                 "indicative_price": None,
                 "flags": flags,
-                "reasons": [f"Only {n_fruit} fruit checked. Minimum {min_hard} required for any grade."]
+                "reasons": [msg]
             }
 
         # Small sample warning flag F1

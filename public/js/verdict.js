@@ -97,13 +97,17 @@ const AgriGradeVerdict = {
           text: 'Fewer than 20 fruit. Cannot grade.'
         });
       }
+      const isLotUnder20 = (lotWeightKg !== null && lotWeightKg !== undefined && lotWeightKg < 2.0);
+      const msgKey = isLotUnder20 ? 'lot_too_small' : 'could_not_find_fruit_retake';
+      const msgText = isLotUnder20 ? 'Lot too small for a grade.' : 'Could not find fruit. Retake photo.';
+
       return {
         has_grade: false,
         has_price: false,
         lot_grade: null,
         verdict_status: 'TOO_FEW_FRUITS',
-        message_key: 'no_grade_few',
-        message: 'Too few fruit. No grade.',
+        message_key: msgKey,
+        message: msgText,
         price_per_kg: null,
         grade_verdicts: {},
         flags,

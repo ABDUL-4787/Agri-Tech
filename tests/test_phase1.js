@@ -183,7 +183,16 @@ it("Fewer than 20 fruit (MIN_FRUITS_HARD) strictly blocks grade and price", () =
   assert.strictEqual(res.has_price, false);
   assert.strictEqual(res.lot_grade, null);
   assert.strictEqual(res.price_per_kg, null);
-  assert.strictEqual(res.message, 'Too few fruit. No grade.');
+  assert.strictEqual(res.message, 'Could not find fruit. Retake photo.');
+
+  // When lot really is under 20 fruit (<2kg)
+  const resSmall = AgriGradeVerdict.evaluateLot({
+    fruitResults: fruits,
+    basePrice: 25.0,
+    minFruitsHard: 20,
+    lotWeightKg: 1.5
+  });
+  assert.strictEqual(resSmall.message, 'Lot too small for a grade.');
 });
 
 it("Full lot evaluation assigns best GREEN grade and calculates price", () => {
